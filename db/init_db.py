@@ -42,6 +42,8 @@ def init_database(db_path="fs_factbase.duckdb"):
             value DOUBLE NOT NULL,
             source_document VARCHAR NOT NULL,
             source_page_number INTEGER NOT NULL,
+            confidence_score DOUBLE DEFAULT 1.0,
+            confidence_reason VARCHAR,
             FOREIGN KEY (metric_id) REFERENCES Core_Metrics(metric_id)
         );
     """)
@@ -57,10 +59,43 @@ def init_database(db_path="fs_factbase.duckdb"):
             institution_id VARCHAR NOT NULL,
             reporting_period VARCHAR NOT NULL,
             source_document VARCHAR NOT NULL,
-            source_page_number INTEGER NOT NULL
+            source_page_number INTEGER NOT NULL,
+            confidence_score DOUBLE DEFAULT 0.5,
+            confidence_reason VARCHAR
         );
     """)
     logger.info("Table created: Unmapped_Staging")
+
+    # Create Extraction_Corrections Table
+    conn.execute("""
+        CREATE SEQUENCE IF NOT EXISTS seq_correction_id;
+        CREATE TABLE IF NOT EXISTS Extraction_Corrections (
+            correction_id INTEGER PRIMARY KEY DEFAULT nextval('seq_correction_id'),
+            institution_id VARCHAR NOT NULL,
+            raw_term VARCHAR NOT NULL,
+            original_value DOUBLE,
+            corrected_value DOUBLE NOT NULL,
+            source_document VARCHAR,
+            page_number INTEGER,
+            reason VARCHAR,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    """)
+    logger.info("Table created: Extraction_Corrections")
+
+    # Create Diagnostic_Lessons Table
+    conn.execute("""
+        CREATE SEQUENCE IF NOT EXISTS seq_lesson_id;
+        CREATE TABLE IF NOT EXISTS Diagnostic_Lessons (
+            lesson_id INTEGER PRIMARY KEY DEFAULT nextval('seq_lesson_id'),
+            institution_id VARCHAR NOT NULL,
+            error_pattern VARCHAR NOT NULL,
+            advice VARCHAR NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            is_active BOOLEAN DEFAULT TRUE
+        );
+    """)
+    logger.info("Table created: Diagnostic_Lessons")
     
     conn.close()
     logger.info("Database initialization completed successfully.")

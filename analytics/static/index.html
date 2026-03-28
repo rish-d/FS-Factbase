@@ -48,6 +48,7 @@
             letter-spacing: -0.02em;
             background: linear-gradient(to right, #fff, #94a3b8);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -138,6 +139,107 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        .cursor-pointer { cursor: pointer; }
+        .cursor-pointer:hover { color: var(--accent-secondary); }
+
+        .select-metric {
+            background: var(--bg-color);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.3rem 0.5rem;
+            font-size: 0.8rem;
+            outline: none;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+            color: var(--text-dim);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            background: var(--accent-primary);
+            color: white;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification.error { background: #ef4444; }
+        .notification.success { background: var(--success); }
+
+        .status-msg {
+            font-size: 0.75rem;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .conf-dot {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.2);
+        }
+
+        .lesson-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid var(--accent-primary);
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            transition: 0.2s;
+        }
+
+        .lesson-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateX(4px);
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not_allowed;
+        }
     </style>
 </head>
 <body>
@@ -151,21 +253,28 @@
             <div class="tab active" onclick="showSection('facts')">Financial Facts</div>
             <div class="tab" onclick="showSection('unmapped')">Unmapped Staging</div>
             <div class="tab" onclick="showSection('metrics')">Data Dictionary</div>
+            <div class="tab" onclick="showSection('diagnostics')">AI Diagnostics</div>
         </div>
 
         <!-- Facts Section -->
         <div id="facts" class="section active">
             <div class="card">
-                <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Standardized Financial Data</h2>
-                <p style="color: var(--text-dim); font-size: 0.85rem;">Deterministic mappings from raw extraction to ground truth.</p>
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <div>
+                        <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Standardized Financial Data</h2>
+                        <p style="color: var(--text-dim); font-size: 0.85rem;">Confidence scoring integrated with historical trend analysis.</p>
+                    </div>
+                </div>
                 <table id="factsTable">
                     <thead>
                         <tr>
+                            <th>Status</th>
                             <th>Metric</th>
                             <th>Institution</th>
                             <th>Period</th>
                             <th>Value</th>
                             <th>Source</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody><!-- Data injected here --></tbody>
@@ -176,20 +285,44 @@
         <!-- Unmapped Section -->
         <div id="unmapped" class="section">
             <div class="card">
-                <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Review Queue (Unmapped)</h2>
-                <p style="color: var(--text-dim); font-size: 0.85rem;">Newly discovered terms requiring manual alias definition.</p>
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <div>
+                        <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Review Queue (Unmapped)</h2>
+                        <p style="color: var(--text-dim); font-size: 0.85rem;">Terms awaiting alias mapping or correction.</p>
+                    </div>
+                </div>
                 <table id="unmappedTable">
                     <thead>
                         <tr>
+                            <th>Status</th>
                             <th>Raw Term</th>
                             <th>Institution</th>
                             <th>Period</th>
                             <th>Raw Value</th>
                             <th>Page</th>
+                            <th>Assign Metric</th>
                         </tr>
                     </thead>
                     <tbody><!-- Data injected here --></tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- Diagnostics Section -->
+        <div id="diagnostics" class="section">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
+                    <div>
+                        <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Self-Correction Intelligence</h2>
+                        <p style="color: var(--text-dim); font-size: 0.85rem;">Lessons learned from manual corrections to improve future extractions.</p>
+                    </div>
+                    <button id="runLearnBtn" onclick="runLearning()" class="btn-primary">Run System Learning</button>
+                </div>
+                
+                <h3 style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-main);">Active Extraction Rules (Lessons)</h3>
+                <div id="lessonsList" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Lessons injected here -->
+                </div>
             </div>
         </div>
 
@@ -213,51 +346,193 @@
         </div>
     </div>
 
+    <div id="notification" class="notification"></div>
+
     <script>
+        let coreMetrics = [];
+        let isEditing = false;
+
         function formatNumber(num) {
             return new Intl.NumberFormat('en-US').format(num);
         }
 
-        async function fetchData() {
+        function getConfidenceInfo(score, reason) {
+            let color = 'var(--text-dim)';
+            let title = reason || 'Unknown';
+            if (score >= 0.9) color = 'var(--success)';
+            else if (score >= 0.6) color = 'var(--warning)';
+            else color = '#ef4444';
+            
+            return `<span class="conf-dot" style="background: ${color}" title="${title}"></span>`;
+        }
+
+        function showNotification(msg, type = 'success') {
+            const el = document.getElementById('notification');
+            el.textContent = msg;
+            el.className = `notification show ${type}`;
+            setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        async function apiCall(url, method = 'GET', body = null) {
             try {
+                const options = { method, headers: { 'Content-Type': 'application/json' } };
+                if (body) options.body = JSON.stringify(body);
+                const res = await fetch(url, options);
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || 'API Error');
+                return data;
+            } catch (err) {
+                showNotification(err.message, 'error');
+                throw err;
+            }
+        }
+
+        async function runLearning() {
+            const btn = document.getElementById('runLearnBtn');
+            btn.disabled = true;
+            btn.textContent = 'Learning...';
+            try {
+                const res = await apiCall('/api/diagnose/run', 'POST');
+                showNotification(res.message);
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.textContent = 'Run System Learning';
+                    fetchData();
+                }, 2000);
+            } catch (err) {
+                btn.disabled = false;
+                btn.textContent = 'Run System Learning';
+            }
+        }
+
+        async function editFactValue(id, currentVal) {
+            const input = prompt('Enter new value:', currentVal);
+            if (input === null || input === currentVal.toString()) return;
+            
+            const newVal = parseFloat(input);
+            if (isNaN(newVal)) {
+                showNotification('Please enter a valid number', 'error');
+                return;
+            }
+
+            const reason = prompt('Why are you correcting this? (optional)', 'Trend correction');
+            await apiCall(`/api/facts/${id}`, 'PATCH', { value: newVal, reason });
+            showNotification('Fact updated & Logged for AI Diagnosis');
+            fetchData();
+        }
+
+        async function editUnmappedValue(id, currentVal) {
+            const input = prompt('Enter new value:', currentVal);
+            if (input === null || input === currentVal.toString()) return;
+
+            const newVal = parseFloat(input);
+            if (isNaN(newVal)) {
+                showNotification('Please enter a valid number', 'error');
+                return;
+            }
+
+            const reason = prompt('Why are you correcting this? (optional)', 'Multiplier error');
+            await apiCall(`/api/unmapped/${id}`, 'PATCH', { value: newVal, reason });
+            showNotification('Staging updated & Logged for AI Diagnosis');
+            fetchData();
+        }
+
+        async function deleteFact(id) {
+            if (!confirm('Are you sure you want to delete this fact?')) return;
+            await apiCall(`/api/facts/${id}`, 'DELETE');
+            showNotification('Fact deleted');
+            fetchData();
+        }
+
+        async function deleteUnmapped(id) {
+            if (!confirm('This will permanently delete this error. Continue?')) return;
+            await apiCall(`/api/unmapped/${id}`, 'DELETE');
+            showNotification('Error deleted');
+            fetchData();
+        }
+
+        async function mapTerm(stagingId, selectEl) {
+            const metricId = selectEl.value;
+            if (!metricId) return;
+            
+            try {
+                selectEl.disabled = true;
+                await apiCall(`/api/unmapped/${stagingId}/map`, 'POST', { metric_id: metricId });
+                showNotification(`Mapped and learned alias for ${metricId}`);
+                fetchData();
+            } catch (err) {
+                selectEl.disabled = false;
+            }
+        }
+
+        async function fetchData() {
+            if (isEditing) return;
+            try {
+                // Fetch dictionary first
+                if (coreMetrics.length === 0) {
+                    coreMetrics = await apiCall('/api/metrics');
+                    const metricsBody = document.querySelector('#metricsTable tbody');
+                    metricsBody.innerHTML = coreMetrics.map(m => `
+                        <tr>
+                            <td><code>${m.metric_id}</code></td>
+                            <td>${m.name}</td>
+                            <td><span class="badge badge-success">${m.standard}</span></td>
+                            <td style="color: var(--text-dim);">${m.type}</td>
+                        </tr>
+                    `).join('');
+                }
+
+                // Fetch lessons
+                const lessons = await apiCall('/api/lessons');
+                const lessonsList = document.getElementById('lessonsList');
+                if (lessons.length === 0) {
+                    lessonsList.innerHTML = '<p style="color: var(--text-dim); font-size: 0.85rem;">No lessons learned yet. Correct some values and run learning!</p>';
+                } else {
+                    lessonsList.innerHTML = lessons.map(l => `
+                        <div class="lesson-card">
+                            <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem;">${l.institution.replace(/_/g, ' ').toUpperCase()} &bull; ${l.pattern}</div>
+                            <div style="color: var(--text-dim); font-size: 0.8rem;">${l.advice}</div>
+                        </div>
+                    `).join('');
+                }
+
                 // Fetch facts
-                const factsRes = await fetch('/api/facts');
-                const facts = await factsRes.json();
+                const facts = await apiCall('/api/facts');
                 const factsBody = document.querySelector('#factsTable tbody');
                 factsBody.innerHTML = facts.map(f => `
                     <tr>
+                        <td>${getConfidenceInfo(f.confidence_score, f.confidence_reason)}</td>
                         <td><span class="badge badge-info">${f.metric_name}</span></td>
                         <td style="text-transform: capitalize;">${f.institution.replace(/_/g, ' ')}</td>
                         <td>${f.period}</td>
-                        <td class="value">${formatNumber(f.value)}</td>
+                        <td class="value cursor-pointer" onclick="editFactValue(${f.fact_id}, ${f.value})">${formatNumber(f.value)} ✎</td>
                         <td style="color: var(--text-dim); font-size: 0.75rem;">${f.source_doc} (p.${f.page})</td>
+                        <td>
+                            <button onclick="deleteFact(${f.fact_id})" class="btn-icon">🗑️</button>
+                        </td>
                     </tr>
                 `).join('');
 
                 // Fetch unmapped
-                const unmappedRes = await fetch('/api/unmapped');
-                const unmapped = await unmappedRes.json();
+                const unmapped = await apiCall('/api/unmapped');
                 const unmappedBody = document.querySelector('#unmappedTable tbody');
                 unmappedBody.innerHTML = unmapped.map(u => `
                     <tr>
+                        <td>${getConfidenceInfo(u.confidence_score, u.confidence_reason)}</td>
                         <td><span class="badge badge-warning">${u.term}</span></td>
                         <td style="text-transform: capitalize;">${u.institution.replace(/_/g, ' ')}</td>
                         <td>${u.period}</td>
-                        <td class="value">${formatNumber(u.value)}</td>
+                        <td class="value cursor-pointer" onclick="editUnmappedValue(${u.staging_id}, ${u.value})">${formatNumber(u.value)} ✎</td>
                         <td>${u.page}</td>
-                    </tr>
-                `).join('');
-
-                // Fetch dictionary
-                const metricsRes = await fetch('/api/metrics');
-                const metrics = await metricsRes.json();
-                const metricsBody = document.querySelector('#metricsTable tbody');
-                metricsBody.innerHTML = metrics.map(m => `
-                    <tr>
-                        <td><code>${m.metric_id}</code></td>
-                        <td>${m.name}</td>
-                        <td><span class="badge badge-success">${m.standard}</span></td>
-                        <td style="color: var(--text-dim);">${m.type}</td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <select onchange="mapTerm(${u.staging_id}, this)" class="select-metric">
+                                    <option value="">Select Metric...</option>
+                                    ${coreMetrics.map(m => `<option value="${m.metric_id}">${m.name}</option>`).join('')}
+                                </select>
+                                <button onclick="deleteUnmapped(${u.staging_id})" class="btn-icon">Error</button>
+                            </div>
+                        </td>
                     </tr>
                 `).join('');
 
@@ -276,7 +551,7 @@
 
         // Initialize
         fetchData();
-        setInterval(fetchData, 10000); // Poll every 10s
+        setInterval(fetchData, 8000);
     </script>
 </body>
 </html>

@@ -2,10 +2,12 @@ import os
 import json
 import duckdb
 from loguru import logger
+from analytics.trend_analyzer import TrendAnalyzer
 
 class StandardizedMapper:
     def __init__(self, db_path="fs_factbase.duckdb"):
         self.db_path = db_path
+        self.trend_analyzer = TrendAnalyzer(db_path)
 
     def load_aliases(self, conn):
         """Loads all aliases into a lookup dictionary for fast access."""
@@ -17,16 +19,21 @@ class StandardizedMapper:
     def process_file(self, json_path):
         logger.info(f"Processing extraction result: {json_path}")
         
-        with open(json_path, 'r') as f:
+        with open(json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
 
         institution_id = data.get("institution_id")
-        reporting_period = data.get("reporting_period")
         source_doc = data.get("source_document")
-        metrics = data.get("extracted_metrics", [])
+        
+        # Support both 'statements' and 'financial_statements' in the raw JSON
+        statements = data.get("statements", data.get("financial_statements", []))
+        
+        # If statements is a dict, convert to list
+        if isinstance(statements, dict):
+            statements = list(statements.values())
 
-        if not metrics:
-            logger.warning(f"No metrics found in {json_path}")
+        if not statements:
+            logger.warning(f"No statements found in {json_path}")
             return
 
         conn = duckdb.connect(self.db_path)
@@ -35,31 +42,42 @@ class StandardizedMapper:
         mapped_count = 0
         unmapped_count = 0
 
-        for m in metrics:
-            raw_term = m.get("raw_term")
-            raw_value = m.get("raw_value")
-            page_num = m.get("source_page_number", 0)
+        for stmt in statements:
+            line_items = stmt.get("line_items", [])
+            for item in line_items:
+                raw_term = item.get("item")
+                values = item.get("values", [])
+                
+                if not raw_term:
+                    continue
 
-            if raw_term is None or raw_value is None:
-                continue
+                for val_obj in values:
+                    year = val_obj.get("year")
+                    val = val_obj.get("value")
 
-            # Lookup
-            metric_id = alias_map.get((raw_term.lower(), institution_id))
+                    if year is None or val is None:
+                        continue
 
-            if metric_id:
-                # Insert into Fact_Financials
-                conn.execute("""
-                    INSERT INTO Fact_Financials (metric_id, institution_id, reporting_period, value, source_document, source_page_number)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                """, (metric_id, institution_id, reporting_period, raw_value, source_doc, page_num))
-                mapped_count += 1
-            else:
-                # Insert into Unmapped_Staging
-                conn.execute("""
-                    INSERT INTO Unmapped_Staging (raw_term, raw_value, institution_id, reporting_period, source_document, source_page_number)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                """, (raw_term, raw_value, institution_id, reporting_period, source_doc, page_num))
-                unmapped_count += 1
+                    # Lookup
+                    metric_id = alias_map.get((raw_term.lower(), institution_id))
+
+                    if metric_id:
+                        # Analyze trend for confidence
+                        score, reason = self.trend_analyzer.analyze_value(institution_id, metric_id, str(year), val)
+                        
+                        # Insert into Fact_Financials
+                        conn.execute("""
+                            INSERT INTO Fact_Financials (metric_id, institution_id, reporting_period, value, source_document, source_page_number, confidence_score, confidence_reason)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                        """, (metric_id, institution_id, str(year), val, source_doc, 0, score, reason))
+                        mapped_count += 1
+                    else:
+                        # Insert into Unmapped_Staging
+                        conn.execute("""
+                            INSERT INTO Unmapped_Staging (raw_term, raw_value, institution_id, reporting_period, source_document, source_page_number, confidence_score, confidence_reason)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                        """, (raw_term, val, institution_id, str(year), source_doc, 0, 0.5, "Unmapped Term"))
+                        unmapped_count += 1
 
         conn.close()
         logger.success(f"Finished {json_path}: Mapped {mapped_count}, Unmapped {unmapped_count}")
