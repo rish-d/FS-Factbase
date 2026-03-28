@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FS Factbase | Financial Data Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0a0a0c;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --accent-primary: #4f46e5;
+            --accent-secondary: #06b6d4;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        header {
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            color: var(--text-dim);
+            font-weight: 600;
+            transition: 0.2s;
+            border-radius: 8px;
+        }
+
+        .tab:hover {
+            color: var(--text-main);
+            background: var(--card-bg);
+        }
+
+        .tab.active {
+            color: var(--text-main);
+            background: var(--accent-primary);
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th {
+            text-align: left;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .badge-info { background: rgba(79, 70, 229, 0.1); color: var(--accent-primary); }
+
+        .value { font-family: monospace; font-size: 1rem; font-weight: 600; }
+
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>FS Factbase <span style="font-weight: 300; opacity: 0.5;">| Dashboard</span></h1>
+        <div class="badge badge-info">Phase 5.1</div>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="showSection('facts')">Financial Facts</div>
+            <div class="tab" onclick="showSection('unmapped')">Unmapped Staging</div>
+            <div class="tab" onclick="showSection('metrics')">Data Dictionary</div>
+        </div>
+
+        <!-- Facts Section -->
+        <div id="facts" class="section active">
+            <div class="card">
+                <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Standardized Financial Data</h2>
+                <p style="color: var(--text-dim); font-size: 0.85rem;">Deterministic mappings from raw extraction to ground truth.</p>
+                <table id="factsTable">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Institution</th>
+                            <th>Period</th>
+                            <th>Value</th>
+                            <th>Source</th>
+                        </tr>
+                    </thead>
+                    <tbody><!-- Data injected here --></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Unmapped Section -->
+        <div id="unmapped" class="section">
+            <div class="card">
+                <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Review Queue (Unmapped)</h2>
+                <p style="color: var(--text-dim); font-size: 0.85rem;">Newly discovered terms requiring manual alias definition.</p>
+                <table id="unmappedTable">
+                    <thead>
+                        <tr>
+                            <th>Raw Term</th>
+                            <th>Institution</th>
+                            <th>Period</th>
+                            <th>Raw Value</th>
+                            <th>Page</th>
+                        </tr>
+                    </thead>
+                    <tbody><!-- Data injected here --></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Dictionary Section -->
+        <div id="metrics" class="section">
+            <div class="card">
+                <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Core Metrics Dictionary</h2>
+                <p style="color: var(--text-dim); font-size: 0.85rem;">The immutable standard for banking financial data.</p>
+                <table id="metricsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Standardized Name</th>
+                            <th>Accounting Standard</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody><!-- Data injected here --></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatNumber(num) {
+            return new Intl.NumberFormat('en-US').format(num);
+        }
+
+        async function fetchData() {
+            try {
+                // Fetch facts
+                const factsRes = await fetch('/api/facts');
+                const facts = await factsRes.json();
+                const factsBody = document.querySelector('#factsTable tbody');
+                factsBody.innerHTML = facts.map(f => `
+                    <tr>
+                        <td><span class="badge badge-info">${f.metric_name}</span></td>
+                        <td style="text-transform: capitalize;">${f.institution.replace(/_/g, ' ')}</td>
+                        <td>${f.period}</td>
+                        <td class="value">${formatNumber(f.value)}</td>
+                        <td style="color: var(--text-dim); font-size: 0.75rem;">${f.source_doc} (p.${f.page})</td>
+                    </tr>
+                `).join('');
+
+                // Fetch unmapped
+                const unmappedRes = await fetch('/api/unmapped');
+                const unmapped = await unmappedRes.json();
+                const unmappedBody = document.querySelector('#unmappedTable tbody');
+                unmappedBody.innerHTML = unmapped.map(u => `
+                    <tr>
+                        <td><span class="badge badge-warning">${u.term}</span></td>
+                        <td style="text-transform: capitalize;">${u.institution.replace(/_/g, ' ')}</td>
+                        <td>${u.period}</td>
+                        <td class="value">${formatNumber(u.value)}</td>
+                        <td>${u.page}</td>
+                    </tr>
+                `).join('');
+
+                // Fetch dictionary
+                const metricsRes = await fetch('/api/metrics');
+                const metrics = await metricsRes.json();
+                const metricsBody = document.querySelector('#metricsTable tbody');
+                metricsBody.innerHTML = metrics.map(m => `
+                    <tr>
+                        <td><code>${m.metric_id}</code></td>
+                        <td>${m.name}</td>
+                        <td><span class="badge badge-success">${m.standard}</span></td>
+                        <td style="color: var(--text-dim);">${m.type}</td>
+                    </tr>
+                `).join('');
+
+            } catch (err) {
+                console.error("Dashboard error:", err);
+            }
+        }
+
+        function showSection(id) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(id).classList.add('active');
+        }
+
+        // Initialize
+        fetchData();
+        setInterval(fetchData, 10000); // Poll every 10s
+    </script>
+</body>
+</html>

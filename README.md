@@ -1,6 +1,22 @@
-PROJECT CONTEXT & ARCHITECT'S BRIEF: FINANCIAL DATA ETL PIPELINE
+# FS Factbase: Automated Financial ETL Pipeline
 
-1. THE NORTH STAR & ULTIMATE END-STATE
+## 🚩 PROJECT ROADMAP & STATUS (BIRD'S EYE VIEW)
+
+| Phase | Description | Status | Reference |
+| :--- | :--- | :--- | :--- |
+| **Phase 1** | **Design & Standardization** | ✅ DONE | `ARCHITECTURE.md`, `DATA_DICTIONARY_PROPOSAL.md` |
+| **Phase 2** | **Database Foundations** | ✅ DONE | `db/seed_data.py`, `fs_factbase.duckdb` |
+| **Phase 3** | **Precision AI Extraction** | 🚧 90% | `extractors/text_clipper.py`, `extractors/pdf_extractor.py` |
+| **Phase 3.5**| **Validation via Simulation** | 🚧 ACTIVE | `data/interim/extracted_metrics/` (Simulation) |
+| **Phase 4** | **Deterministic Mapping** | ✅ DONE | `transformers/mapper.py` (Functional) |
+| **Phase 5** | **Agentic Text-to-SQL** | ⏳ PENDING | Future Analytic Layer |
+
+> [!NOTE]
+> For a detailed technical breakdown of each phase, agent instructions, and current blockers, please see the [Master Plan](file:///.agents/MASTER_PLAN.md).
+
+---
+
+## 1. THE NORTH STAR & ULTIMATE END-STATE
 You are acting as the Lead Data Architect. We are building an automated, highly accurate ETL pipeline to extract financial tables from public Annual Reports (starting with PDFs of Malaysian banks) and transform them into a pristine database.
 
 The Ultimate Goal: This data will not just be read by humans; it is being purpose-built to act as the foundation for an LLM-driven application. We will eventually connect an AI to this database using Text-to-SQL to generate instant, mathematically flawless benchmarking insights, business cases, and target operating models for consulting engagements.
