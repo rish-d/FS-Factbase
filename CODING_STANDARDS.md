@@ -24,3 +24,12 @@
   /transformers/ (Pydantic validation, Master-Alias mapping)
   /loaders/      (DuckDB insertion logic)
   ```
+
+## 5. LLM API Governance
+- **Zero-Redundancy Calls:** Do not chain LLM calls if the data is already structured. For example, if a Text-to-SQL agent successfully returns a data payload to the UI, do not trigger a second LLM call to "summarize" the data unless explicitly requested by the user. 
+- **Strict JSON Enforcement:** Do not rely on "prompt engineering" alone to get JSON. You must pass explicit Pydantic schemas to the LLM API using the `response_schema` parameter to guarantee deterministic structuring and save tokens on markdown formatting.
+
+## 6. Database I/O Optimization
+- **Ban on Iterative Inserts:** Never place a `conn.execute("INSERT INTO...")` statement inside a `for` loop. 
+- **Bulk Execution:** Accumulate tuples in a list during iteration, then perform a single `conn.executemany()` outside the loop.
+- **Connection Pooling:** For API endpoints (e.g., FastAPI), avoid opening and closing `duckdb.connect()` on every single GET request. Use a shared, global read-only connection where possible, reserving write-locks strictly for background ETL orchestration and manual HITL (Human-In-The-Loop) resolutions.
