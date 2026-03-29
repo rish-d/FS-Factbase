@@ -46,3 +46,19 @@ The FS Factbase is a scalable ETL (Extract, Transform, Load) pipeline designed t
 - `reporting_period` (String or Date)
 - `source_document` (String)
 - `source_page_number` (Integer)
+
+## 5. Performance & Scaling Architecture
+
+To process hundreds of 300+ page financial reports efficiently without hitting LLM rate limits or freezing the UI, the architecture adheres to these operational rules:
+
+### 5.1 Targeted Semantic Extraction (Solving the $O(N^2)$ Staging Bottleneck)
+Rather than extracting every row from a financial statement, the orchestrator dynamically prompts the LLM to extract only a highly specific, pre-defined list of metrics (e.g., "Extract ONLY Total Assets, Deposits, and Gross Loans"). 
+* **The Benefit:** This limits the flow of unrecognized terms into the `Unmapped_Staging` queue. Semantic string-matching algorithms (used for alias clustering) run in exponential $O(N^2)$ time. By utilizing "Micro-Staging" (keeping $N$ under 50 per batch), the mapping layer processes instantly, allowing the database to scale selectively over time.
+
+### 5.2 Hybrid AI Diagnostics
+The system learns from human corrections via a hybrid approach:
+1. **Python monitors (Cheap/Deterministic):** Standard SQL queries monitor the database for recurring human corrections and categorize them (e.g., `SCALE_ERROR`).
+2. **LLM resolves (High-Value Compute):** When an error threshold is crossed, the LLM is invoked to rewrite the exact `extraction_prompt` for that specific institution, creating a permanent, self-healing feedback loop.
+
+### 5.3 Asynchronous Bulk Transacting
+DuckDB is optimized for column-store analytics, not transactional row-by-row inserts. All data transformations in the `transformers` directory must accumulate records into memory arrays or Polars DataFrames and execute a single `conn.executemany()` bulk insert at the end of the script to prevent I/O locking and pipeline bottlenecks.
