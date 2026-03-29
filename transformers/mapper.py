@@ -51,9 +51,23 @@ class StandardizedMapper:
                 if not raw_term:
                     continue
 
-                for val_obj in values:
-                    year = val_obj.get("year")
-                    val = val_obj.get("value")
+                for i, val_obj in enumerate(values):
+                    # Robust handling of both dicts and plain values
+                    if isinstance(val_obj, dict):
+                        year = val_obj.get("year", val_obj.get("reporting_year"))
+                        val = val_obj.get("value", val_obj.get("amount"))
+                    else:
+                        # If it's just a number, infer the year if possible
+                        val = val_obj
+                        # Try to guess the year: assume first is current, second is prev
+                        try:
+                            primary_year = int(data.get("reporting_period", 0))
+                            if primary_year > 0:
+                                year = primary_year - i
+                            else:
+                                year = None
+                        except:
+                            year = None
 
                     if year is None or val is None:
                         continue

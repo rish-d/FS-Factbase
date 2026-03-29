@@ -254,6 +254,7 @@
             <div class="tab" onclick="showSection('unmapped')">Unmapped Staging</div>
             <div class="tab" onclick="showSection('metrics')">Data Dictionary</div>
             <div class="tab" onclick="showSection('diagnostics')">AI Diagnostics</div>
+            <div class="tab" onclick="showSection('intelligence')">Intelligence ✨</div>
         </div>
 
         <!-- Facts Section -->
@@ -322,6 +323,21 @@
                 <h3 style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-main);">Active Extraction Rules (Lessons)</h3>
                 <div id="lessonsList" style="display: flex; flex-direction: column; gap: 1rem;">
                     <!-- Lessons injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Intelligence Section -->
+        <div id="intelligence" class="section">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <div>
+                        <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Semantic Clustering (Atomic Resolution)</h2>
+                        <p style="color: var(--text-dim); font-size: 0.85rem;">Approve groups of similar unrecognized terms sequentially to evolve the dictionary rapidly.</p>
+                    </div>
+                </div>
+                <div id="clustersList" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Clusters injected here -->
                 </div>
             </div>
         </div>
@@ -482,6 +498,34 @@
                     `).join('');
                 }
 
+                // Fetch Semantic Clusters
+                const clusters = await apiCall('/api/clusters');
+                const clustersList = document.getElementById('clustersList');
+                if (clusters.length === 0) {
+                    clustersList.innerHTML = '<p style="color: var(--text-dim); font-size: 0.85rem;">No clusters pending. Your dictionary is fully up to date!</p>';
+                } else {
+                    clustersList.innerHTML = clusters.map((c, i) => `
+                        <div class="card" style="border: 1px solid var(--accent-primary); background: rgba(79, 70, 229, 0.05); margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <div>
+                                    <h3 style="font-size: 1rem; margin-bottom: 0.25rem;">Cluster: <span style="color: var(--warning);">${c.leader_term}</span></h3>
+                                    <p style="color: var(--text-dim); font-size: 0.85rem;">Contains ${c.terms.length} similar terminology variations</p>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <input type="text" id="cluster_target_${i}" placeholder="Enter Core Metric ID..." class="select-metric" style="width: 200px;" />
+                                    <button onclick="resolveCluster(${i})" class="btn-primary" style="padding: 0.4rem 1rem;">Promote Cluster</button>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                ${c.terms.map(t => `<span class="badge" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">${t.term} <span style="opacity: 0.5;">(${t.frequency})</span></span>`).join('')}
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    // We attach the cluster data globally so the button can access it
+                    window.currentClusters = clusters;
+                }
+
                 // Fetch lessons
                 const lessons = await apiCall('/api/lessons');
                 const lessonsList = document.getElementById('lessonsList');
@@ -547,6 +591,38 @@
             
             event.target.classList.add('active');
             document.getElementById(id).classList.add('active');
+        }
+
+        async function resolveCluster(index) {
+            const cluster = window.currentClusters[index];
+            const targetIdEl = document.getElementById(`cluster_target_${index}`);
+            const targetId = targetIdEl.value.trim();
+            
+            if (!targetId) {
+                showNotification("Please specify a Core Metric ID to promote these terms into.", "error");
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to promote ${cluster.terms.length} terms into the Core Metric '${targetId}'?`)) return;
+            
+            targetIdEl.disabled = true;
+            try {
+                // Determine if metric exists already
+                const exists = coreMetrics.some(m => m.metric_id === targetId);
+                const req = {
+                    target_metric_id: targetId,
+                    aliases: cluster.terms.map(t => t.term),
+                    create_new_metric: !exists, // create if doesn't exist
+                    new_metric_details: !exists ? { metric_id: targetId } : null
+                };
+                
+                await apiCall('/api/resolve_cluster', 'POST', req);
+                showNotification("Atomic Cluster Resolution Successful!", "success");
+                // Fetch to refresh everything
+                fetchData();
+            } catch (err) {
+                targetIdEl.disabled = false;
+            }
         }
 
         // Initialize

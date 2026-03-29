@@ -1,6 +1,7 @@
 import fitz
+import re
 from loguru import logger
-from typing import Tuple
+from typing import Tuple, List
 
 def convert_pdf_to_text_pages(pdf_path: str) -> dict[int, str]:
     """Extracts text from each page, returning a dict of {page_num: text}"""
@@ -13,123 +14,115 @@ def convert_pdf_to_text_pages(pdf_path: str) -> dict[int, str]:
         
     pages_text = {}
     for i, page in enumerate(doc):
-        # Extract text preserving rough layout/newlines to help LLM structure
         text = page.get_text("text") 
         pages_text[i+1] = text
         
     doc.close()
     return pages_text
 
-def score_page_as_balance_sheet(text: str) -> int:
+def clean_query_terms(user_prompt: str) -> List[str]:
+    """Converts a natural language prompt into core target terms."""
+    # Extremely simple stop-word removal and tokenization
+    stop_words = {"look", "for", "information", "on", "extract", "the", "find", "me", "show", "of", "and"}
+    words = re.findall(r'\b\w+\b', user_prompt.lower())
+    terms = [w for w in words if w not in stop_words]
+    return terms if terms else [user_prompt.lower()]
+
+def score_page_dynamic(text: str, user_prompt: str) -> float:
+    """Scores a page based on structural table density AND dynamic user intent."""
     text_lower = text.lower().replace("\n", " ")
     while "  " in text_lower: text_lower = text_lower.replace("  ", " ")
-    score = 0
-    # Core anchors
-    if "statements of financial position" in text_lower or "statement of financial position" in text_lower or "balance sheet" in text_lower:
-        score += 50
+    
+    score = 0.0
+    
+    # 1. Structural Table Density (Base Multiplier)
+    # Does this page look like a financial table regardless of content?
+    table_features_score = 1.0 # Base
+    
+    if "rm'000" in text_lower or "rm 000" in text_lower or "in thousands" in text_lower:
+        table_features_score += 2.0
         
-    # Structural keywords indicating a real table, not just ToC
-    if "assets" in text_lower: score += 10
-    if "liabilities" in text_lower: score += 10
-    if "equity" in text_lower: score += 10
-    if "cash and short-term funds" in text_lower: score += 20
-    if "deposits from customers" in text_lower: score += 20
-    
-    # Financial table features
-    if "note" in text_lower: score += 5
-    if "rm'000" in text_lower or "rm 000" in text_lower or "in thousands" in text_lower: score += 15
-    
-    # Number density (crude but effective check for actual tables)
+    if "note" in text_lower:
+        table_features_score += 0.5
+        
     numbers = sum(c.isdigit() for c in text)
     if numbers > 50:
-        score += 20
+        table_features_score += 2.0 # High density of numbers
+    elif numbers < 10:
+        table_features_score *= 0.1 # Penalty for pure text pages
         
-    return score
-
-def score_page_as_income_statement(text: str) -> int:
-    text_lower = text.lower().replace("\n", " ")
-    while "  " in text_lower: text_lower = text_lower.replace("  ", " ")
-    score = 0
-    # Core anchors
-    if "statements of profit or loss" in text_lower or "statement of profit or loss" in text_lower or "income statements" in text_lower or "income statement" in text_lower:
-        score += 50
-        
-    # Structural keywords
-    if "interest income" in text_lower: score += 20
-    if "interest expense" in text_lower: score += 20
-    if "net interest income" in text_lower: score += 20
-    if "profit before taxation" in text_lower or "profit before tax" in text_lower: score += 20
-    if "taxation" in text_lower or "tax expense" in text_lower: score += 10
+    # 2. Dynamic Semantic Relevance
+    target_terms = clean_query_terms(user_prompt)
+    relevance_score = 0.0
     
-    if "note" in text_lower: score += 5
-    if "rm'000" in text_lower or "rm 000" in text_lower or "in thousands" in text_lower: score += 15
-    
-    numbers = sum(c.isdigit() for c in text)
-    if numbers > 50:
-        score += 20
-        
-    return score
+    for term in target_terms:
+        # Boost exact phrase matches strongly
+        if user_prompt.lower() in text_lower:
+            relevance_score += 5.0
+            
+        term_count = text_lower.count(term)
+        if term_count > 0:
+            # First occurrence gives highest confidence that the page is relevant
+            relevance_score += 2.0 + (term_count * 0.2) 
+            
+    # Final Score: Only structurally dense pages with high relevance pass.
+    # If relevance_score is 0, score is 0.
+    final_score = table_features_score * relevance_score
+    return final_score
 
-def locate_target_financial_pages(pages_text: dict[int, str]) -> Tuple[list[int], list[int]]:
-    """Returns a list of high-scoring page numbers for Balance Sheet and Income Statement"""
-    bs_scores = []
-    is_scores = []
+def locate_target_financial_pages_dynamic(pages_text: dict[int, str], user_prompt: str) -> List[int]:
+    """Returns a list of high-scoring page numbers matching the dynamic user query."""
+    scores = []
     
     for page_num, text in pages_text.items():
-        bs_scores.append((page_num, score_page_as_balance_sheet(text)))
-        is_scores.append((page_num, score_page_as_income_statement(text)))
+        score = score_page_dynamic(text, user_prompt)
+        scores.append((page_num, score))
         
-    # Get highest scoring pages (must be >= 80 to be fundamentally structural)
-    bs_candidates = sorted([p for p in bs_scores if p[1] >= 80], key=lambda x: x[1], reverse=True)
-    is_candidates = sorted([p for p in is_scores if p[1] >= 80], key=lambda x: x[1], reverse=True)
+    # Filter out anything with zero relevance
+    valid_candidates = [p for p in scores if p[1] > 5.0]
     
-    bs_pages = [p[0] for p in bs_candidates[:2]] # Take top 2 pages just in case it spans 2 pages
-    is_pages = [p[0] for p in is_candidates[:2]]
+    # Sort and take top 2 pages (assuming tables span 1-2 pages)
+    candidates = sorted(valid_candidates, key=lambda x: x[1], reverse=True)
+    top_pages = [p[0] for p in candidates[:2]]
     
-    return bs_pages, is_pages
+    return top_pages
     
-def get_clipped_financial_text(pdf_path: str) -> str:
-    """Efficiently scans a PDF for BS/IS pages without loading all text into memory."""
-    logger.info(f"Opening PDF for localized scanning: {pdf_path}")
+def get_clipped_financial_text_dynamic(pdf_path: str, user_prompt: str) -> str:
+    """Efficiently scans a PDF for dynamically targeted pages based on a user prompt."""
+    logger.info(f"Scanning PDF '{pdf_path}' dynamically for: '{user_prompt}'")
     try:
         doc = fitz.open(pdf_path)
     except Exception as e:
         logger.error(f"Failed to open {pdf_path}: {e}")
         return ""
         
-    bs_scores = []
-    is_scores = []
+    scores = []
     
     # Efficiently score pages first
     for i, page in enumerate(doc):
         page_num = i + 1
-        # Extract small chunks of text or specific area if needed, but here we just get raw text for scoring
-        # Optimization: use small flags for faster extraction if supported
         try:
             text = page.get_text("text")
-            bs_scores.append((page_num, score_page_as_balance_sheet(text)))
-            is_scores.append((page_num, score_page_as_income_statement(text)))
+            score = score_page_dynamic(text, user_prompt)
+            scores.append((page_num, score))
         except Exception as e:
             logger.warning(f"Failed to extract text from page {page_num}: {e}")
             continue
             
-    # Get highest scoring pages (threshold >= 80)
-    bs_candidates = sorted([p for p in bs_scores if p[1] >= 80], key=lambda x: x[1], reverse=True)
-    is_candidates = sorted([p for p in is_scores if p[1] >= 80], key=lambda x: x[1], reverse=True)
-    
-    # Take top 2 pages for each to handle multi-page tables
-    target_pages = sorted(list(set([p[0] for p in bs_candidates[:2]] + [p[0] for p in is_candidates[:2]])))
+    # Filter out anything with zero relevance and take top 2 pages
+    valid_candidates = [p for p in scores if p[1] > 5.0]
+    candidates = sorted(valid_candidates, key=lambda x: x[1], reverse=True)
+    target_pages = sorted(list(set([p[0] for p in candidates[:2]])))
     
     if not target_pages:
-        logger.warning(f"No pages met the threshold in {pdf_path}.")
+        logger.warning(f"No pages met the threshold in {pdf_path} for query: '{user_prompt}'.")
         doc.close()
         return ""
         
-    logger.info(f"Target pages localized: {target_pages}")
+    logger.info(f"Dynamic target pages localized: {target_pages}")
     
     clipped_text = ""
     for page_num in target_pages:
-        # Re-extract the text for targeted pages (redundant but safer if we had different extraction methods)
         page = doc[page_num - 1]
         clipped_text += f"\n\n--- TARGET FINANCIAL PAGE {page_num} ---\n\n"
         clipped_text += page.get_text("text")

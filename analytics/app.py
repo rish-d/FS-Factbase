@@ -3,6 +3,11 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import duckdb
 import os
+from pydantic import BaseModel
+from typing import List, Optional
+
+from transformers.cluster_analyzer import ClusterAnalyzer
+from db.batch_resolver import BatchResolver
 
 app = FastAPI(title="FS Factbase Dashboard")
 
@@ -233,6 +238,37 @@ async def run_diagnostics():
         subprocess.Popen([python_exe, "scripts/run_diagnostics.py"])
         
         return {"status": "started", "message": "Batch diagnostic learning process initiated."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class ResolutionRequest(BaseModel):
+    target_metric_id: str
+    aliases: List[str]
+    create_new_metric: bool = False
+    new_metric_details: Optional[dict] = None
+
+@app.get("/api/clusters")
+async def get_clusters():
+    try:
+        analyzer = ClusterAnalyzer(DB_PATH)
+        return analyzer.get_clusters()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/resolve_cluster")
+async def resolve_cluster(req: ResolutionRequest):
+    try:
+        resolver = BatchResolver(DB_PATH)
+        success = resolver.resolve_cluster_to_metric(
+            req.target_metric_id, 
+            req.aliases, 
+            req.create_new_metric, 
+            req.new_metric_details
+        )
+        if success:
+            return {"status": "success"}
+        else:
+            raise HTTPException(status_code=500, detail="Batch resolution transaction failed.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

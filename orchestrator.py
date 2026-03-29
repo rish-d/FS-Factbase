@@ -21,9 +21,9 @@ def discover_reports(base_path="data/raw/reports"):
                 reports.append((path, inst_id, period))
     return reports
 
-def run_pipeline():
+def run_pipeline(user_prompt: str = "Balance Sheet and Income Statement"):
     reports = discover_reports()
-    logger.info(f"Discovered {len(reports)} reports for processing.")
+    logger.info(f"Discovered {len(reports)} reports for processing. Target: {user_prompt}")
     
     mapper = StandardizedMapper()
     
@@ -35,7 +35,7 @@ def run_pipeline():
         
         try:
             # 1. Extract
-            json_path = process_report(pdf_path, inst_id, period)
+            json_path = process_report(pdf_path, inst_id, period, user_prompt)
             
             if json_path and os.path.exists(json_path):
                 # 2. Map
@@ -56,4 +56,9 @@ def run_pipeline():
     logger.success(f"Orchestration Complete. Success: {success_count}, Fail: {fail_count}")
 
 if __name__ == "__main__":
-    run_pipeline()
+    import argparse
+    parser = argparse.ArgumentParser(description="Orchestrate the extraction pipeline.")
+    parser.add_argument("--prompt", default="Balance Sheet and Income Statement", help="Target financial context to extract")
+    args = parser.parse_args()
+    
+    run_pipeline(args.prompt)
