@@ -1,18 +1,30 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import duckdb
 import os
+import threading
 from pydantic import BaseModel
 from typing import List, Optional
 
-from transformers.cluster_analyzer import ClusterAnalyzer
 from db.batch_resolver import BatchResolver
+from analytics.sql_agent import FinancialSQLAgent
+from transformers.ingestor import sync_input_folder
+from transformers.cluster_analyzer import ClusterAnalyzer
+from orchestrator import run_pipeline
 
 app = FastAPI(title="FS Factbase Dashboard")
 
 # Database Path
 DB_PATH = os.path.join(os.getcwd(), "fs_factbase.duckdb")
+
+# Global status for the extraction pipeline
+pipeline_status = {
+    "is_running": False,
+    "last_run": None,
+    "last_status": "Idle",
+    "synced_count": 0
+}
 
 def get_db_connection(read_only=True):
     return duckdb.connect(DB_PATH, read_only=read_only)
@@ -271,6 +283,55 @@ async def resolve_cluster(req: ResolutionRequest):
             raise HTTPException(status_code=500, detail="Batch resolution transaction failed.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/chat")
+async def chat(data: dict):
+    try:
+        question = data.get("question")
+        if not question:
+            raise HTTPException(status_code=400, detail="Missing question")
+            
+        agent = FinancialSQLAgent(DB_PATH)
+        result = agent.process_query(question)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/pipeline/status")
+async def get_pipeline_status():
+    return pipeline_status
+
+@app.post("/api/pipeline/sync")
+async def sync_pipeline():
+    try:
+        new_files = sync_input_folder()
+        pipeline_status["synced_count"] = len(new_files)
+        pipeline_status["last_status"] = f"Synced {len(new_files)} new files."
+        return {"status": "success", "new_files": len(new_files)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def run_extraction_worker(prompt: str):
+    global pipeline_status
+    pipeline_status["is_running"] = True
+    pipeline_status["last_status"] = "Processing extraction..."
+    try:
+        run_pipeline(user_prompt=prompt)
+        pipeline_status["last_status"] = "Extraction Complete."
+    except Exception as e:
+        pipeline_status["last_status"] = f"Error: {str(e)}"
+    finally:
+        pipeline_status["is_running"] = False
+
+@app.post("/api/pipeline/run")
+async def run_extraction_pipeline(data: dict, background_tasks: BackgroundTasks):
+    if pipeline_status["is_running"]:
+        raise HTTPException(status_code=400, detail="Pipeline is already running.")
+    
+    prompt = data.get("prompt", "Balance Sheet and Income Statement")
+    background_tasks.add_task(run_extraction_worker, prompt)
+    
+    return {"status": "started", "message": "Extraction process started in the background."}
 
 # Static Files
 app.mount("/static", StaticFiles(directory="analytics/static"), name="static")

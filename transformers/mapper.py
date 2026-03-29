@@ -43,10 +43,14 @@ class StandardizedMapper:
         unmapped_count = 0
 
         for stmt in statements:
-            line_items = stmt.get("line_items", [])
+            line_items = stmt.get("line_items", stmt.get("items", stmt.get("data", [])))
             for item in line_items:
-                raw_term = item.get("item")
-                values = item.get("values", [])
+                raw_term = item.get("item", item.get("item_name", item.get("line_item", item.get("name"))))
+                values = item.get("values", item.get("data_points", item.get("data", [])))
+                
+                # Handle flat structure in mapper too
+                if not values and "value" in item:
+                     values = [item]
                 
                 if not raw_term:
                     continue
@@ -56,6 +60,13 @@ class StandardizedMapper:
                     if isinstance(val_obj, dict):
                         year = val_obj.get("year", val_obj.get("reporting_year"))
                         val = val_obj.get("value", val_obj.get("amount"))
+                        month_end = val_obj.get("month_end", 12)
+                        scaling_factor = val_obj.get("scaling_factor", 1)
+                        
+                        # Handle is_cumulative with Balance Sheet default
+                        is_cumulative = val_obj.get("is_cumulative")
+                        if is_cumulative is None:
+                            is_cumulative = "balance sheet" in stmt.get("statement_type", "").lower()
                     else:
                         # If it's just a number, infer the year if possible
                         val = val_obj
@@ -68,6 +79,9 @@ class StandardizedMapper:
                                 year = None
                         except:
                             year = None
+                        month_end = 12
+                        is_cumulative = "balance sheet" in stmt.get("statement_type", "").lower()
+                        scaling_factor = 1
 
                     if year is None or val is None:
                         continue
@@ -81,16 +95,16 @@ class StandardizedMapper:
                         
                         # Insert into Fact_Financials
                         conn.execute("""
-                            INSERT INTO Fact_Financials (metric_id, institution_id, reporting_period, value, source_document, source_page_number, confidence_score, confidence_reason)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                        """, (metric_id, institution_id, str(year), val, source_doc, 0, score, reason))
+                            INSERT INTO Fact_Financials (metric_id, institution_id, reporting_period, value, source_document, source_page_number, confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """, (metric_id, institution_id, str(year), val, source_doc, 0, score, reason, month_end, is_cumulative, scaling_factor))
                         mapped_count += 1
                     else:
                         # Insert into Unmapped_Staging
                         conn.execute("""
-                            INSERT INTO Unmapped_Staging (raw_term, raw_value, institution_id, reporting_period, source_document, source_page_number, confidence_score, confidence_reason)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                        """, (raw_term, val, institution_id, str(year), source_doc, 0, 0.5, "Unmapped Term"))
+                            INSERT INTO Unmapped_Staging (raw_term, raw_value, institution_id, reporting_period, source_document, source_page_number, confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """, (raw_term, val, institution_id, str(year), source_doc, 0, 0.5, "Unmapped Term", month_end, is_cumulative, scaling_factor))
                         unmapped_count += 1
 
         conn.close()

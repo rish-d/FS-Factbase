@@ -1,14 +1,11 @@
 import os
 import json
 import time
+import requests
 from typing import List, Dict, Any, Union
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator, field_validator, AliasChoices
 from loguru import logger
 from dotenv import load_dotenv
-
-# Modern SDK Migration
-from google import genai
-from google.genai import types
 
 from extractors.text_clipper import get_clipped_financial_text_dynamic
 
@@ -17,27 +14,98 @@ load_dotenv()
 API_KEY = os.getenv("GEMINI_API_KEY")
 DUMMY_MODE = os.getenv("DUMMY_MODE", "false").lower() == "true"
 
-if not API_KEY or API_KEY == "your_google_api_key_here":
-    if not DUMMY_MODE:
-        logger.error("GEMINI_API_KEY is missing from the .env file.")
-        exit(1)
+from pydantic import BaseModel, Field, model_validator
 
 class YearValue(BaseModel):
     year: int = Field(description="The reporting year, e.g., 2024", validation_alias="reporting_year")
-    value: float | None = Field(description="The numerical value. Use null for headers or empty cells.", validation_alias="amount")
+    value: float | None = Field(description="The numerical value.", validation_alias="amount")
+    month_end: int = Field(description="The month number of the reporting date (1-12).", default=12)
+    is_cumulative: bool = Field(description="True if the value is cumulative (e.g. Full Year, Balance Sheet), False if incremental (e.g. 3 months only).", default=True)
+    scaling_factor: int = Field(description="The multiplier found in headers (1, 1000, 1000000).", default=1)
     confidence: float = Field(description="AI's confidence in this specific value (0.0 to 1.0)", default=1.0)
     notes: str | None = Field(description="Brief notes on any extraction difficulty.", default=None)
 
 class LineItem(BaseModel):
-    item: str = Field(description="The exact name of the line item as seen in the table.", validation_alias="item_name")
-    group: str | None = Field(description="The category group if discernible, e.g., 'Assets'.", default=None)
-    values: List[Any] = Field(description="List of values for available years. Can be numbers or year/value objects.", validation_alias="data_points")
+    item: str = Field(description="The name of the header/account.", validation_alias=AliasChoices("item_name", "line_item", "item", "name"))
+    group: str | None = Field(description="Group/Category", default=None)
+    values: List[YearValue] = Field(description="List of values.", validation_alias=AliasChoices("data_points", "data", "values", "items"), default_factory=list)
+
+    @model_validator(mode='before')
+    @classmethod
+    def handle_dynamic_keys(cls, data: Any) -> Any:
+        if not isinstance(data, dict):
+            return data
+            
+        # If 'data_points' or 'values' is already there, don't interfere
+        if 'data_points' in data or 'values' in data or 'line_items' in data:
+             return data
+             
+        # Look for potential year columns (e.g., "2024", "GROUP_2024", "BANK_2025")
+        extracted_values = []
+        import re
+        for key, val in data.items():
+            if key == "item" or key == "item_name" or key == "group":
+                continue
+            
+            # Extract year from key if possible
+            match = re.search(r"(\d{4})", key)
+            if match and (isinstance(val, (int, float)) or val is None):
+                year = int(match.group(1))
+                extracted_values.append({"reporting_year": year, "amount": val})
+        
+        if extracted_values:
+            data["data_points"] = extracted_values
+            
+        # Handle flat structure: {"line_item": "...", "value": 123}
+        if "value" in data and not data.get("data_points"):
+             data["data_points"] = [{
+                 "amount": data["value"],
+                 "reporting_year": data.get("year", data.get("period", 0))
+             }]
+            
+        return data
 
 class Statement(BaseModel):
-    statement_type: str = Field(description="e.g., 'Balance Sheet' or 'Income Statement'")
-    statement_name: str | None = Field(description="The full name of the statement.", default=None)
-    currency: str | None = Field(description="The currency unit, e.g., RM'000", default=None)
-    line_items: List[LineItem] = Field(description="List of all extracted line items for this statement.")
+    statement_type: str = Field(description="e.g., 'Balance Sheet' or 'Income Statement'", validation_alias=AliasChoices("statement_type", "report_type", "type", "table_name"))
+    statement_name: str | None = Field(description="Specific name from document.", default=None)
+    items: List[LineItem] = Field(description="List of extracted row data.", validation_alias=AliasChoices("line_items", "data", "items"), default_factory=list)
+
+    @model_validator(mode='before')
+    @classmethod
+    def merge_item_lists(cls, data: Any) -> Any:
+        if not isinstance(data, dict):
+            return data
+            
+        items = data.get('items', data.get('line_items', []))
+        if not isinstance(items, list): items = []
+        
+        # Merge categorized lists if they exist (common in Gemini outputs)
+        for key in ['assets', 'liabilities', 'equity', 'income', 'expenses', 'other']:
+            if key in data and isinstance(data[key], list):
+                for entry in data[key]:
+                    if isinstance(entry, dict) and 'group' not in entry:
+                        entry['group'] = key.capitalize()
+                items.extend(data[key])
+        
+        data['line_items'] = items
+        
+        # Propagate temporal/scaling metadata to items if they are at statement level
+        period = data.get("period", data.get("year", data.get("reporting_period")))
+        month_end = data.get("month_end")
+        is_cumulative = data.get("is_cumulative")
+        scaling_factor = data.get("scaling_factor")
+        
+        for item in items:
+            if not isinstance(item, dict): continue
+            dps = item.get("data_points", item.get("values", item.get("data", [])))
+            for dp in dps:
+                if not isinstance(dp, dict): continue
+                if "reporting_year" not in dp and "year" not in dp: dp["reporting_year"] = period
+                if "month_end" not in dp: dp["month_end"] = month_end
+                if "is_cumulative" not in dp: dp["is_cumulative"] = is_cumulative
+                if "scaling_factor" not in dp: dp["scaling_factor"] = scaling_factor
+        
+        return data
 
 class FSDataPayload(BaseModel):
     institution_id: str | None = Field(description="The canonical ID of the institution", default=None)
@@ -48,149 +116,135 @@ class FSDataPayload(BaseModel):
         validation_alias="financial_statements"
     )
 
-def get_diagnostic_lessons(institution_id: str) -> str:
-    """Fetches active diagnostic lessons for the bank from DuckDB."""
-    try:
-        import duckdb
-        conn = duckdb.connect("fs_factbase.duckdb", read_only=True)
-        rows = conn.execute("SELECT error_pattern, advice FROM Diagnostic_Lessons WHERE institution_id = ? AND is_active = TRUE", [institution_id]).fetchall()
-        conn.close()
-        if not rows:
-            return ""
-        lessons_text = "\n### LESSONS FROM PAST ERRORS ###\n"
-        for r in rows:
-            lessons_text += f"- {r[0]}: {r[1]}\n"
-        return lessons_text
-    except:
-        return ""
-
 def extract_financials_from_text(clipped_text: str, institution_id: str, reporting_period: str, filename: str, user_prompt: str) -> str:
     if DUMMY_MODE:
-        logger.warning("Running in DUMMY_MODE. Returning static JSON payload.")
-        dummy_data = {
+        logger.warning("Running in DUMMY_MODE. Returning simulated JSON.")
+        return json.dumps({
             "institution_id": institution_id,
             "reporting_period": reporting_period,
             "source_document": filename,
-            "statements": [
+            "financial_statements": [
                 {
                     "statement_type": "Balance Sheet",
-                    "statement_name": "Consolidated Statement of Financial Position",
-                    "currency": "RM'000",
-                    "line_items": [
-                        {
-                            "item": "Cash and short-term funds",
-                            "group": "Assets",
-                            "values": [{"year": 2024, "value": 45000000.0}]
-                        }
-                    ]
+                    "line_items": [{
+                        "item_name": "Total Assets", 
+                        "data_points": [{"reporting_year": int(reporting_period), "amount": 1000000}]
+                    }]
                 }
             ]
-        }
-        return json.dumps(dummy_data)
+        })
 
-    system_instruction = (
-        f"You are a master financial OCR AI. Your task is to extract tabular data based on this specific user request: '{user_prompt}'. "
-        "Return a SINGLE JSON object matching the schema exactly. "
-        "IMPORTANT: Use the key 'financial_statements' for the list of extracted statements. "
-        "Extract both the current and comparative years (e.g., 2024 and 2023) if present. "
-        "Use the 'values' list to store year-specific numbers. Convert (X) to -X. "
-        "Always prioritize verbatim accuracy."
+import google.generativeai as genai
+
+def extract_financials_from_text(clipped_text: str, institution_id: str, reporting_period: str, filename: str, user_prompt: str) -> str:
+    if DUMMY_MODE:
+        return json.dumps({
+            "institution_id": institution_id,
+            "reporting_period": reporting_period,
+            "source_document": filename,
+            "financial_statements": [
+                {
+                    "statement_type": "Balance Sheet",
+                    "line_items": [{
+                        "item_name": "Total Assets", 
+                        "data_points": [{"reporting_year": int(reporting_period), "amount": 1000000, "month_end": 12, "is_cumulative": True, "scaling_factor": 1000}]
+                    }]
+                }
+            ]
+        })
+
+    prompt_text = (
+        f"EXTRACT COMPLETE TABULAR FINANCIAL DATA for: '{user_prompt}'.\n"
+        f"INSTITUTION: {institution_id}, PERIOD: {reporting_period}, FILE: {filename}\n\n"
+        "### CRITICAL INSTRUCTIONS ###\n"
+        "1. **Scaling**: Multiply raw numbers by the scale (e.g., if RM'000, multiply by 1000) and set 'scaling_factor'.\n"
+        "2. **Temporal**: Set 'month_end' to the month number (e.g., 12) for the reporting date.\n"
+        "3. **Cumulative**: Set 'is_cumulative' to True if it's year-to-date. Balance Sheet is ALWAYS True.\n"
+        "4. **Format**: MANDATORY JSON structure below. Do NOT use different keys.\n\n"
+        "### MANDATORY JSON TEMPLATE ###\n"
+        "{\n"
+        "  'financial_statements': [\n"
+        "    {\n"
+        "      'statement_type': 'Balance Sheet',\n"
+        "      'month_end': 12,\n"
+        "      'is_cumulative': true,\n"
+        "      'scaling_factor': 1000,\n"
+        "      'line_items': [\n"
+        "        {\n"
+        "          'item_name': 'Cash',\n"
+        "          'data_points': [\n"
+        "            {'reporting_year': 2024, 'amount': 1000000}\n"
+        "          ]\n"
+        "        }\n"
+        "      ]\n"
+        "    }\n"
+        "  ]\n"
+        "}\n"
     )
-    
-    lessons = get_diagnostic_lessons(institution_id)
-    
-    prompt = f"""
-    Extact financial statements for:
-    - institution_id: {institution_id}
-    - reporting_period: {reporting_period}
-    - source_document: {filename}
-    {lessons}
-    
-    ### TEXT SOURCE ###
-    {clipped_text}
-    ### END TEXT ###
-    """
 
-    logger.info("Prompting Gemini (gemini-1.5-flash) via Modern SDK...")
+    # Use confirmed available models from list_models()
+    model_names = ["gemini-2.0-flash", "gemini-flash-latest", "gemini-pro-latest"]
     
-    try:
-        client = genai.Client(api_key=API_KEY)
+    for model_name in model_names:
+        # Mandatory chill-down for Free Tier stability
+        logger.info("Chilling for 65s to clear RPM/RPD quotas...")
+        time.sleep(65)
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={API_KEY}"
+        payload = {
+            "contents": [{
+                "parts": [{"text": prompt_text + "\n\n### DATA ###\n" + clipped_text}]
+            }]
+        }
         
-        # Exponential Backoff Retry Loop for Quota Issues
-        max_retries = 3
-        for attempt in range(max_retries):
-            try:
-                response = client.models.generate_content(
-                    model='gemini-1.5-flash',
-                    contents=prompt,
-                    config=types.GenerateContentConfig(
-                        system_instruction=system_instruction,
-                        response_mime_type='application/json'
-                    )
-                )
-                if response and response.text:
-                    return response.text
-                else:
-                    logger.error("Empty response or blocked content.")
-                    return ""
-            except Exception as e:
-                # Quota exceeded retry logic
-                if "429" in str(e) and attempt < max_retries - 1:
-                    wait_time = (attempt + 1) * 30
-                    logger.warning(f"Quota exceeded. Retrying in {wait_time}s... (Attempt {attempt+1}/{max_retries})")
-                    time.sleep(wait_time)
-                else:
-                    logger.error(f"GenAI Call failed after retries: {e}")
-                    raise e
-                    
-    except Exception as e:
-        logger.error(f"Ultimate Extraction failure: {e}")
-        return ""
+        try:
+            logger.info(f"Targeting REST v1beta: {model_name}")
+            response = requests.post(url, json=payload, timeout=120)
+            
+            if response.status_code == 200:
+                result = response.json()
+                text = result['candidates'][0]['content']['parts'][0]['text']
+                text = text.replace('```json', '').replace('```', '').strip()
+                logger.success(f"Success with {model_name}")
+                return text
+            elif response.status_code == 429:
+                logger.warning(f"Rate limit hit for {model_name}. Skipping to next.")
+                continue
+            else:
+                logger.warning(f"Failed {model_name}: {response.status_code} - {response.text}")
+                continue
+        except Exception as e:
+            logger.error(f"Request Error {model_name}: {e}")
+            continue
+            
+    return ""
 
 def process_report(pdf_path: str, institution_id: str, reporting_period: str, user_prompt: str = "Balance Sheet and Income Statement"):
     filename = os.path.basename(pdf_path)
-    logger.info(f"--- Starting Extraction: {institution_id} ({reporting_period}) ---")
-    logger.info(f"Task: {user_prompt}")
+    logger.info(f"--- Processing: {institution_id} ({reporting_period}) ---")
     
-    # Step 1: Text-First Clipping
-    logger.info(f"Step 1: Text-First Clipping for {pdf_path}")
     clipped_text = get_clipped_financial_text_dynamic(pdf_path, user_prompt)
-    
-    if not clipped_text:
-        logger.error(f"Failed to find relevant pages for {filename}")
-        return None
+    if not clipped_text: return None
         
-    # Step 2: Extract structured JSON using Modern SDK
-    logger.info("Step 2: Sending pure text to LLM API")
     raw_json = extract_financials_from_text(clipped_text, institution_id, reporting_period, filename, user_prompt)
-    
-    if not raw_json:
-        logger.error(f"Extraction returned empty payload for {filename}!")
-        return None
+    if not raw_json: return None
         
-    # Step 3: Validate and Save
+    output_dir = "data/interim/extracted_metrics"
+    os.makedirs(output_dir, exist_ok=True)
+    
     try:
-        # Pydantic validation
         data_dict = json.loads(raw_json)
         payload = FSDataPayload.model_validate(data_dict)
         
-        # Save interim result
-        output_dir = "data/interim/extracted_metrics"
-        os.makedirs(output_dir, exist_ok=True)
-        # Using specific filename to keep track
         output_path = os.path.join(output_dir, f"{institution_id}_{reporting_period}_extracted.json")
-        
         with open(output_path, "w") as f:
             json.dump(payload.model_dump(), f, indent=2)
             
-        logger.success(f"Successfully wrote extracted JSON to {output_path}")
+        logger.success(f"Saved: {output_path}")
         return output_path
-        
     except Exception as e:
-        logger.error(f"Validation failed for {filename}: {e}")
-        # Save the raw JSON for debugging anyway
-        failed_path = os.path.join("data/interim/extracted_metrics", f"{institution_id}_{reporting_period}_FAILED.json")
-        os.makedirs("data/interim/extracted_metrics", exist_ok=True)
-        with open(failed_path, "w") as f:
+        logger.error(f"Validation Error: {e}")
+        # Save raw failing JSON for analysis
+        fail_path = os.path.join(output_dir, f"{institution_id}_{reporting_period}_FAILED.json")
+        with open(fail_path, "w") as f:
             f.write(raw_json)
         return None

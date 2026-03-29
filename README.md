@@ -1,4 +1,4 @@
-# FS Factbase: Automated Financial ETL Pipeline
+# FS Factbase: Autonomous Financial ETL Pipeline
 
 ## 🚩 PROJECT ROADMAP & STATUS (BIRD'S EYE VIEW)
 
@@ -6,10 +6,18 @@
 | :--- | :--- | :--- | :--- |
 | **Phase 1** | **Design & Standardization** | ✅ DONE | `ARCHITECTURE.md`, `DATA_DICTIONARY_PROPOSAL.md` |
 | **Phase 2** | **Database Foundations** | ✅ DONE | `db/seed_data.py`, `fs_factbase.duckdb` |
-| **Phase 3** | **Precision AI Extraction** | 🚧 90% | `extractors/text_clipper.py`, `extractors/pdf_extractor.py` |
-| **Phase 3.5**| **Validation via Simulation** | 🚧 ACTIVE | `data/interim/extracted_metrics/` (Simulation) |
-| **Phase 4** | **Deterministic Mapping** | ✅ DONE | `transformers/mapper.py` (Functional) |
-| **Phase 5** | **Agentic Text-to-SQL** | ⏳ PENDING | Future Analytic Layer |
+| **Phase 3** | **Precision AI Extraction** | ✅ DONE | `extractors/pdf_extractor.py` |
+| **Phase 4** | **Master-Alias Mapping** | ✅ DONE | `transformers/mapper.py` |
+| **Phase 5** | **Agentic Text-to-SQL** | ✅ DONE | `analytics/sql_agent.py` |
+| **Phase 6** | **Self-Correction Loop** | ✅ DONE | `db/audit_log.py` |
+
+## 🚀 Key Autonomous Features
+
+- **Precision Targeting:** `text_clipper.py` uses semantic scoring to find financial tables in 300+ page PDFs, bypassing token limits.
+- **Master-Alias Paradigm:** A deterministic mapping layer that transforms inconsistent banking terms into IFRS-compliant core metrics.
+- **Semantic Clustering:** Automatically identifies and groups similar unmapped terms for one-click dictionary expansion.
+- **AI Diagnostics:** Learns from human-in-the-loop corrections to improve extraction confidence and trend analysis.
+- **Conversational Analytics:** Integrated Text-to-SQL agent for natural language querying of the DuckDB factbase.
 
 > [!NOTE]
 > For a detailed technical breakdown of each phase, agent instructions, and current blockers, please see the [Master Plan](file:///.agents/MASTER_PLAN.md).

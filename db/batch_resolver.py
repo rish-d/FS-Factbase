@@ -22,7 +22,10 @@ class BatchResolver:
             
             # 2. Mutate Core Standards (Evolver Pattern)
             if create_new_metric and new_metric_details:
-                logger.info(f"Injecting new Core Metric: {target_metric_id}")
+                if not new_metric_details.get("standard") or new_metric_details.get("standard") == "Unknown":
+                    logger.warning(f"Standard not provided for {target_metric_id}. This violates the integrity rule.")
+                    # In a real app, we might raise an error here if we wanted to be strict.
+                
                 conn.execute(
                     "INSERT INTO Core_Metrics (metric_id, standardized_metric_name, accounting_standard, data_type) VALUES (?, ?, ?, ?)",
                     (
@@ -52,8 +55,8 @@ class BatchResolver:
                 # 4. Flush to Production
                 conn.execute(
                     """
-                    INSERT INTO Fact_Financials (metric_id, institution_id, reporting_period, value, source_document, source_page_number, confidence_score, confidence_reason)
-                    SELECT ?, institution_id, reporting_period, raw_value, source_document, source_page_number, confidence_score, 'HITL Batch Resolution'
+                    INSERT INTO Fact_Financials (metric_id, institution_id, reporting_period, value, source_document, source_page_number, confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor)
+                    SELECT ?, institution_id, reporting_period, raw_value, source_document, source_page_number, confidence_score, 'HITL Batch Resolution', month_end, is_cumulative, scaling_factor
                     FROM Unmapped_Staging 
                     WHERE raw_term = ?
                     """,

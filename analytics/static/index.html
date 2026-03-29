@@ -240,6 +240,50 @@
             opacity: 0.5;
             cursor: not_allowed;
         }
+
+        /* Chat Styles */
+        .message {
+            padding: 1rem;
+            border-radius: 12px;
+            max-width: 85%;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            position: relative;
+        }
+        .message.ai {
+            background: rgba(79, 70, 229, 0.1);
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+        .message.user {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+        .sql-box {
+            background: #1e1e2e;
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.75rem;
+            color: #fab387;
+            margin-top: 0.5rem;
+            border: 1px solid #313244;
+            overflow-x: auto;
+        }
+        .data-preview {
+            margin-top: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            overflow: hidden;
+            background: var(--bg-card);
+        }
+        .data-preview table { width: 100%; border-collapse: collapse; }
+        .data-preview th { background: rgba(255,255,255,0.05); padding: 4px 8px; text-align: left; }
+        .data-preview td { padding: 4px 8px; border-top: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
@@ -255,6 +299,8 @@
             <div class="tab" onclick="showSection('metrics')">Data Dictionary</div>
             <div class="tab" onclick="showSection('diagnostics')">AI Diagnostics</div>
             <div class="tab" onclick="showSection('intelligence')">Intelligence ✨</div>
+            <div class="tab" onclick="showSection('control')">Control Center ⚙️</div>
+            <div class="tab" onclick="showSection('chat')">Data Chat 💬</div>
         </div>
 
         <!-- Facts Section -->
@@ -327,7 +373,7 @@
             </div>
         </div>
 
-        <!-- Intelligence Section -->
+        <!-- AI Intelligence Section (Clustering) -->
         <div id="intelligence" class="section">
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
@@ -338,6 +384,66 @@
                 </div>
                 <div id="clustersList" style="display: flex; flex-direction: column; gap: 1rem;">
                     <!-- Clusters injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Center Section -->
+        <div id="control" class="section">
+            <div class="card">
+                <div style="margin-bottom: 2rem;">
+                    <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Pipeline Control Center</h2>
+                    <p style="color: var(--text-dim); font-size: 0.85rem;">Manage report ingestion and trigger high-density extraction runs.</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <!-- Sync Card -->
+                    <div class="card" style="background: rgba(255,255,255,0.02);">
+                        <h3 style="font-size: 0.9rem; margin-bottom: 1rem;">1. Ingest New Reports</h3>
+                        <p style="color: var(--text-dim); font-size: 0.8rem; margin-bottom: 1.5rem;">Scans 'Bank Annual Reports input' folder for new PDFs and structures them for processing.</p>
+                        <button id="syncBtn" onclick="syncPipeline()" class="btn-primary" style="width: 100%;">Sync Input Folder</button>
+                        <div id="syncStatus" style="margin-top: 1rem; font-size: 0.8rem; color: var(--success);"></div>
+                    </div>
+
+                    <!-- Run Card -->
+                    <div class="card" style="background: rgba(255,255,255,0.02);">
+                        <h3 style="font-size: 0.9rem; margin-bottom: 1rem;">2. Trigger Extraction</h3>
+                        <p style="color: var(--text-dim); font-size: 0.8rem; margin-bottom: 1rem;">Commence extraction across all synced reports using a custom semantic target.</p>
+                        <input type="text" id="pipelinePrompt" placeholder="e.g. Extract Balance Sheet and Income Statement" 
+                               style="width: 100%; padding: 0.6rem; background: var(--bg-color); border: 1px solid var(--border); border-radius: 6px; color: var(--text-main); margin-bottom: 1rem; font-size: 0.85rem;">
+                        <button id="runPipelineBtn" onclick="runPipeline()" class="btn-primary" style="width: 100%; background: var(--accent-secondary);">Run Full Pipeline</button>
+                    </div>
+                </div>
+
+                <div id="pipelineProgress" style="margin-top: 2rem; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--border); display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span id="pipelineStatusText" style="font-weight: 600; font-size: 0.9rem;">Status: Idle</span>
+                        <div class="badge badge-info" id="pipelineSpinner">RUNNING...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Section -->
+        <div id="chat" class="section">
+            <div class="card" style="height: 70vh; display: flex; flex-direction: column;">
+                <div style="margin-bottom: 1rem;">
+                    <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Financial Analytics Chat 💬</h2>
+                    <p style="color: var(--text-dim); font-size: 0.85rem;">Ask natural language questions about your standardized financial data.</p>
+                </div>
+                
+                <div id="chatHistory" style="flex-grow: 1; overflow-y: auto; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="message ai">
+                        Hello! I am your FS Factbase Assistant. Ask me anything about the metrics we've extracted.
+                        <br><small style="opacity: 0.6;">Example: "What was Maybank's total assets in 2024?" or "Compare Tier 1 Capital between CIMB and Maybank."</small>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" id="chatInput" placeholder="Type your financial question..." 
+                           style="flex-grow: 1; padding: 0.8rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; color: var(--text-main);"
+                           onkeydown="if(event.key === 'Enter') sendChat()">
+                    <button id="sendBtn" onclick="sendChat()" class="btn-primary" style="padding: 0 1.5rem;">Send</button>
                 </div>
             </div>
         </div>
@@ -589,8 +695,60 @@
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             
-            event.target.classList.add('active');
+            // Adjust event to handle both direct call and click event
+            const target = event ? event.target : document.querySelector(`.tab[onclick*="${id}"]`);
+            if (target) target.classList.add('active');
+            
             document.getElementById(id).classList.add('active');
+        }
+
+        async function syncPipeline() {
+            const btn = document.getElementById('syncBtn');
+            const status = document.getElementById('syncStatus');
+            btn.disabled = true;
+            btn.textContent = 'Syncing...';
+            try {
+                const res = await apiCall('/api/pipeline/sync', 'POST');
+                status.textContent = `Success! Synced ${res.new_files} new files.`;
+                showNotification(`Found ${res.new_files} new reports.`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Sync Input Folder';
+            }
+        }
+
+        async function runPipeline() {
+            const prompt = document.getElementById('pipelinePrompt').value.trim();
+            const btn = document.getElementById('runPipelineBtn');
+            btn.disabled = true;
+            try {
+                const res = await apiCall('/api/pipeline/run', 'POST', { prompt });
+                showNotification("Pipeline run started in background.");
+                checkPipelineStatus();
+            } catch (err) {
+                btn.disabled = false;
+            }
+        }
+
+        async function checkPipelineStatus() {
+            try {
+                const status = await apiCall('/api/pipeline/status');
+                const progressDiv = document.getElementById('pipelineProgress');
+                const statusText = document.getElementById('pipelineStatusText');
+                const btn = document.getElementById('runPipelineBtn');
+                
+                if (status.is_running) {
+                    progressDiv.style.display = 'block';
+                    statusText.textContent = `Status: ${status.last_status}`;
+                    btn.disabled = true;
+                } else {
+                    if (progressDiv.style.display === 'block') {
+                        statusText.textContent = `Status: ${status.last_status}`;
+                        setTimeout(() => progressDiv.style.display = 'none', 5000);
+                    }
+                    btn.disabled = false;
+                }
+            } catch (err) {}
         }
 
         async function resolveCluster(index) {
@@ -625,9 +783,65 @@
             }
         }
 
+        async function sendChat() {
+            const inputEl = document.getElementById('chatInput');
+            const historyEl = document.getElementById('chatHistory');
+            const btn = document.getElementById('sendBtn');
+            const question = inputEl.value.trim();
+            
+            if (!question) return;
+            
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.textContent = question;
+            historyEl.appendChild(userMsg);
+            
+            inputEl.value = '';
+            btn.disabled = true;
+            historyEl.scrollTop = historyEl.scrollHeight;
+
+            try {
+                const res = await apiCall('/api/chat', 'POST', { question });
+                
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'message ai';
+                
+                let content = `<div>${res.answer}</div>`;
+                
+                if (res.sql) {
+                    content += `<div class="sql-box" title="Auditable SQL Query">SQL: ${res.sql}</div>`;
+                }
+
+                if (res.data && res.data.length > 0) {
+                    const keys = Object.keys(res.data[0]);
+                    content += `<div class="data-preview"><table>
+                        <thead><tr>${keys.map(k => `<th>${k}</th>`).join('')}</tr></thead>
+                        <tbody>${res.data.slice(0, 5).map(row => `<tr>${keys.map(k => `<td>${row[k]}</td>`).join('')}</tr>`).join('')}</tbody>
+                    </table></div>`;
+                    if (res.data.length > 5) {
+                        content += `<small style="opacity: 0.6; padding: 4px; display: block;">Showing 5 of ${res.data.length} results</small>`;
+                    }
+                }
+                
+                aiMsg.innerHTML = content;
+                historyEl.appendChild(aiMsg);
+            } catch (err) {
+                const errMsg = document.createElement('div');
+                errMsg.className = 'message ai';
+                errMsg.style.color = 'var(--error)';
+                errMsg.textContent = "Error: " + err.message;
+                historyEl.appendChild(errMsg);
+            } finally {
+                btn.disabled = false;
+                historyEl.scrollTop = historyEl.scrollHeight;
+            }
+        }
+
         // Initialize
         fetchData();
         setInterval(fetchData, 8000);
+        setInterval(checkPipelineStatus, 3000);
     </script>
 </body>
 </html>

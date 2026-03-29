@@ -44,6 +44,9 @@ def init_database(db_path="fs_factbase.duckdb"):
             source_page_number INTEGER NOT NULL,
             confidence_score DOUBLE DEFAULT 1.0,
             confidence_reason VARCHAR,
+            month_end INTEGER,
+            is_cumulative BOOLEAN DEFAULT TRUE,
+            scaling_factor INTEGER DEFAULT 1,
             FOREIGN KEY (metric_id) REFERENCES Core_Metrics(metric_id)
         );
     """)
@@ -61,7 +64,10 @@ def init_database(db_path="fs_factbase.duckdb"):
             source_document VARCHAR NOT NULL,
             source_page_number INTEGER NOT NULL,
             confidence_score DOUBLE DEFAULT 0.5,
-            confidence_reason VARCHAR
+            confidence_reason VARCHAR,
+            month_end INTEGER,
+            is_cumulative BOOLEAN,
+            scaling_factor INTEGER
         );
     """)
     logger.info("Table created: Unmapped_Staging")
