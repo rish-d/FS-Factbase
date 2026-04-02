@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg-color: #0a0a0c;
@@ -299,6 +300,7 @@
             <div class="tab" onclick="showSection('metrics')">Data Dictionary</div>
             <div class="tab" onclick="showSection('diagnostics')">AI Diagnostics</div>
             <div class="tab" onclick="showSection('intelligence')">Intelligence ✨</div>
+            <div class="tab" onclick="showSection('benchmarking')">Benchmarking 📊</div>
             <div class="tab" onclick="showSection('control')">Control Center ⚙️</div>
             <div class="tab" onclick="showSection('chat')">Data Chat 💬</div>
         </div>
@@ -384,6 +386,83 @@
                 </div>
                 <div id="clustersList" style="display: flex; flex-direction: column; gap: 1rem;">
                     <!-- Clusters injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Benchmarking Section -->
+        <div id="benchmarking" class="section">
+            <div class="card" style="margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
+                    <div>
+                        <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Precision Benchmarking Engine 📊</h2>
+                        <p style="color: var(--text-dim); font-size: 0.85rem;">Rank institutions, compare performance against metrics, and create custom peer groups.</p>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <!-- Peer Comparison Chart Area -->
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <h3 style="font-size: 0.9rem; color: var(--accent-secondary);">1. Side-by-Side Comparison</h3>
+                        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; align-items: flex-end;">
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.75rem; color: var(--text-dim);">Target Institution</label>
+                                <select id="bench_target_inst" class="select-metric" style="width: 100%; margin-top: 4px; padding: 0.6rem;"></select>
+                            </div>
+                            <div style="flex: 0 0 100px;">
+                                <label style="font-size: 0.75rem; color: var(--text-dim);">Peer Group</label>
+                                <select id="bench_target_group" class="select-metric" style="width: 100%; margin-top: 4px; padding: 0.6rem;">
+                                    <option value="">Sector</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card" style="background: rgba(0,0,0,0.2); min-height: 300px; display: flex; align-items: center; justify-content: center;">
+                            <canvas id="comparisonChart"></canvas>
+                        </div>
+                        <button onclick="runPeerComparison()" class="btn-primary">Generate Comparison</button>
+                    </div>
+
+                    <!-- Rankings Area -->
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <h3 style="font-size: 0.9rem; color: var(--accent-secondary);">2. Sector-Wide Rankings</h3>
+                        <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.75rem; color: var(--text-dim);">Select Metric</label>
+                                <select id="rank_metric" class="select-metric" style="width: 100%; margin-top: 4px; padding: 0.6rem;"></select>
+                            </div>
+                            <button onclick="fetchRankings()" class="btn-primary">Rank</button>
+                        </div>
+                        <table id="rankingsTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Institution</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Peer Group Creation Area -->
+            <div class="card">
+                <h3 style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--accent-secondary);">3. Custom Peer Group Factory</h3>
+                <div style="display: flex; gap: 1.5rem;">
+                    <div style="flex: 1;">
+                        <input type="text" id="new_group_name" placeholder="Group Name (e.g. Malaysian Big 4)" class="select-metric" style="width: 100%; padding: 0.8rem; margin-bottom: 1rem;">
+                        <div id="inst_checkbox_list" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; padding: 0.5rem; background: rgba(0,0,0,0.1); border-radius: 8px;">
+                            <!-- Checkboxes injected here -->
+                        </div>
+                        <button onclick="createPeerGroup()" class="btn-primary" style="width: 100%; margin-top: 1rem;">Create Group</button>
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem;">Existing Peer Groups</p>
+                        <div id="existing_groups_list" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                             <!-- Groups list injected here -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -837,6 +916,160 @@
                 historyEl.scrollTop = historyEl.scrollHeight;
             }
         }
+
+        // --- Benchmarking Logic ---
+        let comparisonChart = null;
+
+        async function initBenchmarking() {
+            const insts = await apiCall('/api/facts'); // Indirectly get unique institutions from facts
+            const uniqueInsts = [...new Set(insts.map(f => f.institution))];
+            
+            const targetSelect = document.getElementById('bench_target_inst');
+            targetSelect.innerHTML = uniqueInsts.map(id => `<option value="${id}">${id.replace(/_/g, ' ').toUpperCase()}</option>`).join('');
+
+            const rankMetricSelect = document.getElementById('rank_metric');
+            rankMetricSelect.innerHTML = coreMetrics.map(m => `<option value="${m.metric_id}">${m.name}</option>`).join('');
+            
+            const checkboxList = document.getElementById('inst_checkbox_list');
+            checkboxList.innerHTML = uniqueInsts.map(id => `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" value="${id}" class="group-member-check">
+                    <label style="font-size: 0.8rem;">${id.replace(/_/g, ' ').toUpperCase()}</label>
+                </div>
+            `).join('');
+
+            fetchPeerGroups();
+        }
+
+        async function fetchPeerGroups() {
+            const groups = await apiCall('/api/peer-groups');
+            const listEl = document.getElementById('existing_groups_list');
+            const selectEl = document.getElementById('bench_target_group');
+            
+            if (groups.length === 0) {
+                listEl.innerHTML = '<p style="color: var(--text-dim); font-size: 0.75rem;">No groups created yet.</p>';
+            } else {
+                listEl.innerHTML = groups.map(g => `
+                    <div class="badge" style="background: rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
+                        <span>${g.name} (${g.members.length} members)</span>
+                    </div>
+                `).join('');
+                
+                selectEl.innerHTML = '<option value="">Sector (All)</option>' + 
+                    groups.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
+            }
+        }
+
+        async function createPeerGroup() {
+            const name = document.getElementById('new_group_name').value.trim();
+            const checks = document.querySelectorAll('.group-member-check:checked');
+            const ids = Array.from(checks).map(c => c.value);
+
+            if (!name || ids.length === 0) {
+                showNotification("Name and at least one member required.", "error");
+                return;
+            }
+
+            try {
+                await apiCall('/api/peer-groups', 'POST', { name, institution_ids: ids });
+                showNotification("Peer Group Created!");
+                fetchPeerGroups();
+                document.getElementById('new_group_name').value = '';
+            } catch (err) { }
+        }
+
+        async function fetchRankings() {
+            const metricId = document.getElementById('rank_metric').value;
+            const rankings = await apiCall(`/api/benchmarking/rankings?metric_id=${metricId}`);
+            const tbody = document.querySelector('#rankingsTable tbody');
+            
+            tbody.innerHTML = rankings.map((r, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td style="font-weight:600;">${r.name}</td>
+                    <td class="value">${formatNumber(r.value)}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function runPeerComparison() {
+            const instId = document.getElementById('bench_target_inst').value;
+            const groupId = document.getElementById('bench_target_group').value;
+            
+            // Compare on several key ratios if they exist
+            const metrics = ['return_on_equity', 'return_on_assets', 'cet1_ratio', 'net_interest_margin', 'cost_to_income_ratio'];
+            
+            const results = await apiCall('/api/benchmarking/compare', 'POST', {
+                institution_id: instId,
+                metrics: metrics,
+                group_id: groupId ? parseInt(groupId) : null
+            });
+
+            if (!results || Object.keys(results).length === 0) {
+                showNotification("No data found for comparison.", "error");
+                return;
+            }
+
+            const labels = Object.keys(results).map(m => coreMetrics.find(cm => cm.metric_id === m)?.name || m);
+            const targetVals = Object.keys(results).map(m => results[m].target_value || 0);
+            const peerAvgs = Object.keys(results).map(m => results[m].peer_average || 0);
+
+            // Normalize values for better visualization (Radar chart usually works best with 0-100 or ratios)
+            // For now, simple bar chart comparison
+            updateChart(labels, targetVals, peerAvgs, instId.toUpperCase());
+        }
+
+        function updateChart(labels, targetData, peerData, label) {
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            if (comparisonChart) comparisonChart.destroy();
+
+            comparisonChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: label,
+                            data: targetData,
+                            backgroundColor: 'rgba(79, 70, 229, 0.6)',
+                            borderColor: 'rgba(79, 70, 229, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Peer Group Average',
+                            data: peerData,
+                            backgroundColor: 'rgba(6, 182, 212, 0.4)',
+                            borderColor: 'rgba(6, 182, 212, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#f8fafc' } }
+                    }
+                }
+            });
+        }
+
+        // --- End Benchmarking Logic ---
+
+        // Initialize and augment fetchData
+        const originalFetchData = fetchData;
+        fetchData = async function() {
+            await originalFetchData();
+            // One-time init for benchmarking selects
+            const targetSelect = document.getElementById('bench_target_inst');
+            if (targetSelect && targetSelect.options.length === 0) {
+                initBenchmarking();
+            }
+        };
 
         // Initialize
         fetchData();

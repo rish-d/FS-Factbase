@@ -1,8 +1,8 @@
 import os
 import time
 from loguru import logger
-from extractors.pdf_extractor import process_report
-from transformers.mapper import StandardizedMapper
+from p01_Data_Extraction.pdf_extractor import process_report
+from p02_Database_and_Mapping.mapper import StandardizedMapper
 
 def discover_reports(base_path="data/raw/reports"):
     """

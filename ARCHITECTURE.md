@@ -1,64 +1,72 @@
 # FS Factbase Architecture Blueprint
 
 ## 1. System Overview
-The FS Factbase is a scalable ETL (Extract, Transform, Load) pipeline designed to extract banking financial tables from unstructured PDFs, parse them into structured arrays, and map esoteric reporting terminology securely against a globally standardized dictionary (Master-Alias Paradigm) to support a Text-to-SQL layer safely.
+The FS Factbase is a scalable ETL pipeline designed to extract banking and insurance financial data from unstructured PDFs, standardizing it via a Master-Alias Paradigm to support high-precision benchmarking and Text-to-SQL analytics.
 
 ## 2. Core Operational Pillars
-1. **AI-Assisted Raw Extraction**: Uses an LLM to reliably pull tables from complex PDFs into JSON, replacing brittle regex heuristics.
-2. **100% Deterministic Mapping**: The mapping logic relies on predefined aliases. 
-3. **The Soft-Halt Mechanism**: Unrecognized terminology is temporarily sent to an `Unmapped_Staging` database table without breaking pipeline progress, allowing human-in-the-loop review at the end of the extraction process.
+1. **AI-Assisted Raw Extraction**: Uses LLMs (Gemini) to extract targeted tables from PDFs into structured JSON.
+2. **100% Deterministic Mapping**: Maps raw report terms to canonical metrics.
+3. **The Variance Engine (Dual-Fact Model)**: Stores both report-published values and system-computed ones to reconcile and audit data integrity.
+4. **Selective Growth**: Employs "Micro-Staging" (limited batch sizes) to keep the human-in-the-loop (HITL) queue manageable and the database growth intentional.
 
 ## 3. Recommended Tech Stack
-- **Database**: **DuckDB** - Provides lighting-fast analytical query processing on flat files, making it completely local, scalable, and fully compatible with Text-to-SQL LLM paradigms.
+- **Database**: **DuckDB** - Local-first OLAP for lightning-fast analytical queries and Text-to-SQL compatibility.
 - **Language**: **Python 3.11+**
-- **Data Model Validation**: **Pydantic** - Enforces strict static typing on parsed variables before they enter the local mappings layer or DuckDB.
-- **Data Manipulation**: **Polars / Pandas** - Clean and transform mapped JSON data into flat, relational database rows intuitively.
-- **Orchestration**: **Dagster / Prefect** (Local) - Ensures distinct extraction, transformation, and load steps are modular, trackable, and individually idempotent. 
-- **LLM/API Extraction**: Google **Gemini 1.5 Pro** or equivalent Document AI for layout-heavy tabular data extraction to robust JSON.
+- **Validation**: **Pydantic** - Strict schema enforcement on all LLM outputs.
+- **Orchestration**: **Local Order of Operations** (Extract -> Map -> Compute Variance -> Load).
 
 ## 4. Database Schema (Master-Alias Paradigm)
+
+### `Institutions` (The Metadata Root)
+- `institution_id` (PK, String)
+- `name` (String)
+- `sector` (Enum: 'BANK', 'INSURANCE')
+- `country` (String)
+- `base_currency` (String)
+- `regulatory_regime` (String)
+
 ### `Core_Metrics` (The Immutable Center)
-- `metric_id` (PK, String or UUID)
-- `standardized_metric_name` (String, e.g., "Total Assets")
-- `accounting_standard` (String, e.g., "IFRS 9", "Basel III")
+- `metric_id` (PK, String)
+- `standardized_metric_name` (String)
+- `accounting_standard` (String, e.g., "IFRS 9", "IFRS 17")
+- `sector` (String: 'banking', 'insurance', 'universal')
 - `data_type` (Enum)
 
 ### `Metric_Aliases` (The Translation Engine)
 - `alias_id` (PK)
 - `metric_id` (FK to `Core_Metrics`)
-- `raw_term` (String, e.g., "Advances to customers")
-- `institution_id` (Nullable String, to distinguish varying terms across specific banks)
+- `raw_term` (String)
+- `institution_id` (FK to `Institutions`)
 
 ### `Fact_Financials` (The Target Tidy Data)
 - `fact_id` (PK)
 - `metric_id` (FK to `Core_Metrics`)
-- `institution_id` (String)
-- `reporting_period` (String or Date, e.g., "2023-Q4")
-- `value` (Float/Numeric)
+- `institution_id` (FK to `Institutions`)
+- `reporting_period` (String, e.g., "2024")
+- `value` (Numeric)
+- `currency_code` (String, as reported)
+- `is_published` (Boolean: True if from report, False if computed)
+- `formula_id` (Nullable String, for computed facts)
 - `source_document` (String)
 - `source_page_number` (Integer)
 
 ### `Unmapped_Staging` (The Human Review Queue)
 - `staging_id` (PK)
-- `raw_term` (String - unrecognized metric names)
-- `raw_value` (Float/Numeric)
+- `raw_term` (String)
+- `raw_value` (Numeric)
 - `institution_id` (String)
-- `reporting_period` (String or Date)
-- `source_document` (String)
-- `source_page_number` (Integer)
+- `reporting_period` (String)
 
-## 5. Performance & Scaling Architecture
+## 5. Operational Features
 
-To process hundreds of 300+ page financial reports efficiently without hitting LLM rate limits or freezing the UI, the architecture adheres to these operational rules:
+### 5.1 The Variance Engine
+To ensure data integrity, the system implements a post-extraction computation layer. For every derived metric (e.g., ROE), the system:
+1.  Extracts the published ROE from the PDF (stored with `is_published=True`).
+2.  Independently calculates ROE from component facts (e.g., Net Profit / Total Equity) and stores it with `is_published=False`.
+3.  Flags any variance above 0.5% for manual audit.
 
-### 5.1 Targeted Semantic Extraction (Solving the $O(N^2)$ Staging Bottleneck)
-Rather than extracting every row from a financial statement, the orchestrator dynamically prompts the LLM to extract only a highly specific, pre-defined list of metrics (e.g., "Extract ONLY Total Assets, Deposits, and Gross Loans"). 
-* **The Benefit:** This limits the flow of unrecognized terms into the `Unmapped_Staging` queue. Semantic string-matching algorithms (used for alias clustering) run in exponential $O(N^2)$ time. By utilizing "Micro-Staging" (keeping $N$ under 50 per batch), the mapping layer processes instantly, allowing the database to scale selectively over time.
-
-### 5.2 Hybrid AI Diagnostics
-The system learns from human corrections via a hybrid approach:
-1. **Python monitors (Cheap/Deterministic):** Standard SQL queries monitor the database for recurring human corrections and categorize them (e.g., `SCALE_ERROR`).
-2. **LLM resolves (High-Value Compute):** When an error threshold is crossed, the LLM is invoked to rewrite the exact `extraction_prompt` for that specific institution, creating a permanent, self-healing feedback loop.
+### 5.2 Multi-Currency Scaling
+All values are stored in their native currency as found in the report. Multi-company benchmarking queries apply exchange rates at **runtime** (query-side) to prevent data staleness and allow for various FX sources.
 
 ### 5.3 Asynchronous Bulk Transacting
-DuckDB is optimized for column-store analytics, not transactional row-by-row inserts. All data transformations in the `transformers` directory must accumulate records into memory arrays or Polars DataFrames and execute a single `conn.executemany()` bulk insert at the end of the script to prevent I/O locking and pipeline bottlenecks.
+All transformation scripts must accumulate results into memory and perform a single `conn.executemany()` bulk transaction to ensure performance and avoid I/O blocking in DuckDB.

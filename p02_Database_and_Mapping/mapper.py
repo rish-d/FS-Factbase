@@ -2,7 +2,7 @@ import os
 import json
 import duckdb
 from loguru import logger
-from analytics.trend_analyzer import TrendAnalyzer
+from p03_Analytics_Dashboard.trend_analyzer import TrendAnalyzer
 
 class StandardizedMapper:
     def __init__(self, db_path="fs_factbase.duckdb"):
@@ -39,16 +39,16 @@ class StandardizedMapper:
         conn = duckdb.connect(self.db_path)
         alias_map = self.load_aliases(conn)
         
-        mapped_count = 0
-        unmapped_count = 0
+        facts_to_insert = []
+        staging_to_insert = []
 
         for stmt in statements:
+            statement_type = stmt.get("statement_type", "").lower()
             line_items = stmt.get("line_items", stmt.get("items", stmt.get("data", [])))
             for item in line_items:
                 raw_term = item.get("item", item.get("item_name", item.get("line_item", item.get("name"))))
                 values = item.get("values", item.get("data_points", item.get("data", [])))
                 
-                # Handle flat structure in mapper too
                 if not values and "value" in item:
                      values = [item]
                 
@@ -56,32 +56,30 @@ class StandardizedMapper:
                     continue
 
                 for i, val_obj in enumerate(values):
-                    # Robust handling of both dicts and plain values
                     if isinstance(val_obj, dict):
                         year = val_obj.get("year", val_obj.get("reporting_year"))
                         val = val_obj.get("value", val_obj.get("amount"))
                         month_end = val_obj.get("month_end", 12)
                         scaling_factor = val_obj.get("scaling_factor", 1)
+                        # Default is_published to True for report-extracted values
+                        is_published = val_obj.get("is_published", True)
+                        currency = val_obj.get("currency", val_obj.get("currency_code", "MYR"))
                         
-                        # Handle is_cumulative with Balance Sheet default
                         is_cumulative = val_obj.get("is_cumulative")
                         if is_cumulative is None:
-                            is_cumulative = "balance sheet" in stmt.get("statement_type", "").lower()
+                            is_cumulative = "balance sheet" in statement_type
                     else:
-                        # If it's just a number, infer the year if possible
                         val = val_obj
-                        # Try to guess the year: assume first is current, second is prev
                         try:
                             primary_year = int(data.get("reporting_period", 0))
-                            if primary_year > 0:
-                                year = primary_year - i
-                            else:
-                                year = None
+                            year = primary_year - i if primary_year > 0 else None
                         except:
                             year = None
                         month_end = 12
-                        is_cumulative = "balance sheet" in stmt.get("statement_type", "").lower()
+                        is_cumulative = "balance sheet" in statement_type
                         scaling_factor = 1
+                        is_published = True
+                        currency = "MYR"
 
                     if year is None or val is None:
                         continue
@@ -90,25 +88,47 @@ class StandardizedMapper:
                     metric_id = alias_map.get((raw_term.lower(), institution_id))
 
                     if metric_id:
-                        # Analyze trend for confidence
-                        score, reason = self.trend_analyzer.analyze_value(institution_id, metric_id, str(year), val)
-                        
-                        # Insert into Fact_Financials
-                        conn.execute("""
-                            INSERT INTO Fact_Financials (metric_id, institution_id, reporting_period, value, source_document, source_page_number, confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        """, (metric_id, institution_id, str(year), val, source_doc, 0, score, reason, month_end, is_cumulative, scaling_factor))
-                        mapped_count += 1
+                        # SCALE ENFORCEMENT: Normalize raw value by scaling factor
+                        try:
+                            normalized_val = float(val) * float(scaling_factor)
+                        except:
+                            normalized_val = val
+
+                        score, reason = self.trend_analyzer.analyze_value(institution_id, metric_id, str(year), normalized_val)
+                        facts_to_insert.append((
+                            metric_id, institution_id, str(year), normalized_val, currency, 
+                            is_published, None, # formula_id
+                            source_doc, 0, score, reason, month_end, is_cumulative, scaling_factor
+                        ))
                     else:
-                        # Insert into Unmapped_Staging
-                        conn.execute("""
-                            INSERT INTO Unmapped_Staging (raw_term, raw_value, institution_id, reporting_period, source_document, source_page_number, confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        """, (raw_term, val, institution_id, str(year), source_doc, 0, 0.5, "Unmapped Term", month_end, is_cumulative, scaling_factor))
-                        unmapped_count += 1
+                        # Also normalize staging for consistency in UI review
+                        try:
+                            normalized_val = float(val) * float(scaling_factor)
+                        except:
+                            normalized_val = val
+                            
+                        staging_to_insert.append((
+                            raw_term, normalized_val, institution_id, str(year), source_doc, 0, 0.5, "Unmapped Term", month_end, is_cumulative, scaling_factor
+                        ))
+
+        # Bulk Insert Facts
+        if facts_to_insert:
+            conn.executemany("""
+                INSERT OR IGNORE INTO Fact_Financials 
+                (metric_id, institution_id, reporting_period, value, currency_code, is_published, formula_id, source_document, source_page_number, confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, facts_to_insert)
+            
+        # Bulk Insert Staging
+        if staging_to_insert:
+            conn.executemany("""
+                INSERT INTO Unmapped_Staging 
+                (raw_term, raw_value, institution_id, reporting_period, source_document, source_page_number, confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, staging_to_insert)
 
         conn.close()
-        logger.success(f"Finished {json_path}: Mapped {mapped_count}, Unmapped {unmapped_count}")
+        logger.success(f"Finished {json_path}: Mapped {len(facts_to_insert)}, Unmapped {len(staging_to_insert)}")
 
 def run_mapping():
     interim_dir = "data/interim/extracted_metrics"

@@ -3,9 +3,11 @@ from loguru import logger
 
 ALIASES = [
     # (metric_id, raw_term, institution_id)
-    ("total_assets", "Cash and short-term funds", "cimb_group_holdings_berhad"),
-    ("total_customer_deposits", "Deposits from customers", "cimb_group_holdings_berhad"),
-    ("net_interest_income", "Net interest income", "cimb_group_holdings_berhad"),
+    ("cash_and_short_term_funds", "Cash and short-term funds", "cimb"),
+    ("total_customer_deposits", "Deposits from customers", "cimb"),
+    ("net_interest_income", "Net interest income", "cimb"),
+    ("total_assets", "Total Assets", "maybank"),
+    ("total_equity", "Shareholders' Equity", "maybank"),
 ]
 
 def seed_aliases(db_path="fs_factbase.duckdb"):

@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field, model_validator, field_validator, AliasCh
 from loguru import logger
 from dotenv import load_dotenv
 
-from extractors.text_clipper import get_clipped_financial_text_dynamic
+from p01_Data_Extraction.text_clipper import get_clipped_financial_text_dynamic
 
 load_dotenv()
 
@@ -116,7 +116,15 @@ class FSDataPayload(BaseModel):
         validation_alias="financial_statements"
     )
 
+import google.generativeai as genai
+
+# Load Gemini API Key
+genai.configure(api_key=API_KEY)
+
 def extract_financials_from_text(clipped_text: str, institution_id: str, reporting_period: str, filename: str, user_prompt: str) -> str:
+    """
+    Uses the Gemini SDK with native JSON Schema enforcement to extract financial data.
+    """
     if DUMMY_MODE:
         logger.warning("Running in DUMMY_MODE. Returning simulated JSON.")
         return json.dumps({
@@ -127,96 +135,55 @@ def extract_financials_from_text(clipped_text: str, institution_id: str, reporti
                 {
                     "statement_type": "Balance Sheet",
                     "line_items": [{
-                        "item_name": "Total Assets", 
-                        "data_points": [{"reporting_year": int(reporting_period), "amount": 1000000}]
-                    }]
-                }
-            ]
-        })
-
-import google.generativeai as genai
-
-def extract_financials_from_text(clipped_text: str, institution_id: str, reporting_period: str, filename: str, user_prompt: str) -> str:
-    if DUMMY_MODE:
-        return json.dumps({
-            "institution_id": institution_id,
-            "reporting_period": reporting_period,
-            "source_document": filename,
-            "financial_statements": [
-                {
-                    "statement_type": "Balance Sheet",
-                    "line_items": [{
-                        "item_name": "Total Assets", 
-                        "data_points": [{"reporting_year": int(reporting_period), "amount": 1000000, "month_end": 12, "is_cumulative": True, "scaling_factor": 1000}]
+                        "item": "Total Assets", 
+                        "values": [{"year": int(reporting_period), "value": 1000000, "month_end": 12, "is_cumulative": True, "scaling_factor": 1000}]
                     }]
                 }
             ]
         })
 
     prompt_text = (
-        f"EXTRACT COMPLETE TABULAR FINANCIAL DATA for: '{user_prompt}'.\n"
-        f"INSTITUTION: {institution_id}, PERIOD: {reporting_period}, FILE: {filename}\n\n"
-        "### CRITICAL INSTRUCTIONS ###\n"
-        "1. **Scaling**: Multiply raw numbers by the scale (e.g., if RM'000, multiply by 1000) and set 'scaling_factor'.\n"
-        "2. **Temporal**: Set 'month_end' to the month number (e.g., 12) for the reporting date.\n"
-        "3. **Cumulative**: Set 'is_cumulative' to True if it's year-to-date. Balance Sheet is ALWAYS True.\n"
-        "4. **Format**: MANDATORY JSON structure below. Do NOT use different keys.\n\n"
-        "### MANDATORY JSON TEMPLATE ###\n"
-        "{\n"
-        "  'financial_statements': [\n"
-        "    {\n"
-        "      'statement_type': 'Balance Sheet',\n"
-        "      'month_end': 12,\n"
-        "      'is_cumulative': true,\n"
-        "      'scaling_factor': 1000,\n"
-        "      'line_items': [\n"
-        "        {\n"
-        "          'item_name': 'Cash',\n"
-        "          'data_points': [\n"
-        "            {'reporting_year': 2024, 'amount': 1000000}\n"
-        "          ]\n"
-        "        }\n"
-        "      ]\n"
-        "    }\n"
-        "  ]\n"
-        "}\n"
+        "TASK: Extract standardized financial data from the provided text snippet.\n"
+        f"INSTITUTION: {institution_id}\n"
+        f"PRIMARY REPORTING PERIOD: {reporting_period}\n"
+        f"SOURCE FILE: {filename}\n"
+        f"USER TARGET: {user_prompt}\n\n"
+        "### EXTRACTION RULES ###\n"
+        "1. RAW SCALING: Extract the RAWEST numerical value exactly as it appears in the table. Identify multipliers from headers (RM'000, Millions) and store as 'scaling_factor' metadata. DO NOT multiply the value yourself.\n"
+        "2. TEMPORAL: Detect 'month_end' (1-12) and 'is_cumulative' (True for annual/balance sheet).\n"
+        "3. PRECISION: Extract ONLY from the provided text. Do not hallucinate data points.\n"
+        "4. STRUCTURE: Comply exactly with the target JSON schema.\n\n"
+        "### TEXT SNIPPET ###\n"
+        f"{clipped_text}"
     )
 
-    # Use confirmed available models from list_models()
-    model_names = ["gemini-2.0-flash", "gemini-flash-latest", "gemini-pro-latest"]
+    # Use Gemini 1.5 Flash for performance/cost balance, or 1.5 Pro for complex layouts
+    model_name = "gemini-1.5-flash"
     
-    for model_name in model_names:
-        # Mandatory chill-down for Free Tier stability
-        logger.info("Chilling for 65s to clear RPM/RPD quotas...")
-        time.sleep(65)
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={API_KEY}"
-        payload = {
-            "contents": [{
-                "parts": [{"text": prompt_text + "\n\n### DATA ###\n" + clipped_text}]
-            }]
-        }
+    try:
+        model = genai.GenerativeModel(model_name=model_name)
+        logger.info(f"Targeting SDK: {model_name} with Structured Output")
         
-        try:
-            logger.info(f"Targeting REST v1beta: {model_name}")
-            response = requests.post(url, json=payload, timeout=120)
+        # Enforce structured output via Pydantic model
+        response = model.generate_content(
+            prompt_text,
+            generation_config={
+                "response_mime_type": "application/json",
+                "response_schema": FSDataPayload
+            },
+            request_options={"timeout": 120}
+        )
+        
+        if response.text:
+            logger.success(f"Successfully extracted data using {model_name}")
+            return response.text
+        else:
+            logger.error(f"Empty response from {model_name}")
+            return ""
             
-            if response.status_code == 200:
-                result = response.json()
-                text = result['candidates'][0]['content']['parts'][0]['text']
-                text = text.replace('```json', '').replace('```', '').strip()
-                logger.success(f"Success with {model_name}")
-                return text
-            elif response.status_code == 429:
-                logger.warning(f"Rate limit hit for {model_name}. Skipping to next.")
-                continue
-            else:
-                logger.warning(f"Failed {model_name}: {response.status_code} - {response.text}")
-                continue
-        except Exception as e:
-            logger.error(f"Request Error {model_name}: {e}")
-            continue
-            
-    return ""
+    except Exception as e:
+        logger.error(f"Gemini SDK Error: {e}")
+        return ""
 
 def process_report(pdf_path: str, institution_id: str, reporting_period: str, user_prompt: str = "Balance Sheet and Income Statement"):
     filename = os.path.basename(pdf_path)

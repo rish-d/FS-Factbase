@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.getcwd())
+
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -7,13 +11,25 @@ import threading
 from pydantic import BaseModel
 from typing import List, Optional
 
-from db.batch_resolver import BatchResolver
-from analytics.sql_agent import FinancialSQLAgent
-from transformers.ingestor import sync_input_folder
-from transformers.cluster_analyzer import ClusterAnalyzer
-from orchestrator import run_pipeline
+from p02_Database_and_Mapping.batch_resolver import BatchResolver
+from p03_Analytics_Dashboard.sql_agent import FinancialSQLAgent
+from p01_Data_Extraction.ingestor import sync_input_folder
+from p02_Database_and_Mapping.cluster_analyzer import ClusterAnalyzer
+from p04_Orchestration.orchestrator import run_pipeline
+from p03_Analytics_Dashboard.comparison_engine import FinancialComparisonEngine
 
 app = FastAPI(title="FS Factbase Dashboard")
+
+# Peer Group Models
+class PeerGroupCreate(BaseModel):
+    name: str
+    institution_ids: List[str]
+
+class ComparisonRequest(BaseModel):
+    institution_id: str
+    metrics: List[str]
+    period: str = "2024"
+    group_id: Optional[int] = None
 
 # Database Path
 DB_PATH = os.path.join(os.getcwd(), "fs_factbase.duckdb")
@@ -247,7 +263,7 @@ async def run_diagnostics():
         
         # Note: In windows, we use the venv python
         python_exe = sys.executable
-        subprocess.Popen([python_exe, "scripts/run_diagnostics.py"])
+        subprocess.Popen([python_exe, "-m", "p04_Orchestration.run_diagnostics"])
         
         return {"status": "started", "message": "Batch diagnostic learning process initiated."}
     except Exception as e:
@@ -333,9 +349,63 @@ async def run_extraction_pipeline(data: dict, background_tasks: BackgroundTasks)
     
     return {"status": "started", "message": "Extraction process started in the background."}
 
+@app.get("/api/benchmarking/rankings")
+async def get_rankings(metric_id: str, period: str = "2024", sector: Optional[str] = None):
+    try:
+        engine = FinancialComparisonEngine(DB_PATH)
+        return engine.get_rankings(metric_id, period, sector)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/benchmarking/compare")
+async def compare_peer(req: ComparisonRequest):
+    try:
+        engine = FinancialComparisonEngine(DB_PATH)
+        return engine.get_peer_comparison(req.institution_id, req.metrics, req.period, req.group_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/peer-groups")
+async def get_peer_groups():
+    try:
+        conn = get_db_connection(read_only=True)
+        groups = conn.execute("SELECT * FROM Peer_Groups").fetchall()
+        
+        result = []
+        for g in groups:
+            members = conn.execute("SELECT institution_id FROM Peer_Group_Members WHERE group_id = ?", [g[0]]).fetchall()
+            result.append({
+                "id": g[0],
+                "name": g[1],
+                "members": [m[0] for m in members]
+            })
+        conn.close()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/peer-groups")
+async def create_peer_group(req: PeerGroupCreate):
+    try:
+        conn = get_db_connection(read_only=False)
+        conn.execute("INSERT INTO Peer_Groups (group_name) VALUES (?)", [req.name])
+        group_id = conn.execute("SELECT currval('seq_group_id')").fetchone()[0]
+        
+        for inst_id in req.institution_ids:
+            conn.execute("INSERT INTO Peer_Group_Members (group_id, institution_id) VALUES (?, ?)", [group_id, inst_id])
+        
+        conn.close()
+        return {"status": "success", "id": group_id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Static Files
-app.mount("/static", StaticFiles(directory="analytics/static"), name="static")
+app.mount("/static", StaticFiles(directory="p03_Analytics_Dashboard/static"), name="static")
 
 @app.get("/")
 async def read_index():
-    return FileResponse("analytics/static/index.html")
+    return FileResponse("p03_Analytics_Dashboard/static/index.html")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
