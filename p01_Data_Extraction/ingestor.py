@@ -3,17 +3,14 @@ import re
 import shutil
 from pathlib import Path
 from loguru import logger
-
-def get_project_root():
-    """Returns the absolute path to the project root."""
-    return Path(__file__).resolve().parent.parent
+from p00_Shared_Utils.io_utils import get_root_dir
 
 def sync_input_folder(input_name="Bank Annual Reports input", target_rel_path="data/raw/reports"):
     """
     Scans the input folder for PDFs, extracts the year from filenames,
     and copies them to the structured data/raw/reports directory at the project root.
     """
-    root_dir = get_project_root()
+    root_dir = get_root_dir()
     input_base = root_dir / input_name
     target_base = root_dir / target_rel_path
 

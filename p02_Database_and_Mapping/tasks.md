@@ -11,10 +11,11 @@ This file contains the tickets for the Database Agent.
 
 - [x] Initial setup of DuckDB schema and Master-Alias paradigm.
 - [x] Implementation of IFRSAT-2025 seeding in `seed_data.py`.
-- [ ] **[SEED REFINEMENT]** Refine and expand the 80+ core metrics in `seed_data.py` based on the official IFRS taxonomy files. Ensure all IDs use the `ifrs-full_` prefix accurately.
-- [ ] **[MAPPER REFACTOR]** Update `mapper.py` to remove ALL `TrendAnalyzer` imports and related logic. Decouple DB insertion from analytical overhead.
-- [ ] **[ZERO-HALLUCINATION]** Enforce strict routing to `Unmapped_Staging` in `mapper.py`. Any `raw_term` failing an alias match must be isolated.
-- [ ] **[TRACEABILITY]** Verify that `mapper.py` correctly handles `source_document` and `source_page_number` during the insertion phase into `Fact_Financials`.
+- [/] **[SEED REFINEMENT]** Refine and expand the 80+ core metrics in `seed_data.py` based on the official IFRS taxonomy files. Ensure all IDs use the `ifrs-full_` prefix accurately. (v9: Islamic metrics deferred).
+- [/] **[MAPPER REFACTOR]** Update `mapper.py` to remove ALL `TrendAnalyzer` imports and related logic. Decouple DB insertion from analytical overhead.
+- [/] **[ZERO-HALLUCINATION]** Enforce strict routing to `Unmapped_Staging` in `mapper.py`. Any `raw_term` failing an alias match must be isolated.
+- [/] **[TRACEABILITY]** Verify that `mapper.py` correctly handles `source_document` and `source_page_number`. 
+    - **Note:** Blocked by p01. Extraction Agent must fix the missing page numbers in raw JSONs before mapping can be finalized.
 
 ---
 

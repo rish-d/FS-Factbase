@@ -2,11 +2,13 @@ import os
 import json
 import time
 import requests
-from typing import List, Dict, Any, Union, Optional
+import re
+from typing import List, Dict, Any, Union, Optional, Annotated
 from pydantic import BaseModel, Field, model_validator, field_validator, AliasChoices
 from loguru import logger
 from dotenv import load_dotenv
 
+from p00_Shared_Utils.io_utils import get_root_dir, save_json
 from p01_Data_Extraction.text_clipper import get_clipped_financial_text_dynamic
 
 load_dotenv()
@@ -17,17 +19,18 @@ DUMMY_MODE = os.getenv("DUMMY_MODE", "false").lower() == "true"
 from pydantic import BaseModel, Field, model_validator
 
 class YearValue(BaseModel):
-    year: int = Field(description="The reporting year, e.g., 2024", validation_alias="reporting_year")
-    value: Optional[float] = Field(description="The numerical value.", validation_alias="amount")
+    year: int = Field(description="The reporting year, e.g., 2024", validation_alias=AliasChoices("reporting_year", "year"))
+    value: Optional[float] = Field(None, description="The numerical value.", validation_alias=AliasChoices("amount", "value"))
     month_end: int = Field(description="The month number of the reporting date (1-12).")
     is_cumulative: bool = Field(description="True if the value is cumulative (e.g. Full Year, Balance Sheet), False if incremental (e.g. 3 months only).")
     scaling_factor: int = Field(description="The multiplier found in headers (1, 1000, 1000000).")
     confidence: float = Field(description="AI's confidence in this specific value (0.0 to 1.0)")
-    notes: Optional[str] = Field(description="Brief notes on any extraction difficulty.")
+    source_page_number: Optional[int] = Field(None, description="The specific page number where this value was found.", validation_alias=AliasChoices("page_number", "source_page_number"))
+    notes: Optional[str] = Field(None, description="Brief notes on any extraction difficulty.")
 
 class LineItem(BaseModel):
     item: str = Field(description="The name of the header/account.", validation_alias=AliasChoices("item_name", "line_item", "item", "name"))
-    group: Optional[str] = Field(description="Group/Category")
+    group: Optional[str] = Field(None, description="Group/Category")
     values: List[YearValue] = Field(description="List of values.", validation_alias=AliasChoices("data_points", "data", "values", "items"))
 
     @model_validator(mode='before')
@@ -42,7 +45,6 @@ class LineItem(BaseModel):
              
         # Look for potential year columns (e.g., "2024", "GROUP_2024", "BANK_2025")
         extracted_values = []
-        import re
         for key, val in data.items():
             if key == "item" or key == "item_name" or key == "group":
                 continue
@@ -67,7 +69,7 @@ class LineItem(BaseModel):
 
 class Statement(BaseModel):
     statement_type: str = Field(description="e.g., 'Balance Sheet' or 'Income Statement'", validation_alias=AliasChoices("statement_type", "report_type", "type", "table_name"))
-    statement_name: Optional[str] = Field(description="Specific name from document.")
+    statement_name: Optional[str] = Field(None, description="Specific name from document.")
     items: List[LineItem] = Field(description="List of extracted row data.", validation_alias=AliasChoices("line_items", "data", "items"))
 
     @model_validator(mode='before')
@@ -94,6 +96,7 @@ class Statement(BaseModel):
         month_end = data.get("month_end")
         is_cumulative = data.get("is_cumulative")
         scaling_factor = data.get("scaling_factor")
+        source_page_number = data.get("source_page_number")
         
         for item in items:
             if not isinstance(item, dict): continue
@@ -104,16 +107,18 @@ class Statement(BaseModel):
                 if "month_end" not in dp: dp["month_end"] = month_end
                 if "is_cumulative" not in dp: dp["is_cumulative"] = is_cumulative
                 if "scaling_factor" not in dp: dp["scaling_factor"] = scaling_factor
+                if "source_page_number" not in dp and "page_number" not in dp: dp["source_page_number"] = source_page_number
         
         return data
 
 class FSDataPayload(BaseModel):
-    institution_id: Optional[str] = Field(description="The canonical ID of the institution")
-    reporting_period: Optional[str] = Field(description="The primary reporting period, e.g., 2024")
-    source_document: Optional[str] = Field(description="The name of the PDF file")
+    institution_id: Optional[str] = Field(None, description="The canonical ID of the institution")
+    reporting_period: Optional[str] = Field(None, description="The primary reporting period, e.g., 2024")
+    source_document: Optional[str] = Field(None, description="The name of the PDF file")
+    source_page_number: Optional[int] = Field(None, description="Default page number for all statements if not specified per item.")
     statements: List[Statement] = Field(
         description="The extracted financial statements.",
-        validation_alias="financial_statements"
+        validation_alias=AliasChoices("financial_statements", "statements")
     )
 
 import google.generativeai as genai
@@ -121,6 +126,19 @@ from google.api_core import exceptions as g_exceptions
 
 # Load Gemini API Key
 genai.configure(api_key=API_KEY)
+
+def clean_json_output(raw_text: str) -> str:
+    """
+    Removes markdown code blocks (```json ... ```) from Gemini's response 
+    to ensure it's a valid JSON string.
+    """
+    if not raw_text:
+        return ""
+    
+    # Remove markdown backticks if present
+    cleaned = re.sub(r"```json\s*", "", raw_text)
+    cleaned = re.sub(r"```\s*", "", cleaned)
+    return cleaned.strip()
 
 def extract_financials_from_text(clipped_text: str, institution_id: str, reporting_period: str, filename: str, user_prompt: str) -> str:
     """
@@ -154,17 +172,18 @@ def extract_financials_from_text(clipped_text: str, institution_id: str, reporti
         "1. RAW SCALING: Extract the RAWEST numerical value exactly as it appears in the table. Identify multipliers from headers (RM'000, Millions) and store as 'scaling_factor' metadata. DO NOT multiply the value yourself.\n"
         "2. TEMPORAL: Detect 'month_end' (1-12) and 'is_cumulative' (True for annual/balance sheet).\n"
         "3. PRECISION: Extract ONLY from the provided text. Do not hallucinate data points.\n"
-        "4. STRUCTURE: Comply exactly with the target JSON schema.\n\n"
+        "4. TRACEABILITY: Locate the '--- TARGET FINANCIAL PAGE {page_num} ---' markers in the text. For EACH extracted data point (YearValue), you MUST set 'source_page_number' to the {page_num} specified in the marker immediately preceding that section of text. If you extracted data from multiple pages, ensure each point is attributed to its correct source page.\n"
+        "5. STRUCTURE: Comply exactly with the target JSON schema.\n\n"
         "### TEXT SNIPPET ###\n"
         f"{clipped_text}"
     )
 
     # Model tiered hierarchy for resilience
     trial_configs = [
-        {"name": "gemini-2.5-flash", "retries": 2, "use_schema": True},
-        {"name": "gemini-3.1-flash-lite", "retries": 2, "use_schema": True},
         {"name": "gemini-2.5-flash-lite", "retries": 2, "use_schema": True},
-        {"name": "gemini-3.1-flash-lite-preview", "retries": 1, "use_schema": False}
+        {"name": "gemini-2.0-flash-lite", "retries": 2, "use_schema": True},
+        {"name": "gemini-2.0-flash", "retries": 2, "use_schema": True},
+        {"name": "gemini-2.5-flash", "retries": 1, "use_schema": True}
     ]
 
     for config in trial_configs:
@@ -186,9 +205,56 @@ def extract_financials_from_text(clipped_text: str, institution_id: str, reporti
                     "response_mime_type": "application/json",
                 }
                 
+                # GenAI-native schema dict (Proto compatible)
+                manual_schema = {
+                    "type": "OBJECT",
+                    "properties": {
+                        "institution_id": {"type": "STRING"},
+                        "reporting_period": {"type": "STRING"},
+                        "source_document": {"type": "STRING"},
+                        "source_page_number": {"type": "INTEGER"},
+                        "statements": {
+                            "type": "ARRAY",
+                            "items": {
+                                "type": "OBJECT",
+                                "properties": {
+                                    "statement_type": {"type": "STRING"},
+                                    "statement_name": {"type": "STRING"},
+                                    "items": {
+                                        "type": "ARRAY",
+                                        "items": {
+                                            "type": "OBJECT",
+                                            "properties": {
+                                                "item": {"type": "STRING"},
+                                                "group": {"type": "STRING"},
+                                                "values": {
+                                                    "type": "ARRAY",
+                                                    "items": {
+                                                        "type": "OBJECT",
+                                                        "properties": {
+                                                            "reporting_year": {"type": "INTEGER"},
+                                                            "amount": {"type": "NUMBER"},
+                                                            "month_end": {"type": "INTEGER"},
+                                                            "is_cumulative": {"type": "BOOLEAN"},
+                                                            "scaling_factor": {"type": "INTEGER"},
+                                                            "confidence": {"type": "NUMBER"},
+                                                            "page_number": {"type": "INTEGER"},
+                                                            "notes": {"type": "STRING"}
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+    
                 if use_schema:
-                    generation_config["response_schema"] = FSDataPayload
-                    logger.debug(f"Enforcing schema for {model_name}")
+                    generation_config["response_schema"] = manual_schema
+                    logger.debug(f"Using manual schema for {model_name}")
 
                 response = model.generate_content(
                     current_prompt,
@@ -198,7 +264,7 @@ def extract_financials_from_text(clipped_text: str, institution_id: str, reporti
                 
                 if response.text:
                     logger.success(f"Successfully extracted data using {model_name}")
-                    return response.text
+                    return clean_json_output(response.text)
                 else:
                     logger.error(f"Empty response from {model_name}")
                     

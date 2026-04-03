@@ -10,13 +10,13 @@ This file contains the tickets for the Orchestration Agent.
 ## 📋 Ticket Queue
 
 - [x] Initial setup of `orchestrator.py`.
-- [ ] **[CLI RESOLVER]** New Script: `cli_resolver.py`.
+- [/] **[CLI RESOLVER]** New Script: `cli_resolver.py`.
     - Provide a terminal-based interface to query `Unmapped_Staging`.
     - Group similar terms for batch mapping to core IDs.
-- [ ] **[TERMINAL AUDITOR]** New Script: `view_db.py`.
+- [x] **[TERMINAL AUDITOR]** New Script: `view_db.py`.
     - Lightweight data preview tool using the Polars library.
     - Provide balance sheet sum-check reports (Asset/Liab/Eq).
-- [ ] **[ORCHESTRATOR REFINEMENT]** Update `orchestrator.py` to act as the primary CLI "glue" for loop-based file extraction and mapping.
+- [/] **[ORCHESTRATOR REFINEMENT]** Update `orchestrator.py` to act as the primary CLI "glue" for loop-based file extraction and mapping.
 
 ---
 

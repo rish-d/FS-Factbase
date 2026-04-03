@@ -1,0 +1,3 @@
+2026-04-03 18:55:05.091 | INFO     | __main__:test_logging:56 - This is an audit trail test message.
+2026-04-03 18:55:05.091 | WARNING  | __main__:test_logging:57 - This is a warning for auditability.
+2026-04-03 18:55:05.093 | ERROR    | __main__:test_logging:58 - This is an error with structured data: bank='Maybank', year=2024

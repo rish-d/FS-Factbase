@@ -6,3 +6,6 @@
 2026-04-02 19:15:46 | SUCCESS  | __main__:test_logging:23 - Logging setup verified!
 2026-04-02 19:15:46 | WARNING  | p00_Shared_Utils.date_utils:parse_year:26 - Could not parse year from: 'Invalid'
 2026-04-02 23:10:25 | INFO     | __main__:<module>:12 - Successfully imported logger from p00_Shared_Utils
+2026-04-03 18:55:05.058 | ERROR    | io_utils:validate_audit_trail:112 - Source document does not exist: D:\FS Factbase\non_existent_report.pdf
+2026-04-03 18:55:05.083 | ERROR    | io_utils:validate_audit_trail:98 - Invalid source_page_number: -1. Must be a non-negative integer.
+2026-04-03 18:55:05.085 | ERROR    | io_utils:validate_audit_trail:98 - Invalid source_page_number: 1. Must be a non-negative integer.

@@ -19,7 +19,7 @@ This document is the absolute ground truth for the FS Factbase ETL pipeline. It 
 
 | Phase | Description | Status | Target Scripts |
 | :--- | :--- | :--- | :--- |
-| **Phase 0** | **Decommissioning & Cleanup** | ✅ DONE | `.archive/`, `rm` scripts |
+| **Phase 0** | **Decommissioning & Cleanup** | ✅ DONE | `.archive/p03`, `rm` logs |
 | **Phase 1** | **IFRS Dictionary Seeding** | 🏗️ ACTIVE | `p02.../seed_data.py` |
 | **Phase 2** | **DuckDB Foundation** | ✅ DONE | `p02.../init_db.py` |
 | **Phase 3** | **Extraction with Fallbacks** | 🏗️ ACTIVE | `p01.../pdf_extractor.py` |
@@ -61,8 +61,16 @@ This document is the absolute ground truth for the FS Factbase ETL pipeline. It 
 
 ## 🤖 Agent Directives (MANDATORY)
 
-1.  **Local-First Isolation:** Keep modules decoupled. p01 handles PDFs/LLMs. p02 handles DuckDB. Do not mix dependencies.
-2.  **Bulk DB Operations:** Iterative, row-by-row `INSERT` is forbidden. Use `conn.executemany()`.
-3.  **Patience & Persistence:** If Tier 1 fails, gracefully log the warning and automatically try Tier 2 before halting.
-4.  **Audit Trail:** Maintain the link from fact to source page for 100% auditability.
-5.  **Local-First Mandate:** DuckDB only. No cloud/multi-user migrations unless explicitly requested.
+1.  **Accounting Standard Mandate:** Every fact in the core dictionary MUST eventually link to an explicit standard (IFRS 9, IFRS 17, Basel III). Do not create "standard-less" metrics during cluster resolution.
+2.  **Soft-Halt for Safety:** If a mapping is missing, the system MUST send it to `Unmapped_Staging`. Do NOT attempt to "repair" mappings with code logic outside the resolver.
+3.  **Temporal Consistency:** Never compare incremental interim data with cumulative annual data. Use the `is_cumulative` flag in `Fact_Financials` to filter comparisons.
+4.  **Scale Factor Enforcement:** All numerical values stored in the DB MUST be fully normalized (e.g., if PDF says RM1,000 and Scale is RM'000, DB must store 1,000,000). Storing integers is preferred for analysis performance.
+5.  **Sampled Re-Extraction Protocol:** Before a full run, always perform a **Sampled verification** of exactly 2 reports per bank to validate integrity upgrades.
+6.  **LLM Budgeting:** Never use an LLM for a task that deterministic Python/SQL can handle. Do not use the LLM to summarize UI tables or detect mathematical variances. Reserve LLM compute strictly for semantic table extraction and diagnostic rule-rewriting.
+7.  **Enforce Structured Outputs:** All extraction LLM calls MUST utilize native JSON Schema enforcement (e.g., Pydantic through the GenAI SDK) to eliminate markdown parsing failures.
+8.  **Bulk DB Operations:** DuckDB is an OLAP database. Iterative, row-by-row `INSERT` operations in loops are strictly forbidden. Use `conn.executemany()`.
+9.  **Dual-Fact Strategy:** Extracted ratios are `is_published=True`. System-computed ratios are `is_published=False`. Flag any variance > 1.0%.
+10. **Local-First Isolation:** Keep modules decoupled. p01 handles PDFs/LLMs. p02 handles DuckDB. Do not mix dependencies.
+11. **Patience & Persistence:** If Tier 1 fails, gracefully log the warning and automatically try Tier 2 before halting.
+12. **Audit Trail:** Maintain the link from fact to source page for 100% auditability.
+13. **Local-First Mandate:** DuckDB only. No cloud/multi-user migrations unless explicitly requested.

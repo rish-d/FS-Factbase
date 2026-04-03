@@ -1,0 +1,170 @@
+2026-04-03 19:24:37.795 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:238 - --- Processing: RHB BANK BERHAD (2024) ---
+2026-04-03 19:24:37.797 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'd:\FS Factbase\data\raw\reports\RHB BANK BERHAD\2024_fs.pdf' dynamically for: 'Deposits from customers'
+2026-04-03 19:24:38.663 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [19, 22]
+2026-04-03 19:24:38.682 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-03 19:24:38.721 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:229 - Unexpected error with gemini-2.5-flash-lite: Unknown field for Schema: default
+2026-04-03 19:24:38.724 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-03 19:24:38.732 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:229 - Unexpected error with gemini-2.0-flash-lite: Unknown field for Schema: default
+2026-04-03 19:24:38.733 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-03 19:24:38.745 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:229 - Unexpected error with gemini-2.0-flash: Unknown field for Schema: default
+2026-04-03 19:24:38.745 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-03 19:24:38.754 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:229 - Unexpected error with gemini-2.5-flash: Unknown field for Schema: default
+2026-04-03 19:24:38.754 | CRITICAL | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:233 - All models and retries exhausted. Extraction failed.
+2026-04-03 19:24:59.159 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:238 - --- Processing: RHB BANK BERHAD (2024) ---
+2026-04-03 19:24:59.159 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'd:\FS Factbase\data\raw\reports\RHB BANK BERHAD\2024_fs.pdf' dynamically for: 'Deposits from customers'
+2026-04-03 19:24:59.906 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [19, 22]
+2026-04-03 19:24:59.916 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-03 19:26:58.657 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:229 - Unexpected error with gemini-2.5-flash-lite: 504 The request timed out. Please try again.
+2026-04-03 19:26:58.658 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-03 19:26:58.742 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:226 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-03 19:27:08.757 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-03 19:27:08.958 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:226 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-03 19:27:28.972 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-03 19:27:29.077 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:226 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-03 19:27:39.079 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-03 19:27:39.143 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:226 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-03 19:27:59.146 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-03 19:28:10.099 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:219 - Successfully extracted data using gemini-2.5-flash
+2026-04-03 19:28:10.100 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:229 - Unexpected error with gemini-2.5-flash: name 're' is not defined
+2026-04-03 19:28:10.101 | CRITICAL | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:233 - All models and retries exhausted. Extraction failed.
+2026-04-03 19:28:45.396 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:238 - --- Processing: RHB BANK BERHAD (2024) ---
+2026-04-03 19:28:45.398 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'd:\FS Factbase\data\raw\reports\RHB BANK BERHAD\2024_fs.pdf' dynamically for: 'Deposits from customers'
+2026-04-03 19:28:46.159 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [19, 22]
+2026-04-03 19:28:46.168 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-03 19:28:47.907 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:219 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-03 19:28:47.943 | ERROR    | p01_Data_Extraction.pdf_extractor:process_report:260 - Validation Error: 2 validation errors for FSDataPayload
+financial_statements.0.statement_name
+  Field required [type=missing, input_value={'statement_type': 'Cash ...oup)', 'line_items': []}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+financial_statements.1.statement_name
+  Field required [type=missing, input_value={'statement_type': 'Cash ...ank)', 'line_items': []}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+2026-04-03 19:29:11.542 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:238 - --- Processing: RHB BANK BERHAD (2024) ---
+2026-04-03 19:29:11.542 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'd:\FS Factbase\data\raw\reports\RHB BANK BERHAD\2024_fs.pdf' dynamically for: 'Deposits from customers'
+2026-04-03 19:29:12.255 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [19, 22]
+2026-04-03 19:29:12.264 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-03 19:29:12.280 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:229 - Unexpected error with gemini-2.5-flash-lite: Unknown field for Schema: default
+2026-04-03 19:29:12.280 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-03 19:29:12.288 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:229 - Unexpected error with gemini-2.0-flash-lite: Unknown field for Schema: default
+2026-04-03 19:29:12.288 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-03 19:29:12.296 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:229 - Unexpected error with gemini-2.0-flash: Unknown field for Schema: default
+2026-04-03 19:29:12.296 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-03 19:29:12.303 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:229 - Unexpected error with gemini-2.5-flash: Unknown field for Schema: default
+2026-04-03 19:29:12.304 | CRITICAL | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:233 - All models and retries exhausted. Extraction failed.
+2026-04-03 19:30:37.512 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:238 - --- Processing: RHB BANK BERHAD (2024) ---
+2026-04-03 19:30:37.514 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'd:\FS Factbase\data\raw\reports\RHB BANK BERHAD\2024_fs.pdf' dynamically for: 'Deposits from customers'
+2026-04-03 19:30:38.239 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [19, 22]
+2026-04-03 19:30:38.250 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-03 19:30:38.263 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:229 - Unexpected error with gemini-2.5-flash-lite: Unknown field for Schema: default
+2026-04-03 19:30:38.264 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-03 19:30:38.274 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:229 - Unexpected error with gemini-2.0-flash-lite: Unknown field for Schema: default
+2026-04-03 19:30:38.274 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-03 19:30:38.281 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:229 - Unexpected error with gemini-2.0-flash: Unknown field for Schema: default
+2026-04-03 19:30:38.281 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-03 19:30:38.289 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:229 - Unexpected error with gemini-2.5-flash: Unknown field for Schema: default
+2026-04-03 19:30:38.289 | CRITICAL | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:233 - All models and retries exhausted. Extraction failed.
+2026-04-03 19:31:36.674 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:235 - --- Processing: RHB BANK BERHAD (2024) ---
+2026-04-03 19:31:36.675 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'd:\FS Factbase\data\raw\reports\RHB BANK BERHAD\2024_fs.pdf' dynamically for: 'Deposits from customers'
+2026-04-03 19:31:37.379 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [19, 22]
+2026-04-03 19:31:37.388 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:199 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-03 19:31:37.399 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:226 - Unexpected error with gemini-2.5-flash-lite: Unknown field for Schema: default
+2026-04-03 19:31:37.399 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:199 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-03 19:31:37.408 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:226 - Unexpected error with gemini-2.0-flash-lite: Unknown field for Schema: default
+2026-04-03 19:31:37.409 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:199 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-03 19:31:37.416 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:226 - Unexpected error with gemini-2.0-flash: Unknown field for Schema: default
+2026-04-03 19:31:37.417 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:199 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-03 19:31:37.424 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:226 - Unexpected error with gemini-2.5-flash: Unknown field for Schema: default
+2026-04-03 19:31:37.424 | CRITICAL | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:230 - All models and retries exhausted. Extraction failed.
+2026-04-03 19:32:14.169 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:282 - --- Processing: RHB BANK BERHAD (2024) ---
+2026-04-03 19:32:14.169 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'd:\FS Factbase\data\raw\reports\RHB BANK BERHAD\2024_fs.pdf' dynamically for: 'Deposits from customers'
+2026-04-03 19:32:14.881 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [19, 22]
+2026-04-03 19:32:14.891 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:199 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-03 19:32:17.088 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:263 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-03 19:32:17.090 | ERROR    | p01_Data_Extraction.pdf_extractor:process_report:304 - Validation Error: 2 validation errors for FSDataPayload
+statements.0.items
+  Field required [type=missing, input_value={'statement_name': 'Cash ...2022", 'line_items': []}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.items
+  Field required [type=missing, input_value={'statement_name': 'Cash ...2022", 'line_items': []}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+2026-04-03 19:32:45.621 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: RHB BANK BERHAD (2024) ---
+2026-04-03 19:32:45.622 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'd:\FS Factbase\data\raw\reports\RHB BANK BERHAD\2024_fs.pdf' dynamically for: 'Deposits from customers'
+2026-04-03 19:32:46.337 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [19, 22]
+2026-04-03 19:32:46.348 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-03 19:34:44.614 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 Stream cancelled; RPC from prefill servable to decode servable failed; Failed to close the streaming context; status = CANCELLED: Stream cancelled; RPC from prefill servable to decode servable failed [type.googleapis.com/util.ErrorSpacePayload='RPC::CANCELLED']
+=== Source Location Trace: ===
+net/rpc/rpc-errorspace-util.cc:19
+learning/serving/servables/wiz/remote_wiz_servable.cc:231
+learning/serving/servables/wiz/prefill_remote_wiz_servable.cc:223
+learning/serving/servables/wiz/wiz_servable.cc:3410
+;  Failed to run inference for model: go/debugstr   
+name: "prod-common-global__/aistudio/gemini-v3smmm-rev19-prowlridge-sc__main__/aistudio/gemini-v3smmm-rev19-prowlridge-sc__2025121701__prefill__variantglp__9919c28e-82a9-4658-bfa6-6dab52f18654"
+version {
+  value: 1
+}
+signature_name: "serving_stream"
+
+2026-04-03 19:34:44.623 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-03 19:34:44.705 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-03 19:34:54.707 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-03 19:34:54.789 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-03 19:35:14.791 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-03 19:35:14.868 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-03 19:35:24.869 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-03 19:35:24.947 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-03 19:35:44.949 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-03 19:35:51.801 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-03 19:35:51.804 | ERROR    | p01_Data_Extraction.pdf_extractor:process_report:307 - Validation Error: 1 validation error for FSDataPayload
+financial_statements
+  Field required [type=missing, input_value={'institution_id': 'RHB B...nt_type': 'Cash Flow'}]}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+2026-04-03 19:36:26.990 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: RHB BANK BERHAD (2024) ---
+2026-04-03 19:36:26.993 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'd:\FS Factbase\data\raw\reports\RHB BANK BERHAD\2024_fs.pdf' dynamically for: 'Deposits from customers'
+2026-04-03 19:36:27.709 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [19, 22]
+2026-04-03 19:36:27.717 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-03 19:38:25.737 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 The request timed out. Please try again.
+2026-04-03 19:38:25.743 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-03 19:38:25.854 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-03 19:38:35.857 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-03 19:38:35.962 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-03 19:38:55.966 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-03 19:38:56.050 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-03 19:39:06.064 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-03 19:39:06.174 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-03 19:39:26.176 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-03 19:39:36.914 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-03 19:39:36.935 | ERROR    | p01_Data_Extraction.pdf_extractor:process_report:307 - Validation Error: 4 validation errors for FSDataPayload
+statements.0.line_items.0.values.0.reporting_year
+  Field required [type=missing, input_value={'confidence': 1, 'is_cum...: 4575653, 'year': 2024}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.0.line_items.0.values.1.reporting_year
+  Field required [type=missing, input_value={'confidence': 1, 'is_cum... 17757321, 'year': 2023}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.0.line_items.1.values.0.reporting_year
+  Field required [type=missing, input_value={'confidence': 1, 'is_cum...: 8502343, 'year': 2024}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.0.line_items.1.values.1.reporting_year
+  Field required [type=missing, input_value={'confidence': 1, 'is_cum... 11002093, 'year': 2023}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+2026-04-03 22:46:37.804 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: RHB BANK BERHAD (2024) ---
+2026-04-03 22:46:37.819 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'd:\FS Factbase\data\raw\reports\RHB BANK BERHAD\2024_fs.pdf' dynamically for: 'Deposits from customers'
+2026-04-03 22:46:38.728 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [19, 22]
+2026-04-03 22:46:38.741 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-03 22:48:36.589 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-03 22:48:36.837 | ERROR    | p01_Data_Extraction.pdf_extractor:process_report:307 - Validation Error: Unterminated string starting at: line 8 column 25 (char 231)
+2026-04-03 22:49:40.659 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: RHB BANK BERHAD (2024) ---
+2026-04-03 22:49:40.660 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'd:\FS Factbase\data\raw\reports\RHB BANK BERHAD\2024_fs.pdf' dynamically for: 'Deposits from customers'
+2026-04-03 22:49:41.387 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [19, 22]
+2026-04-03 22:49:41.397 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-03 22:51:39.034 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 The request timed out. Please try again.
+2026-04-03 22:51:39.035 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-03 22:51:39.103 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-03 22:51:49.104 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-03 22:51:49.196 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-03 22:52:09.197 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-03 22:52:09.273 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-03 22:52:19.274 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-03 22:52:19.334 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-03 22:52:39.336 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-03 22:52:50.967 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-03 22:52:50.989 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\RHB BANK BERHAD_2024_extracted.json

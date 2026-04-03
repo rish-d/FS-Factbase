@@ -1,6 +1,6 @@
 import duckdb
 from loguru import logger
-from . import db_config
+import db_config
 
 def init_database(db_path=None):
     if db_path is None:

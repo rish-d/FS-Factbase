@@ -5,45 +5,71 @@ from loguru import logger
 # IDs follow the official 'ifrs-full_' prefix from the 2025-03-27 taxonomy files.
 
 MAPPINGS = [
-    # --- Universal / Totals (High Level) ---
+    # --- L0: Universal Totals (The "Big Five") ---
     ("ifrs-full_Assets", "Total Assets", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_Liabilities", "Total Liabilities", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_Equity", "Total Equity", "IFRS 2025", "universal", "numeric"),
-    ("ifrs-full_ProfitLoss", "Profit or Loss", "IFRS 2025", "universal", "numeric"),
-    ("ifrs-full_ProfitLossBeforeTax", "Profit (Loss) Before Tax", "IFRS 2025", "universal", "numeric"),
-    ("ifrs-full_IncomeTaxExpenseIncome", "Income Tax Expense (Income)", "IFRS 2025", "universal", "numeric"),
-    ("ifrs-full_ProfitLossFromOperatingActivities", "Profit (Loss) from Operating Activities", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_EquityAndLiabilities", "Total Equity and Liabilities", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_ProfitLoss", "Profit or Loss (Net Profit)", "IFRS 2025", "universal", "numeric"),
+
+    # --- L1: High-Level Components (Sub-Totals) ---
+    ("ifrs-full_CurrentAssets", "Total Current Assets", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_NoncurrentAssets", "Total Non-Current Assets", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_CurrentLiabilities", "Total Current Liabilities", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_NoncurrentLiabilities", "Total Non-Current Liabilities", "IFRS 2025", "universal", "numeric"),
     
-    # --- Balance Sheet: Assets (Granular) ---
+    ("ifrs-full_ProfitLossBeforeTax", "Profit (Loss) Before Tax", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_ProfitLossFromOperatingActivities", "Profit (Loss) from Operating Activities", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_IncomeTaxExpenseIncome", "Income Tax Expense (Income)", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_ProfitLossFromContinuingOperations", "Profit (Loss) from Continuing Operations", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_ProfitLossFromDiscontinuedOperations", "Profit (Loss) from Discontinued Operations", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_OtherComprehensiveIncome", "Other Comprehensive Income (OCI)", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_ComprehensiveIncome", "Total Comprehensive Income", "IFRS 2025", "universal", "numeric"),
+
+    # --- L2: Banking Assets (The Core of the Factbase) ---
     ("ifrs-full_CashAndCashEquivalents", "Cash and Cash Equivalents", "IFRS 2025", "banking", "numeric"),
-    ("ifrs-full_LoansAndAdvancesToCustomers", "Loans and Advances to Customers", "IFRS 2025", "banking", "numeric"),
+    ("ifrs-full_CashAndBalancesWithCentralBanks", "Cash and Balances with Central Banks", "IFRS 2025", "banking", "numeric"),
+    ("ifrs-full_DepositsAndPlacementsWithBanksAndOtherFinancialInstitutions", "Deposits and Placements with Banks", "IFRS 2025", "banking", "numeric"),
+    ("ifrs-full_LoansAndAdvancesToCustomers", "Loans and Advances to Customers (Gross/Net)", "IFRS 2025", "banking", "numeric"),
     ("ifrs-full_LoansAndAdvancesToBanks", "Loans and Advances to Banks", "IFRS 2025", "banking", "numeric"),
     ("ifrs-full_FinancialAssetsAtAmortisedCost", "Financial Assets at Amortised Cost", "IFRS 2025", "banking", "numeric"),
     ("ifrs-full_FinancialAssetsAtFairValueThroughOtherComprehensiveIncome", "Financial Assets at FVOCI", "IFRS 2025", "banking", "numeric"),
     ("ifrs-full_FinancialAssetsAtFairValueThroughProfitOrLoss", "Financial Assets at FVTPL", "IFRS 2025", "banking", "numeric"),
     ("ifrs-full_DerivativeFinancialAssets", "Derivative Financial Assets", "IFRS 2025", "banking", "numeric"),
-    ("ifrs-full_AllowanceAccountForCreditLossesOfFinancialAssets", "Allowance for Credit Losses", "IFRS 2025", "banking", "numeric"),
+    ("ifrs-full_ReverseRepurchaseAgreements", "Reverse Repurchase Agreements", "IFRS 2025", "banking", "numeric"),
+    ("ifrs-full_StatutoryDepositsWithCentralBanks", "Statutory Deposits with Central Banks", "IFRS 2025", "banking", "numeric"),
+    
+    # --- L2: Universal Assets ---
     ("ifrs-full_InvestmentProperty", "Investment Property", "IFRS 2025", "universal", "numeric"),
-    ("ifrs-full_PropertyPlantAndEquipment", "Property, Plant and Equipment", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_PropertyPlantAndEquipment", "Property, Plant and Equipment (PPE)", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_IntangibleAssetsAndGoodwill", "Intangible Assets and Goodwill", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_DeferredTaxAssets", "Deferred Tax Assets", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_CurrentTaxAssets", "Current Tax Assets", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_OtherAssets", "Other Assets", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_Inventories", "Inventories", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_TradeAndOtherReceivables", "Trade and Other Receivables", "IFRS 2025", "universal", "numeric"),
 
-    # --- Balance Sheet: Liabilities & Equity (Granular) ---
+    # --- L2: Banking Liabilities ---
     ("ifrs-full_DepositsFromCustomers", "Deposits from Customers", "IFRS 2025", "banking", "numeric"),
-    ("ifrs-full_DepositsFromBanks", "Deposits from Banks", "IFRS 2025", "banking", "numeric"),
+    ("ifrs-full_DepositsFromBanks", "Deposits and Placements of Banks", "IFRS 2025", "banking", "numeric"),
     ("ifrs-full_DerivativeFinancialLiabilities", "Derivative Financial Liabilities", "IFRS 2025", "banking", "numeric"),
     ("ifrs-full_DebtSecuritiesIssued", "Debt Securities Issued", "IFRS 2025", "banking", "numeric"),
     ("ifrs-full_SubordinatedLiabilities", "Subordinated Liabilities", "IFRS 2025", "banking", "numeric"),
+    ("ifrs-full_RepurchaseAgreements", "Repurchase Agreements", "IFRS 2025", "banking", "numeric"),
+    ("ifrs-full_FinancialLiabilitiesAtFairValueThroughProfitOrLoss", "Financial Liabilities at FVTPL", "IFRS 2025", "banking", "numeric"),
+
+    # --- L2: Universal Liabilities & Equity ---
+    ("ifrs-full_Provisions", "Provisions", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_CurrentTaxLiabilities", "Current Tax Liabilities", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_DeferredTaxLiabilities", "Deferred Tax Liabilities", "IFRS 2025", "universal", "numeric"),
-    ("ifrs-full_Provisions", "Provisions", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_OtherLiabilities", "Other Liabilities", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_TradeAndOtherPayables", "Trade and Other Payables", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_IssuedCapital", "Issued Capital", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_RetainedEarnings", "Retained Earnings", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_OtherReserves", "Other Reserves", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_NoncontrollingInterests", "Non-Controlling Interests", "IFRS 2025", "universal", "numeric"),
 
-    # --- Income Statement: Revenues & Operating Items ---
+    # --- L2: Income Statement (Banking Focus) ---
     ("ifrs-full_InterestIncome", "Interest Income", "IFRS 2025", "banking", "numeric"),
     ("ifrs-full_InterestExpense", "Interest Expense", "IFRS 2025", "banking", "numeric"),
     ("ifrs-full_NetInterestIncome", "Net Interest Income", "IFRS 2025", "banking", "numeric"),
@@ -51,67 +77,88 @@ MAPPINGS = [
     ("ifrs-full_FeeAndCommissionExpense", "Fee and Commission Expense", "IFRS 2025", "banking", "numeric"),
     ("ifrs-full_NetFeeAndCommissionIncome", "Net Fee and Commission Income", "IFRS 2025", "banking", "numeric"),
     ("ifrs-full_DividendIncome", "Dividend Income", "IFRS 2025", "universal", "numeric"),
-    ("ifrs-full_RentalIncome", "Rental Income", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_GainsLossesOnForeignExchange", "Gains (Losses) on Foreign Exchange", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_NetGainsLossesOnFinancialAssetsAndLiabilitiesHeldForTrading", "Net Trading Income", "IFRS 2025", "banking", "numeric"),
     ("ifrs-full_OtherOperatingIncome", "Other Operating Income", "IFRS 2025", "universal", "numeric"),
-
-    # --- Operating Expenses (Deep Disaggregation for Comparison) ---
+    ("ifrs-full_Revenue", "Total Revenue / Income", "IFRS 2025", "universal", "numeric"),
+    
+    # --- L2: Expenses & Operating Deep-Dive ---
+    ("ifrs-full_OperatingExpenses", "Total Operating Expenses", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_EmployeeBenefitsExpense", "Personnel / Staff Expenses", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_DepreciationAndAmortisationExpense", "Depreciation and Amortisation", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_AdministrativeExpense", "General Administrative Expenses", "IFRS 2025", "universal", "numeric"),
-    ("ifrs-full_SellingExpense", "Selling and Marketing Expenses", "IFRS 2025", "universal", "numeric"),
-    ("ifrs-full_ResearchAndDevelopmentExpense", "Research and Development Expenses", "IFRS 2025", "universal", "numeric"),
-    ("ifrs-full_OtherOperatingExpenses", "Other Operating Expenses", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_InformationTechnologyExpenses", "Information Technology Expenses", "IFRS 2025", "banking", "numeric"),
-    ("ifrs-full_MiscellaneousOtherOperatingExpense", "Miscellaneous Expenses", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_EstablishmentCosts", "Establishment / Premises Costs", "IFRS 2025", "banking", "numeric"),
+    ("ifrs-full_MarketingAndAdvertisingExpense", "Marketing and Advertising", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_OtherOperatingExpenses", "Other Operating Expenses", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_FinanceIncome", "Finance Income", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_FinanceCosts", "Finance Costs", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_ShareOfProfitLossOfAssociatesAndJointVentures", "Share of Profit (Loss) of Associates", "IFRS 2025", "universal", "numeric"),
 
-    # --- Credit Risk & IFRS 9 Stages ---
-    ("ifrs-full_ExposuresToCreditRiskTwelvemonthECLMember", "Loans & Advances: Stage 1 (12m ECL)", "IFRS 2025", "banking", "numeric"),
-    ("ifrs-full_ExposuresToCreditRiskLifetimeECLNotCreditimpairedMember", "Loans & Advances: Stage 2 (Lifetime ECL)", "IFRS 2025", "banking", "numeric"),
-    ("ifrs-full_ExposuresToCreditRiskLifetimeECLCreditimpairedMember", "Loans & Advances: Stage 3 (Impaired)", "IFRS 2025", "banking", "numeric"),
-    ("ifrs-full_ImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss", "ECL / Impairment Charges in P&L", "IFRS 2025", "banking", "numeric"),
+    # --- L3: Granular Components (Audit Depth) ---
+    ("ifrs-full_InterestIncomeOnFinancialAssetsAtAmortisedCost", "Interest Income: Amortised Cost", "IFRS 2025", "banking", "numeric"),
+    ("ifrs-full_InterestIncomeOnFinancialAssetsAtFairValueThroughOtherComprehensiveIncome", "Interest Income: FVOCI", "IFRS 2025", "banking", "numeric"),
+    ("ifrs-full_InterestExpenseOnFinancialLiabilitiesAtAmortisedCost", "Interest Expense: Amortised Cost", "IFRS 2025", "banking", "numeric"),
+    ("ifrs-full_ImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss", "ECL / Impairment Charges (P&L)", "IFRS 2025", "banking", "numeric"),
+    ("ifrs-full_AllowanceAccountForCreditLossesOfFinancialAssets", "Total Allowance for Credit Losses (BS)", "IFRS 2025", "banking", "numeric"),
+    ("ifrs-full_ExposuresToCreditRiskTwelvemonthECLMember", "ECL: Stage 1 (12-month)", "IFRS 2025", "banking", "numeric"),
+    ("ifrs-full_ExposuresToCreditRiskLifetimeECLNotCreditimpairedMember", "ECL: Stage 2 (Lifetime Non-Impaired)", "IFRS 2025", "banking", "numeric"),
+    ("ifrs-full_ExposuresToCreditRiskLifetimeECLCreditimpairedMember", "ECL: Stage 3 (Impaired)", "IFRS 2025", "banking", "numeric"),
 
-    # --- Segment Reporting ---
-    ("ifrs-full_RevenueFromExternalCustomersByGeographicalArea", "Revenue by Geographical Area", "IFRS 2025", "universal", "numeric"),
-    ("ifrs-full_ProfitLossBeforeTaxBySegment", "Profit Before Tax by Segment", "IFRS 2025", "universal", "numeric"),
-    ("ifrs-full_AssetsBySegment", "Total Assets by Segment", "IFRS 2025", "universal", "numeric"),
+    # --- Cash Flow Statement ---
+    ("ifrs-full_CashFlowsFromUsedInOperatingActivities", "Net Cash from Operating Activities", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_CashFlowsFromUsedInInvestingActivities", "Net Cash from Investing Activities", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_CashFlowsFromUsedInFinancingActivities", "Net Cash from Financing Activities", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_IncreaseDecreaseInCashAndCashEquivalents", "Net Increase (Decrease) in Cash", "IFRS 2025", "universal", "numeric"),
 
-    # --- Technical / Derived (Maintaining structure) ---
+    # --- Ratios & Meta ---
     ("ifrs-full_EarningsPerShare", "Earnings per Share", "IFRS 2025", "universal", "numeric"),
     ("ifrs-full_DividendsPaid", "Total Dividends Paid", "IFRS 2025", "universal", "numeric"),
+    ("ifrs-full_WeightedAverageNumberOfOrdinarySharesOutstanding", "Avg Shares Outstanding", "IFRS 2025", "universal", "numeric"),
 ]
 
 # Hierarchical Relationships (Additive Integrity)
 HIERARCHY = [
-    # Total Assets breakdown
-    ("ifrs-full_Assets", "ifrs-full_CashAndCashEquivalents", 1.0),
+    # Top-Level Balance Sheet
+    ("ifrs-full_EquityAndLiabilities", "ifrs-full_Equity", 1.0),
+    ("ifrs-full_EquityAndLiabilities", "ifrs-full_Liabilities", 1.0),
+    ("ifrs-full_Assets", "ifrs-full_CurrentAssets", 1.0),
+    ("ifrs-full_Assets", "ifrs-full_NoncurrentAssets", 1.0),
+    ("ifrs-full_Liabilities", "ifrs-full_CurrentLiabilities", 1.0),
+    ("ifrs-full_Liabilities", "ifrs-full_NoncurrentLiabilities", 1.0),
+
+    # Assets Breakdown (L2 into Assets or Current/Noncurrent)
+    ("ifrs-full_Assets", "ifrs-full_CashAndBalancesWithCentralBanks", 1.0),
     ("ifrs-full_Assets", "ifrs-full_LoansAndAdvancesToCustomers", 1.0),
     ("ifrs-full_Assets", "ifrs-full_LoansAndAdvancesToBanks", 1.0),
     ("ifrs-full_Assets", "ifrs-full_FinancialAssetsAtAmortisedCost", 1.0),
+    ("ifrs-full_Assets", "ifrs-full_FinancialAssetsAtFairValueThroughOtherComprehensiveIncome", 1.0),
+    ("ifrs-full_Assets", "ifrs-full_FinancialAssetsAtFairValueThroughProfitOrLoss", 1.0),
     ("ifrs-full_Assets", "ifrs-full_DerivativeFinancialAssets", 1.0),
-    ("ifrs-full_Assets", "ifrs-full_InvestmentProperty", 1.0),
-    ("ifrs-full_Assets", "ifrs-full_PropertyPlantAndEquipment", 1.0),
-    ("ifrs-full_Assets", "ifrs-full_IntangibleAssetsAndGoodwill", 1.0),
+    ("ifrs-full_Assets", "ifrs-full_OtherAssets", 1.0),
     
-    # Total Liabilities breakdown
+    # Liabilities Breakdown
     ("ifrs-full_Liabilities", "ifrs-full_DepositsFromCustomers", 1.0),
     ("ifrs-full_Liabilities", "ifrs-full_DepositsFromBanks", 1.0),
-    ("ifrs-full_Liabilities", "ifrs-full_DerivativeFinancialLiabilities", 1.0),
     ("ifrs-full_Liabilities", "ifrs-full_DebtSecuritiesIssued", 1.0),
     ("ifrs-full_Liabilities", "ifrs-full_SubordinatedLiabilities", 1.0),
+    ("ifrs-full_Liabilities", "ifrs-full_OtherLiabilities", 1.0),
 
-    # Profit Before Tax = Profit from Ops + Share of Assoc - Tax (Simulated)
-    ("ifrs-full_ProfitLossBeforeTax", "ifrs-full_ProfitLossFromOperatingActivities", 1.0),
-    
-    # Operating Expenses (Logic: Summing disaggregated items for comparison)
-    # Using 'OtherOperatingExpenses' as a synthetic total if needed, or mapping them all to OperatingProfit
-    ("ifrs-full_ProfitLossFromOperatingActivities", "ifrs-full_EmployeeBenefitsExpense", -1.0),
-    ("ifrs-full_ProfitLossFromOperatingActivities", "ifrs-full_DepreciationAndAmortisationExpense", -1.0),
-    ("ifrs-full_ProfitLossFromOperatingActivities", "ifrs-full_AdministrativeExpense", -1.0),
-    ("ifrs-full_ProfitLossFromOperatingActivities", "ifrs-full_OtherOperatingExpenses", -1.0),
-    ("ifrs-full_ProfitLossFromOperatingActivities", "ifrs-full_InformationTechnologyExpenses", -1.0),
+    # Income Statement Arithmetic (Waterfall)
+    ("ifrs-full_NetInterestIncome", "ifrs-full_InterestIncome", 1.0),
+    ("ifrs-full_NetInterestIncome", "ifrs-full_InterestExpense", -1.0),
     ("ifrs-full_NetFeeAndCommissionIncome", "ifrs-full_FeeAndCommissionIncome", 1.0),
     ("ifrs-full_NetFeeAndCommissionIncome", "ifrs-full_FeeAndCommissionExpense", -1.0),
+    
+    # Profit Before Tax components
+    ("ifrs-full_ProfitLossBeforeTax", "ifrs-full_ProfitLossFromOperatingActivities", 1.0),
+    ("ifrs-full_ProfitLossBeforeTax", "ifrs-full_FinanceIncome", 1.0),
+    ("ifrs-full_ProfitLossBeforeTax", "ifrs-full_FinanceCosts", -1.0),
+    ("ifrs-full_ProfitLossBeforeTax", "ifrs-full_ShareOfProfitLossOfAssociatesAndJointVentures", 1.0),
+
+    # Net Profit
+    ("ifrs-full_ProfitLoss", "ifrs-full_ProfitLossBeforeTax", 1.0),
+    ("ifrs-full_ProfitLoss", "ifrs-full_IncomeTaxExpenseIncome", -1.0),
 ]
 
 FX_RATES = [

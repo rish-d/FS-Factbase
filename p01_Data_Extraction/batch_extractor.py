@@ -2,7 +2,8 @@ import os
 import json
 from pathlib import Path
 from loguru import logger
-from p01_Data_Extraction.ingestor import sync_input_folder, get_project_root
+from p00_Shared_Utils.io_utils import get_root_dir
+from p01_Data_Extraction.ingestor import sync_input_folder
 
 def run_2021_2024_batch():
     """
@@ -12,7 +13,7 @@ def run_2021_2024_batch():
     logger.info("🚀 Starting 2021-2024 Extraction Batch...")
     
     # 1. Get project root
-    root_dir = get_project_root()
+    root_dir = get_root_dir()
     
     # 2. Sync folders 
     # Note: ingestor.py now handles root resolution internally

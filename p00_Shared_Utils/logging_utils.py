@@ -13,7 +13,7 @@ def setup_logger(log_file="logs/app.log", level="INFO"):
     # Add console handler (standard error)
     logger.add(
         sys.stderr,
-        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+        format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <cyan>{name}:{function}:{line}</cyan> - <level>{message}</level>",
         level=level,
         colorize=True
     )
@@ -26,7 +26,7 @@ def setup_logger(log_file="logs/app.log", level="INFO"):
     # Add file handler
     logger.add(
         log_file,
-        format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
+        format="{time:YYYY-MM-DD HH:mm:ss.SSS} | {level: <8} | {name}:{function}:{line} - {message}",
         level=level,
         rotation="5 MB",
         retention="10 days",

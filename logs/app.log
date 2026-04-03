@@ -1,0 +1,16 @@
+2026-04-03 23:14:12.568 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: malayan_banking_berhad (2022) ---
+2026-04-03 23:14:12.571 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'd:\FS Factbase\data\raw\reports\MALAYAN BANKING BERHAD\2022_fs.pdf' dynamically for: 'Information Technology costs AND Deposits from customers'
+2026-04-03 23:14:13.558 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [38, 216]
+2026-04-03 23:14:13.571 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-03 23:16:11.262 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 The request timed out. Please try again.
+2026-04-03 23:16:11.263 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-03 23:16:11.346 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-03 23:16:21.348 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-03 23:16:21.425 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-03 23:16:41.427 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-03 23:16:41.513 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-03 23:16:51.520 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-03 23:16:51.691 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-03 23:17:11.696 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-03 23:17:24.928 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-03 23:17:24.932 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\malayan_banking_berhad_2022_extracted.json

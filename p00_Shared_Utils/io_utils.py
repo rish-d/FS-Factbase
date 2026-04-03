@@ -60,4 +60,61 @@ def write_text(content: str, path: Union[str, Path]) -> bool:
         logger.error(f"Failed to save text to {path}: {e}")
         return False
 
-__all__ = ["ensure_directory", "save_json", "load_json", "write_text"]
+def get_root_dir(marker: str = "MASTER_PLAN.md") -> Path:
+    """
+    Find the project root directory by searching upwards for a marker file.
+    """
+    # Start from the current file's parent
+    current_path = Path(__file__).resolve().parent
+    
+    # Check current path and all its parents
+    if (current_path / marker).exists():
+        return current_path
+        
+    for parent in current_path.parents:
+        if (parent / marker).exists():
+            return parent
+    
+    # Fallback: check CWD and its parents
+    current_cwd = Path.cwd().resolve()
+    if (current_cwd / marker).exists():
+        return current_cwd
+    
+    for parent in current_cwd.parents:
+        if (parent / marker).exists():
+            return parent
+            
+    raise FileNotFoundError(f"Could not find root directory containing {marker}")
+
+def validate_audit_trail(source_document: Union[str, Path], source_page_number: Any) -> bool:
+    """
+    Validate the audit trail metadata for Phase 4 compliance.
+    source_document: Path to the PDF/document (relative to root or absolute).
+    source_page_number: Must be a positive integer.
+    """
+    try:
+        # 1. Validate page number
+        if not isinstance(source_page_number, int) or source_page_number < 0:
+            logger.error(f"Invalid source_page_number: {source_page_number}. Must be a non-negative integer.")
+            return False
+        
+        # 2. Validate document path
+        doc_path = Path(source_document)
+        if not doc_path.is_absolute():
+            try:
+                root = get_root_dir()
+                doc_path = root / doc_path
+            except FileNotFoundError:
+                # If root can't be found, we just check existence as is
+                pass
+            
+        if not doc_path.exists():
+            logger.error(f"Source document does not exist: {doc_path}")
+            return False
+            
+        return True
+    except Exception as e:
+        logger.error(f"Audit trail validation failed: {e}")
+        return False
+
+__all__ = ["ensure_directory", "save_json", "load_json", "write_text", "get_root_dir", "validate_audit_trail"]

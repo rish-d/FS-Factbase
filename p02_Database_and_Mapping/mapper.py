@@ -10,21 +10,12 @@ import db_config
 if db_config.ROOT_DIR not in sys.path:
     sys.path.append(db_config.ROOT_DIR)
 
-try:
-    from p03_Analytics_Dashboard.trend_analyzer import TrendAnalyzer
-except ImportError:
-    logger.warning("TrendAnalyzer not found. Using MockTrendAnalyzer.")
-    class TrendAnalyzer:
-        def __init__(self, db_path): pass
-        def analyze_value(self, *args): return 1.0, "No analyzer available"
-
 class StandardizedMapper:
     def __init__(self, db_path=None):
         if db_path is None:
             self.db_path = db_config.get_db_path()
         else:
             self.db_path = db_path
-        self.trend_analyzer = TrendAnalyzer(self.db_path)
 
     def load_aliases(self, conn):
         """Loads all aliases into a lookup dictionary for fast access."""
@@ -49,6 +40,27 @@ class StandardizedMapper:
             mapping[base_name.replace(" ", "_")] = row[0]
         return mapping
 
+    def audit_traceability(self, fact):
+        """Audits a fact for traceability metadata and returns a refined confidence score."""
+        # fact: [metric_id, institution_id, period, value, currency, published, formula, doc, page, score, reason, month, cumulative, scale]
+        score = 1.0
+        reasons = []
+        
+        page_num = fact[8]
+        source_doc = fact[7]
+        
+        if not page_num or page_num <= 0:
+            score -= 0.3
+            reasons.append("Missing source page number")
+        
+        if not source_doc or source_doc == "Unknown":
+            score -= 0.2
+            reasons.append("Unknown source document")
+            
+        if reasons:
+            return score, " | ".join(reasons)
+        return 1.0, "Traceability Verified"
+
     def process_file(self, json_path):
         logger.info(f"Processing extraction result: {json_path}")
         
@@ -56,7 +68,7 @@ class StandardizedMapper:
             data = json.load(f)
 
         raw_inst_id = str(data.get("institution_id") or "").lower()
-        source_doc = data.get("source_document")
+        source_doc = data.get("source_document", "Unknown")
         
         conn = duckdb.connect(self.db_path)
         
@@ -65,8 +77,7 @@ class StandardizedMapper:
         institution_id = inst_map.get(raw_inst_id)
         
         if not institution_id:
-            # Fallback: try to derive from filename if json field is missing or generic
-            # e.g. "PUBLIC BANK BERHAD_2021_extracted.json"
+            # Fallback: try to derive from filename
             basename = os.path.basename(json_path).lower().split("_20")[0]
             base_name_stripped = basename.replace(" berhad", "").replace(" holdings", "").replace(" group", "").strip()
             institution_id = inst_map.get(basename) or inst_map.get(basename.replace(" ", "_")) or inst_map.get(base_name_stripped) or inst_map.get(base_name_stripped.replace(" ", "_"))
@@ -76,10 +87,8 @@ class StandardizedMapper:
             conn.close()
             return
 
-        # Support both 'statements' and 'financial_statements' in the raw JSON
+        # Support both 'statements' and 'financial_statements'
         statements = data.get("statements", data.get("financial_statements", []))
-        
-        # If statements is a dict, convert to list
         if isinstance(statements, dict):
             statements = list(statements.values())
 
@@ -112,9 +121,10 @@ class StandardizedMapper:
                         val = val_obj.get("value", val_obj.get("amount"))
                         month_end = val_obj.get("month_end", 12)
                         scaling_factor = val_obj.get("scaling_factor", 1)
-                        # Default is_published to True for report-extracted values
                         is_published = val_obj.get("is_published", True)
                         currency = val_obj.get("currency", val_obj.get("currency_code", "MYR"))
+                        # Traceability: Look for specific page numbers in val_obj or stmt
+                        page_num = val_obj.get("source_page_number", val_obj.get("page_number", val_obj.get("source_page", stmt.get("source_page_number", stmt.get("page_number", 0)))))
                         
                         is_cumulative = val_obj.get("is_cumulative")
                         if is_cumulative is None:
@@ -131,40 +141,49 @@ class StandardizedMapper:
                         scaling_factor = 1
                         is_published = True
                         currency = "MYR"
+                        page_num = 0
 
                     if year is None or val is None:
                         continue
 
-                    # Lookup: Try specific institution first, then global (None)
+                    # NORMALIZE
+                    try:
+                        normalized_val = float(val) * float(scaling_factor)
+                    except:
+                        normalized_val = val
+
+                    # Map raw term to standardized metric
                     metric_id = alias_map.get((raw_term.lower(), institution_id))
                     if not metric_id:
                         metric_id = alias_map.get((raw_term.lower(), None))
 
                     if metric_id:
-                        # SCALE ENFORCEMENT: Normalize raw value by scaling factor
-                        try:
-                            normalized_val = float(val) * float(scaling_factor)
-                        except:
-                            normalized_val = val
-
-                        score, reason = self.trend_analyzer.analyze_value(institution_id, metric_id, str(year), normalized_val)
-                        facts_to_insert.append((
+                        fact = [
                             metric_id, institution_id, str(year), normalized_val, currency, 
                             is_published, None, # formula_id
-                            source_doc, 0, score, reason, month_end, is_cumulative, scaling_factor
-                        ))
-                    else:
-                        # Also normalize staging for consistency in UI review
-                        try:
-                            normalized_val = float(val) * float(scaling_factor)
-                        except:
-                            normalized_val = val
+                            source_doc, page_num, 1.0, "Initial Mapping", month_end, is_cumulative, scaling_factor
+                        ]
+                        
+                        # Apply Traceability Audit
+                        final_score, audit_reason = self.audit_traceability(fact)
+                        fact[9] = final_score
+                        fact[10] = audit_reason
+                        
+                        if final_score < 0.7:
+                            logger.warning(f"Traceability warning for {raw_term}: {audit_reason}")
                             
+                        facts_to_insert.append(tuple(fact))
+                    else:
+                        # Unmapped terms get 0.5 base score, adjusted by traceability
+                        base_score = 0.5
+                        if not page_num or page_num <= 0:
+                            base_score = 0.3
+                        
                         staging_to_insert.append((
-                            raw_term, normalized_val, institution_id, str(year), source_doc, 0, 0.5, "Unmapped Term", month_end, is_cumulative, scaling_factor
+                            raw_term, normalized_val, institution_id, str(year), source_doc, page_num, base_score, "Unmapped Term", month_end, is_cumulative, scaling_factor
                         ))
 
-        # Bulk Insert Facts
+        # Bulk Insert
         if facts_to_insert:
             conn.executemany("""
                 INSERT OR IGNORE INTO Fact_Financials 
@@ -172,13 +191,14 @@ class StandardizedMapper:
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, facts_to_insert)
             
-        # Bulk Insert Staging
         if staging_to_insert:
             conn.executemany("""
                 INSERT INTO Unmapped_Staging 
                 (raw_term, raw_value, institution_id, reporting_period, source_document, source_page_number, confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, staging_to_insert)
+            
+        conn.close()
 
         conn.close()
         logger.success(f"Finished {json_path}: Mapped {len(facts_to_insert)}, Unmapped {len(staging_to_insert)}")
