@@ -1,7 +1,10 @@
 import duckdb
 from loguru import logger
+from . import db_config
 
-def init_database(db_path="fs_factbase.duckdb"):
+def init_database(db_path=None):
+    if db_path is None:
+        db_path = db_config.get_db_path()
     logger.info(f"Initializing DuckDB database at {db_path}...")
     
     # Connect (this will create the file if it doesn't exist)
@@ -173,6 +176,19 @@ def init_database(db_path="fs_factbase.duckdb"):
         );
     """)
     logger.info("Table created: Exchange_Rates")
+    
+    # Create Pipeline_Checkpoints Table
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS Pipeline_Checkpoints (
+            institution_id VARCHAR NOT NULL,
+            reporting_period VARCHAR NOT NULL,
+            task_name VARCHAR NOT NULL, -- e.g., 'IT Spend and Deposits'
+            status VARCHAR NOT NULL,    -- 'PENDING', 'COMPLETED', 'FAILED'
+            last_run TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (institution_id, reporting_period, task_name)
+        );
+    """)
+    logger.info("Table created: Pipeline_Checkpoints")
     
     conn.close()
     logger.info("Database initialization completed successfully.")

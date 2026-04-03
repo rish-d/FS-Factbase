@@ -1,14 +1,18 @@
 import duckdb
 from difflib import SequenceMatcher
 from typing import List, Dict, Any
+import db_config
 
 def get_similarity(a: str, b: str) -> float:
     """Returns a similarity ratio between 0.0 and 1.0"""
     return SequenceMatcher(None, a.lower(), b.lower()).ratio()
 
 class ClusterAnalyzer:
-    def __init__(self, db_path="fs_factbase.duckdb"):
-        self.db_path = db_path
+    def __init__(self, db_path=None):
+        if db_path is None:
+            self.db_path = db_config.get_db_path()
+        else:
+            self.db_path = db_path
         
     def get_clusters(self, threshold=0.65) -> List[Dict[str, Any]]:
         """

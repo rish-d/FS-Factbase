@@ -1,72 +1,70 @@
-# FS Factbase Architecture Blueprint
+# FS Factbase Architecture Blueprint (v9)
 
 ## 1. System Overview
-The FS Factbase is a scalable ETL pipeline designed to extract banking and insurance financial data from unstructured PDFs, standardizing it via a Master-Alias Paradigm to support high-precision benchmarking and Text-to-SQL analytics.
+The FS Factbase is a deterministic ETL pipeline designed to extract banking and insurance financial data from unstructured PDFs. It standardizes data via a **Master-Alias Paradigm** into an IFRS-compliant DuckDB factbase, purpose-built for CLI-driven auditing and downstream BI integration.
 
 ## 2. Core Operational Pillars
-1. **AI-Assisted Raw Extraction**: Uses LLMs (Gemini) to extract targeted tables from PDFs into structured JSON.
-2. **100% Deterministic Mapping**: Maps raw report terms to canonical metrics.
-3. **The Variance Engine (Dual-Fact Model)**: Stores both report-published values and system-computed ones to reconcile and audit data integrity.
-4. **Selective Growth**: Employs "Micro-Staging" (limited batch sizes) to keep the human-in-the-loop (HITL) queue manageable and the database growth intentional.
+1.  **AI-Assisted Raw Extraction:** Uses LLMs (Gemini) as "Universal Readers" to extract targeted tables into structured JSON schemas.
+2.  **100% Deterministic Mapping:** A strict Python/SQL translation layer that maps raw report terms to canonical IFRS metrics. Hallucination is prevented by a "Soft-Halt" protocol.
+3.  **Auditable Traceability:** Every stored fact maintains a direct link to the `source_document` and `source_page_number` for 100% auditability.
+4.  **CLI-First Human-in-the-Loop (HITL):** Replaces heavy UI dashboards with lightweight terminal tools for cluster-based metric resolution and database auditing.
 
-## 3. Recommended Tech Stack
-- **Database**: **DuckDB** - Local-first OLAP for lightning-fast analytical queries and Text-to-SQL compatibility.
-- **Language**: **Python 3.11+**
-- **Validation**: **Pydantic** - Strict schema enforcement on all LLM outputs.
-- **Orchestration**: **Local Order of Operations** (Extract -> Map -> Compute Variance -> Load).
+## 3. Technology Stack
+-   **Database:** **DuckDB** - Local-first OLAP for high-performance analytical queries.
+-   **Extraction:** **Google Gemini SDK** (Tiered Fallbacks: Flash-Lite -> Flash -> Pro).
+-   **Validation:** **Pydantic** - Strict schema enforcement on all LLM data payloads.
+-   **Processing:** **Python 3.11+** with Polars for CLI data previews.
 
 ## 4. Database Schema (Master-Alias Paradigm)
 
 ### `Institutions` (The Metadata Root)
-- `institution_id` (PK, String)
-- `name` (String)
-- `sector` (Enum: 'BANK', 'INSURANCE')
-- `country` (String)
-- `base_currency` (String)
-- `regulatory_regime` (String)
+-   `institution_id` (PK, String - e.g., Full Folder Name)
+-   `name` (String)
+-   `sector` (Enum: 'BANK', 'INSURANCE')
+-   `country`, `base_currency`, `regulatory_regime`
 
 ### `Core_Metrics` (The Immutable Center)
-- `metric_id` (PK, String)
-- `standardized_metric_name` (String)
-- `accounting_standard` (String, e.g., "IFRS 9", "IFRS 17")
-- `sector` (String: 'banking', 'insurance', 'universal')
-- `data_type` (Enum)
+-   `metric_id` (PK, String - e.g., `ifrs-full_Assets`)
+-   `standardized_metric_name` (String)
+-   `accounting_standard` (String, e.g., "IFRS 2025")
+-   `data_type` (Enum)
 
 ### `Metric_Aliases` (The Translation Engine)
-- `alias_id` (PK)
-- `metric_id` (FK to `Core_Metrics`)
-- `raw_term` (String)
-- `institution_id` (FK to `Institutions`)
+-   `alias_id` (PK)
+-   `metric_id` (FK to `Core_Metrics`)
+-   `raw_term` (String - Exact text from PDF)
+-   `institution_id` (FK to `Institutions`)
 
 ### `Fact_Financials` (The Target Tidy Data)
-- `fact_id` (PK)
-- `metric_id` (FK to `Core_Metrics`)
-- `institution_id` (FK to `Institutions`)
-- `reporting_period` (String, e.g., "2024")
-- `value` (Numeric)
-- `currency_code` (String, as reported)
-- `is_published` (Boolean: True if from report, False if computed)
-- `formula_id` (Nullable String, for computed facts)
-- `source_document` (String)
-- `source_page_number` (Integer)
+-   `fact_id` (PK)
+-   `metric_id` (FK to `Core_Metrics`)
+-   `institution_id` (FK to `Institutions`)
+-   `reporting_period` (String)
+-   `value` (Numeric)
+-   `is_published` (Boolean: True if extracted, False if computed)
+-   `source_document`, `source_page_number`
 
-### `Unmapped_Staging` (The Human Review Queue)
-- `staging_id` (PK)
-- `raw_term` (String)
-- `raw_value` (Numeric)
-- `institution_id` (String)
-- `reporting_period` (String)
+### `Unmapped_Staging` (The Terminal Review Queue)
+-   `staging_id` (PK)
+-   `raw_term`, `raw_value`, `institution_id`, `reporting_period`
 
-## 5. Operational Features
+## 5. Multi-Agent Workflow & Delegation
 
-### 5.1 The Variance Engine
-To ensure data integrity, the system implements a post-extraction computation layer. For every derived metric (e.g., ROE), the system:
-1.  Extracts the published ROE from the PDF (stored with `is_published=True`).
-2.  Independently calculates ROE from component facts (e.g., Net Profit / Total Equity) and stores it with `is_published=False`.
-3.  Flags any variance above 0.5% for manual audit.
+The system is designed for **Multi-Agent Isolation** to ensure modularity and prevent context bleed.
 
-### 5.2 Multi-Currency Scaling
-All values are stored in their native currency as found in the report. Multi-company benchmarking queries apply exchange rates at **runtime** (query-side) to prevent data staleness and allow for various FX sources.
+### 5.1 Numbered Workspaces
+-   `p00_Shared_Utils`: Common IO, logging, and date utilities.
+-   `p01_Data_Extraction`: PDF slicing, tiered LLM extraction, and JSON ingestion.
+-   `p02_Database_and_Mapping`: DuckDB schema, IFRS seeding, and deterministic mapping.
+-   `p04_Orchestration`: The "Glue" layer for cross-workspace workflow and CLI tools.
 
-### 5.3 Asynchronous Bulk Transacting
-All transformation scripts must accumulate results into memory and perform a single `conn.executemany()` bulk transaction to ensure performance and avoid I/O blocking in DuckDB.
+### 5.2 Agent Roles
+-   **Root Agent (Lead Architect):** PM role. Manages cross-component orchestration and overarching system standards. Forbidden from writing application code.
+-   **Workspace Agents (Engineers):** Specialized agents authorized to write/refactor code within their numbered directories, following `tasks.md` tickets.
+
+---
+
+## 6. Engineering Guarantees
+-   **Zero-Hallucination:** System MUST route unrecognized terms to `Unmapped_Staging` instead of guessing.
+-   **Bulk Transactions:** Use `conn.executemany()` for all database writes to ensure DuckDB performance.
+-   **Tiered Reliability:** Automatic fallback to heavier LLM models on 429 Resource Exhausted errors.

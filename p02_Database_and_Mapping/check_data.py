@@ -1,7 +1,10 @@
 import duckdb
 from loguru import logger
+import db_config
 
-def check_results(db_path="fs_factbase.duckdb"):
+def check_results(db_path=None):
+    if db_path is None:
+        db_path = db_config.get_db_path()
     conn = duckdb.connect(db_path)
     
     logger.info("--- Fact_Financials (Standardized Data) ---")

@@ -1,6 +1,20 @@
+from pathlib import Path
 import sys
-import os
-sys.path.append(os.getcwd())
+
+# Robust Pathing
+BASE_DIR = Path(__file__).parent.parent.resolve()
+APP_DIR = Path(__file__).parent.resolve()
+DB_PATH = BASE_DIR / "fs_factbase.duckdb"
+REPORTS_DIR = BASE_DIR / "data" / "raw" / "reports"
+
+# Ensure imports work regardless of CWD
+if str(BASE_DIR) not in sys.path:
+    sys.path.append(str(BASE_DIR))
+
+# Satisfy internal imports for workspace packages
+P02_DIR = BASE_DIR / "p02_Database_and_Mapping"
+if str(P02_DIR) not in sys.path:
+    sys.path.append(str(P02_DIR))
 
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.staticfiles import StaticFiles
@@ -9,7 +23,7 @@ import duckdb
 import os
 import threading
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from p02_Database_and_Mapping.batch_resolver import BatchResolver
 from p03_Analytics_Dashboard.sql_agent import FinancialSQLAgent
@@ -17,8 +31,6 @@ from p01_Data_Extraction.ingestor import sync_input_folder
 from p02_Database_and_Mapping.cluster_analyzer import ClusterAnalyzer
 from p04_Orchestration.orchestrator import run_pipeline
 from p03_Analytics_Dashboard.comparison_engine import FinancialComparisonEngine
-
-app = FastAPI(title="FS Factbase Dashboard")
 
 # Peer Group Models
 class PeerGroupCreate(BaseModel):
@@ -31,8 +43,7 @@ class ComparisonRequest(BaseModel):
     period: str = "2024"
     group_id: Optional[int] = None
 
-# Database Path
-DB_PATH = os.path.join(os.getcwd(), "fs_factbase.duckdb")
+app = FastAPI(title="FS Factbase Dashboard")
 
 # Global status for the extraction pipeline
 pipeline_status = {
@@ -399,12 +410,60 @@ async def create_peer_group(req: PeerGroupCreate):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Static Files
-app.mount("/static", StaticFiles(directory="p03_Analytics_Dashboard/static"), name="static")
+@app.get("/api/reports/batch-view")
+async def get_batch_view(metric_name: str):
+    """Returns a pivoted table for the 2021-2024 batch for a specific metric name."""
+    try:
+        conn = get_db_connection(read_only=True)
+        
+        # 1. Look up metric_id
+        metric = conn.execute("SELECT metric_id FROM Core_Metrics WHERE standardized_metric_name = ?", [metric_name]).fetchone()
+        if not metric:
+            conn.close()
+            raise HTTPException(status_code=404, detail=f"Metric '{metric_name}' not found in dictionary.")
+        
+        metric_id = metric[0]
+        
+        # 2. Get data for 2021-2024
+        query = """
+            SELECT institution_id, reporting_period, value
+            FROM Fact_Financials
+            WHERE metric_id = ? AND reporting_period IN ('2021', '2022', '2023', '2024')
+        """
+        rows = conn.execute(query, [metric_id]).fetchall()
+        
+        # 3. Pivot data: { institution_id: { year: value } }
+        pivot = {}
+        for inst_id, year, val in rows:
+            if inst_id not in pivot:
+                pivot[inst_id] = {"2021": None, "2022": None, "2023": None, "2024": None}
+            pivot[inst_id][year] = val
+        
+        # 4. Format for table: [{ institution: name, "2021": val, ... }]
+        result = []
+        for inst_id, years in pivot.items():
+            row = {"institution": inst_id.replace("_", " ").title()}
+            row.update(years)
+            result.append(row)
+            
+        conn.close()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Static Files & Report Serving
+app.mount("/static", StaticFiles(directory=str(APP_DIR / "static")), name="static")
+
+# Serve raw PDF reports
+if REPORTS_DIR.exists():
+    app.mount("/reports", StaticFiles(directory=str(REPORTS_DIR)), name="reports")
 
 @app.get("/")
 async def read_index():
-    return FileResponse("p03_Analytics_Dashboard/static/index.html")
+    index_path = APP_DIR / "static" / "index.html"
+    if not index_path.exists():
+        raise HTTPException(status_code=404, detail="index.html not found in static directory")
+    return FileResponse(str(index_path))
 
 if __name__ == "__main__":
     import uvicorn

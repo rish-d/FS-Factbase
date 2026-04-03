@@ -1,10 +1,14 @@
 import duckdb
 from loguru import logger
 from typing import List, Dict
+import db_config
 
 class BatchResolver:
-    def __init__(self, db_path="fs_factbase.duckdb"):
-        self.db_path = db_path
+    def __init__(self, db_path=None):
+        if db_path is None:
+            self.db_path = db_config.get_db_path()
+        else:
+            self.db_path = db_path
         
     def resolve_cluster_to_metric(self, target_metric_id: str, aliases: List[str], create_new_metric: bool = False, new_metric_details: Dict = None) -> bool:
         """

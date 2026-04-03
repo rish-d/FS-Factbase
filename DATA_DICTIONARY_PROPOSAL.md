@@ -23,6 +23,8 @@ To seed our `Core_Metrics` table, this initial proposal provides the critical 15
    - Fees, commissions, trading income, and other ancillary revenues.
 8. **Operating Expenses** (`total_operating_expenses`)
    - The aggregated cost of running the bank (staff, IT, premises, marketing).
+8.1. **Information Technology Expenses** (`information_technology_expenses`)
+   - A sub-metric of operating expenses, representing investment and upkeep of digital infrastructure (aligned with IFRS/IAS 1 presentation).
 9. **Impairment Charges / Specific Provisions** (`impairment_charges_for_credit_losses`)
    - The P&L hit taken in the current reporting period reflecting newly expected credit losses.
 10. **Profit Before Tax** (`profit_before_tax`)

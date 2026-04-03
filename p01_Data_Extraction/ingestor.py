@@ -1,20 +1,27 @@
 import os
 import re
 import shutil
+from pathlib import Path
 from loguru import logger
 
-def sync_input_folder(input_base="Bank Annual Reports input", target_base="data/raw/reports"):
+def get_project_root():
+    """Returns the absolute path to the project root."""
+    return Path(__file__).resolve().parent.parent
+
+def sync_input_folder(input_name="Bank Annual Reports input", target_rel_path="data/raw/reports"):
     """
     Scans the input folder for PDFs, extracts the year from filenames,
-    and copies them to the structured data/raw/reports directory.
+    and copies them to the structured data/raw/reports directory at the project root.
     """
-    if not os.path.exists(input_base):
+    root_dir = get_project_root()
+    input_base = root_dir / input_name
+    target_base = root_dir / target_rel_path
+
+    if not input_base.exists():
         logger.warning(f"Input base directory not found: {input_base}")
         return []
 
     synced_files = []
-    
-    # regex to find 4-digit years like 2021, 2022, etc.
     year_pattern = re.compile(r'(\d{4})')
 
     for root, dirs, files in os.walk(input_base):
@@ -24,9 +31,12 @@ def sync_input_folder(input_base="Bank Annual Reports input", target_base="data/
                 institution_id = os.path.basename(root)
                 
                 # If the root is the input_base itself, we don't have an institution_id
-                if institution_id == input_base:
+                if institution_id == input_name:
                     logger.warning(f"File {file} found in root of input folder. Skipping as institution is unknown.")
                     continue
+                
+                # Standardize institution_id to uppercase
+                institution_id = institution_id.upper()
                 
                 # Find the year in the filename
                 match = year_pattern.search(file)
@@ -36,19 +46,18 @@ def sync_input_folder(input_base="Bank Annual Reports input", target_base="data/
                 
                 year = match.group(1)
                 
-                # Target path: data/raw/reports/{Institution}/{Year}_fs.pdf
-                target_dir = os.path.join(target_base, institution_id)
+                # Target path: project_root/data/raw/reports/{Institution}/{Year}_fs.pdf
+                target_dir = target_base / institution_id
                 target_filename = f"{year}_fs.pdf"
-                target_path = os.path.join(target_dir, target_filename)
+                target_path = target_dir / target_filename
                 
                 # Check if it already exists
-                if os.path.exists(target_path):
-                    # logger.debug(f"File already synced: {target_path}")
+                if target_path.exists():
                     continue
                 
                 # Copy the file
-                os.makedirs(target_dir, exist_ok=True)
-                source_path = os.path.join(root, file)
+                target_dir.mkdir(parents=True, exist_ok=True)
+                source_path = Path(root) / file
                 try:
                     shutil.copy2(source_path, target_path)
                     logger.info(f"Synced: {file} -> {target_path}")

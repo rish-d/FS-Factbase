@@ -2,7 +2,7 @@ import os
 import json
 import time
 import requests
-from typing import List, Dict, Any, Union
+from typing import List, Dict, Any, Union, Optional
 from pydantic import BaseModel, Field, model_validator, field_validator, AliasChoices
 from loguru import logger
 from dotenv import load_dotenv
@@ -18,17 +18,17 @@ from pydantic import BaseModel, Field, model_validator
 
 class YearValue(BaseModel):
     year: int = Field(description="The reporting year, e.g., 2024", validation_alias="reporting_year")
-    value: float | None = Field(description="The numerical value.", validation_alias="amount")
-    month_end: int = Field(description="The month number of the reporting date (1-12).", default=12)
-    is_cumulative: bool = Field(description="True if the value is cumulative (e.g. Full Year, Balance Sheet), False if incremental (e.g. 3 months only).", default=True)
-    scaling_factor: int = Field(description="The multiplier found in headers (1, 1000, 1000000).", default=1)
-    confidence: float = Field(description="AI's confidence in this specific value (0.0 to 1.0)", default=1.0)
-    notes: str | None = Field(description="Brief notes on any extraction difficulty.", default=None)
+    value: Optional[float] = Field(description="The numerical value.", validation_alias="amount")
+    month_end: int = Field(description="The month number of the reporting date (1-12).")
+    is_cumulative: bool = Field(description="True if the value is cumulative (e.g. Full Year, Balance Sheet), False if incremental (e.g. 3 months only).")
+    scaling_factor: int = Field(description="The multiplier found in headers (1, 1000, 1000000).")
+    confidence: float = Field(description="AI's confidence in this specific value (0.0 to 1.0)")
+    notes: Optional[str] = Field(description="Brief notes on any extraction difficulty.")
 
 class LineItem(BaseModel):
     item: str = Field(description="The name of the header/account.", validation_alias=AliasChoices("item_name", "line_item", "item", "name"))
-    group: str | None = Field(description="Group/Category", default=None)
-    values: List[YearValue] = Field(description="List of values.", validation_alias=AliasChoices("data_points", "data", "values", "items"), default_factory=list)
+    group: Optional[str] = Field(description="Group/Category")
+    values: List[YearValue] = Field(description="List of values.", validation_alias=AliasChoices("data_points", "data", "values", "items"))
 
     @model_validator(mode='before')
     @classmethod
@@ -67,8 +67,8 @@ class LineItem(BaseModel):
 
 class Statement(BaseModel):
     statement_type: str = Field(description="e.g., 'Balance Sheet' or 'Income Statement'", validation_alias=AliasChoices("statement_type", "report_type", "type", "table_name"))
-    statement_name: str | None = Field(description="Specific name from document.", default=None)
-    items: List[LineItem] = Field(description="List of extracted row data.", validation_alias=AliasChoices("line_items", "data", "items"), default_factory=list)
+    statement_name: Optional[str] = Field(description="Specific name from document.")
+    items: List[LineItem] = Field(description="List of extracted row data.", validation_alias=AliasChoices("line_items", "data", "items"))
 
     @model_validator(mode='before')
     @classmethod
@@ -108,15 +108,16 @@ class Statement(BaseModel):
         return data
 
 class FSDataPayload(BaseModel):
-    institution_id: str | None = Field(description="The canonical ID of the institution", default=None)
-    reporting_period: str | None = Field(description="The primary reporting period, e.g., 2024", default=None)
-    source_document: str | None = Field(description="The name of the PDF file", default=None)
-    statements: Union[List[Statement], Dict[str, Statement]] = Field(
+    institution_id: Optional[str] = Field(description="The canonical ID of the institution")
+    reporting_period: Optional[str] = Field(description="The primary reporting period, e.g., 2024")
+    source_document: Optional[str] = Field(description="The name of the PDF file")
+    statements: List[Statement] = Field(
         description="The extracted financial statements.",
         validation_alias="financial_statements"
     )
 
 import google.generativeai as genai
+from google.api_core import exceptions as g_exceptions
 
 # Load Gemini API Key
 genai.configure(api_key=API_KEY)
@@ -124,6 +125,7 @@ genai.configure(api_key=API_KEY)
 def extract_financials_from_text(clipped_text: str, institution_id: str, reporting_period: str, filename: str, user_prompt: str) -> str:
     """
     Uses the Gemini SDK with native JSON Schema enforcement to extract financial data.
+    Implements exponential backoff for 429 RESOURCE_EXHAUSTED errors and model fallback.
     """
     if DUMMY_MODE:
         logger.warning("Running in DUMMY_MODE. Returning simulated JSON.")
@@ -157,33 +159,60 @@ def extract_financials_from_text(clipped_text: str, institution_id: str, reporti
         f"{clipped_text}"
     )
 
-    # Use Gemini 1.5 Flash for performance/cost balance, or 1.5 Pro for complex layouts
-    model_name = "gemini-1.5-flash"
-    
-    try:
-        model = genai.GenerativeModel(model_name=model_name)
-        logger.info(f"Targeting SDK: {model_name} with Structured Output")
+    # Model tiered hierarchy for resilience
+    trial_configs = [
+        {"name": "gemini-2.5-flash", "retries": 2, "use_schema": True},
+        {"name": "gemini-3.1-flash-lite", "retries": 2, "use_schema": True},
+        {"name": "gemini-2.5-flash-lite", "retries": 2, "use_schema": True},
+        {"name": "gemini-3.1-flash-lite-preview", "retries": 1, "use_schema": False}
+    ]
+
+    for config in trial_configs:
+        model_name = config["name"]
+        max_retries = config["retries"]
+        use_schema = config["use_schema"]
         
-        # Enforce structured output via Pydantic model
-        response = model.generate_content(
-            prompt_text,
-            generation_config={
-                "response_mime_type": "application/json",
-                "response_schema": FSDataPayload
-            },
-            request_options={"timeout": 120}
-        )
-        
-        if response.text:
-            logger.success(f"Successfully extracted data using {model_name}")
-            return response.text
-        else:
-            logger.error(f"Empty response from {model_name}")
-            return ""
-            
-    except Exception as e:
-        logger.error(f"Gemini SDK Error: {e}")
-        return ""
+        # Prepare the prompt for the specific model
+        current_prompt = prompt_text
+        if not use_schema:
+            current_prompt += "\n\nCRITICAL: Return valid JSON following the schema requirements for FSDataPayload."
+
+        for attempt in range(max_retries):
+            try:
+                model = genai.GenerativeModel(model_name=model_name)
+                logger.info(f"Targeting model: {model_name} (Attempt {attempt + 1}/{max_retries})")
+                
+                generation_config = {
+                    "response_mime_type": "application/json",
+                }
+                
+                if use_schema:
+                    generation_config["response_schema"] = FSDataPayload
+                    logger.debug(f"Enforcing schema for {model_name}")
+
+                response = model.generate_content(
+                    current_prompt,
+                    generation_config=generation_config,
+                    request_options={"timeout": 120}
+                )
+                
+                if response.text:
+                    logger.success(f"Successfully extracted data using {model_name}")
+                    return response.text
+                else:
+                    logger.error(f"Empty response from {model_name}")
+                    
+            except g_exceptions.ResourceExhausted:
+                wait_time = (2 ** attempt) * 10 # 10, 20, 40s
+                logger.warning(f"429 RESOURCE_EXHAUSTED on {model_name}. Backing off for {wait_time}s...")
+                time.sleep(wait_time)
+            except Exception as e:
+                logger.error(f"Unexpected error with {model_name}: {e}")
+                # For non-retriable errors, we break retry loop and try next model or fail
+                break 
+
+    logger.critical("All models and retries exhausted. Extraction failed.")
+    return ""
 
 def process_report(pdf_path: str, institution_id: str, reporting_period: str, user_prompt: str = "Balance Sheet and Income Statement"):
     filename = os.path.basename(pdf_path)

@@ -1,13 +1,30 @@
 import os
 import json
+import sys
 import duckdb
 from loguru import logger
-from p03_Analytics_Dashboard.trend_analyzer import TrendAnalyzer
+
+import db_config
+
+# Ensure project root is in sys.path for package imports
+if db_config.ROOT_DIR not in sys.path:
+    sys.path.append(db_config.ROOT_DIR)
+
+try:
+    from p03_Analytics_Dashboard.trend_analyzer import TrendAnalyzer
+except ImportError:
+    logger.warning("TrendAnalyzer not found. Using MockTrendAnalyzer.")
+    class TrendAnalyzer:
+        def __init__(self, db_path): pass
+        def analyze_value(self, *args): return 1.0, "No analyzer available"
 
 class StandardizedMapper:
-    def __init__(self, db_path="fs_factbase.duckdb"):
-        self.db_path = db_path
-        self.trend_analyzer = TrendAnalyzer(db_path)
+    def __init__(self, db_path=None):
+        if db_path is None:
+            self.db_path = db_config.get_db_path()
+        else:
+            self.db_path = db_path
+        self.trend_analyzer = TrendAnalyzer(self.db_path)
 
     def load_aliases(self, conn):
         """Loads all aliases into a lookup dictionary for fast access."""
@@ -16,15 +33,49 @@ class StandardizedMapper:
         # Key: (raw_term.lower(), institution_id)
         return {(r[0].lower(), r[1]): r[2] for r in rows}
 
+    def load_institutions(self, conn):
+        """Loads all institutions to support flexible matching."""
+        rows = conn.execute("SELECT institution_id, name FROM Institutions").fetchall()
+        # Map: lowcase_id -> id AND lowcase_name -> id
+        mapping = {}
+        for row in rows:
+            inst_id, name = row[0].lower(), row[1].lower()
+            mapping[inst_id] = row[0]
+            # Strip common suffixes for better fuzzy matching
+            base_name = name.replace(" berhad", "").replace(" holdings", "").replace(" group", "").strip()
+            mapping[name] = row[0]
+            mapping[name.replace(" ", "_")] = row[0]
+            mapping[base_name] = row[0]
+            mapping[base_name.replace(" ", "_")] = row[0]
+        return mapping
+
     def process_file(self, json_path):
         logger.info(f"Processing extraction result: {json_path}")
         
         with open(json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
 
-        institution_id = data.get("institution_id")
+        raw_inst_id = str(data.get("institution_id") or "").lower()
         source_doc = data.get("source_document")
         
+        conn = duckdb.connect(self.db_path)
+        
+        # Robust Institution ID Resolution
+        inst_map = self.load_institutions(conn)
+        institution_id = inst_map.get(raw_inst_id)
+        
+        if not institution_id:
+            # Fallback: try to derive from filename if json field is missing or generic
+            # e.g. "PUBLIC BANK BERHAD_2021_extracted.json"
+            basename = os.path.basename(json_path).lower().split("_20")[0]
+            base_name_stripped = basename.replace(" berhad", "").replace(" holdings", "").replace(" group", "").strip()
+            institution_id = inst_map.get(basename) or inst_map.get(basename.replace(" ", "_")) or inst_map.get(base_name_stripped) or inst_map.get(base_name_stripped.replace(" ", "_"))
+            
+        if not institution_id:
+            logger.error(f"Could not resolve institution for '{raw_inst_id}' in {json_path}")
+            conn.close()
+            return
+
         # Support both 'statements' and 'financial_statements' in the raw JSON
         statements = data.get("statements", data.get("financial_statements", []))
         
@@ -34,9 +85,9 @@ class StandardizedMapper:
 
         if not statements:
             logger.warning(f"No statements found in {json_path}")
+            conn.close()
             return
 
-        conn = duckdb.connect(self.db_path)
         alias_map = self.load_aliases(conn)
         
         facts_to_insert = []
@@ -84,8 +135,10 @@ class StandardizedMapper:
                     if year is None or val is None:
                         continue
 
-                    # Lookup
+                    # Lookup: Try specific institution first, then global (None)
                     metric_id = alias_map.get((raw_term.lower(), institution_id))
+                    if not metric_id:
+                        metric_id = alias_map.get((raw_term.lower(), None))
 
                     if metric_id:
                         # SCALE ENFORCEMENT: Normalize raw value by scaling factor
@@ -131,7 +184,8 @@ class StandardizedMapper:
         logger.success(f"Finished {json_path}: Mapped {len(facts_to_insert)}, Unmapped {len(staging_to_insert)}")
 
 def run_mapping():
-    interim_dir = "data/interim/extracted_metrics"
+    # Use db_config.ROOT_DIR to find the data folder reliably
+    interim_dir = os.path.join(db_config.ROOT_DIR, "data", "interim", "extracted_metrics")
     if not os.path.exists(interim_dir):
         logger.error(f"Directory not found: {interim_dir}")
         return

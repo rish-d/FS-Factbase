@@ -299,13 +299,42 @@
             <div class="tab" onclick="showSection('unmapped')">Unmapped Staging</div>
             <div class="tab" onclick="showSection('metrics')">Data Dictionary</div>
             <div class="tab" onclick="showSection('diagnostics')">AI Diagnostics</div>
+            <div class="tab" onclick="showSection('batch_results')">Batch Results (2021-2024) 📅</div>
             <div class="tab" onclick="showSection('intelligence')">Intelligence ✨</div>
             <div class="tab" onclick="showSection('benchmarking')">Benchmarking 📊</div>
             <div class="tab" onclick="showSection('control')">Control Center ⚙️</div>
             <div class="tab" onclick="showSection('chat')">Data Chat 💬</div>
         </div>
 
-        <!-- Facts Section -->
+        <!-- Batch Results Section -->
+        <div id="batch_results" class="section">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 2rem;">
+                    <div>
+                        <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Batch Analysis (2021-2024)</h2>
+                        <p style="color: var(--text-dim); font-size: 0.85rem;">Multi-year performance comparison for key operational metrics.</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="fetchBatchResults('Information technology expenses')" class="btn-primary" style="font-size: 0.8rem; background: var(--card-bg); border: 1px solid var(--accent-primary); color: var(--accent-primary);">💻 IT Spend</button>
+                        <button onclick="fetchBatchResults('Total customer deposits')" class="btn-primary" style="font-size: 0.8rem; background: var(--card-bg); border: 1px solid var(--accent-secondary); color: var(--accent-secondary);">🏦 Deposits</button>
+                    </div>
+                </div>
+                <div id="batch_results_container">
+                    <table id="batchTable">
+                        <thead>
+                            <tr>
+                                <th>Institution</th>
+                                <th>2021</th>
+                                <th>2022</th>
+                                <th>2023</th>
+                                <th>2024</th>
+                            </tr>
+                        </thead>
+                        <tbody><!-- Data injected here --></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
         <div id="facts" class="section active">
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
@@ -735,7 +764,11 @@
                         <td style="text-transform: capitalize;">${f.institution.replace(/_/g, ' ')}</td>
                         <td>${f.period}</td>
                         <td class="value cursor-pointer" onclick="editFactValue(${f.fact_id}, ${f.value})">${formatNumber(f.value)} ✎</td>
-                        <td style="color: var(--text-dim); font-size: 0.75rem;">${f.source_doc} (p.${f.page})</td>
+                        <td style="color: var(--text-dim); font-size: 0.75rem;">
+                            <a href="/reports/${f.source_doc}" target="_blank" style="color: inherit; text-decoration: none; border-bottom: 1px dotted var(--text-dim);">
+                                ${f.source_doc} (p.${f.page})
+                            </a>
+                        </td>
                         <td>
                             <button onclick="deleteFact(${f.fact_id})" class="btn-icon">🗑️</button>
                         </td>
@@ -1071,10 +1104,38 @@
             }
         };
 
+        async function fetchBatchResults(metricName) {
+            try {
+                const results = await apiCall(`/api/reports/batch-view?metric_name=${encodeURIComponent(metricName)}`);
+                const tbody = document.querySelector('#batchTable tbody');
+                
+                if (results.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-dim);">No data found for this metric in the 2021-2024 range.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = results.map(r => `
+                    <tr>
+                        <td style="font-weight: 600;">${r.institution}</td>
+                        <td class="value">${r['2021'] ? formatNumber(r['2021']) : '-'}</td>
+                        <td class="value">${r['2022'] ? formatNumber(r['2022']) : '-'}</td>
+                        <td class="value">${r['2023'] ? formatNumber(r['2023']) : '-'}</td>
+                        <td class="value">${r['2024'] ? formatNumber(r['2024']) : '-'}</td>
+                    </tr>
+                `).join('');
+                
+                // Show section if not already
+                showSection('batch_results');
+            } catch (err) {}
+        }
+
         // Initialize
         fetchData();
         setInterval(fetchData, 8000);
         setInterval(checkPipelineStatus, 3000);
+        
+        // Load initial batch results
+        setTimeout(() => fetchBatchResults('Information technology expenses'), 1000);
     </script>
 </body>
 </html>

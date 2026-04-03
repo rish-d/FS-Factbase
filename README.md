@@ -1,69 +1,45 @@
-# FS Factbase: Autonomous Financial ETL Pipeline
+# FS Factbase: Deterministic Financial ETL Pipeline (v9)
 
-## 🚩 PROJECT ROADMAP & STATUS (BIRD'S EYE VIEW)
+## 🚩 PROJECT ROADMAP & STATUS
 
-| Phase | Description | Status | Reference |
+| Phase | Description | Status | Target Scripts |
 | :--- | :--- | :--- | :--- |
-| **Phase 1** | **Design & Standardization** | ✅ DONE | `ARCHITECTURE.md`, `DATA_DICTIONARY_PROPOSAL.md` |
-| **Phase 2** | **Database Foundations** | ✅ DONE | `db/seed_data.py`, `fs_factbase.duckdb` |
-| **Phase 3** | **Precision AI Extraction** | ✅ DONE | `extractors/pdf_extractor.py` |
-| **Phase 4** | **Master-Alias Mapping** | ✅ DONE | `transformers/mapper.py` |
-| **Phase 5** | **Agentic Text-to-SQL** | ✅ DONE | `analytics/sql_agent.py` |
-| **Phase 6** | **Self-Correction Loop** | ✅ DONE | `db/audit_log.py` |
+| **Phase 0** | **Decommissioning & Cleanup** | ✅ DONE | `.archive/` |
+| **Phase 1** | **IFRS Dictionary Seeding** | 🏗️ ACTIVE | `p02.../seed_data.py` |
+| **Phase 2** | **DuckDB Foundation** | ✅ DONE | `p02.../init_db.py` |
+| **Phase 3** | **Extraction with Fallbacks** | 🏗️ ACTIVE | `p01.../pdf_extractor.py` |
+| **Phase 4** | **Deterministic Mapping** | 🏗️ ACTIVE | `p02.../mapper.py` |
+| **Phase 5** | **CLI HITL & Verification** | 🏗️ PLANNED | `cli_resolver.py` |
 
-## 🚀 Key Autonomous Features
+## 🚀 Core Architectural Mandates
 
-- **Precision Targeting:** `text_clipper.py` uses semantic scoring to find financial tables in 300+ page PDFs, bypassing token limits.
-- **Master-Alias Paradigm:** A deterministic mapping layer that transforms inconsistent banking terms into IFRS-compliant core metrics.
-- **Semantic Clustering:** Automatically identifies and groups similar unmapped terms for one-click dictionary expansion.
-- **AI Diagnostics:** Learns from human-in-the-loop corrections to improve extraction confidence and trend analysis.
-- **Conversational Analytics:** Integrated Text-to-SQL agent for natural language querying of the DuckDB factbase.
+-   **Master-Alias Paradigm:** A deterministic mapping layer that transforms inconsistent banking terms (e.g., "Financing and advances") into IFRS-compliant core metrics (e.g., "Gross Loans").
+-   **Universal Reader (LLM):** LLMs are used strictly for raw extraction into structured JSON. No autonomous mapping or accounting "guessing" is permitted.
+-   **Tiered Fallback Mechanism:** Survival strategy for API rate-limits. Automatically switches from High-Throughput models (`gemini-2.0-flash-lite`) to Reliable/Deep-Reasoning models if quotas are exhausted.
+-   **Terminal-First Verification:** Lightweight CLI tools replace heavy dashboards for human-in-the-loop (HITL) auditing and mapping.
 
 > [!NOTE]
-> For a detailed technical breakdown of each phase, agent instructions, and current blockers, please see the [Master Plan](file:///.agents/MASTER_PLAN.md).
+> For a detailed technical breakdown of each phase and agent instructions, please see the [Master Plan](file:///d:/FS%20Factbase/MASTER_PLAN.md).
 
 ---
 
-## 1. THE NORTH STAR & ULTIMATE END-STATE
-You are acting as the Lead Data Architect. We are building an automated, highly accurate ETL pipeline to extract financial tables from public Annual Reports (starting with PDFs of Malaysian banks) and transform them into a pristine database.
+## 1. THE NORTH STAR
+The ultimate deliverable is a pristine, **100% deterministic, auditable DuckDB database** (`fs_factbase.duckdb`) aligned to the official IFRS Accounting Taxonomy.
 
-The Ultimate Goal: This data will not just be read by humans; it is being purpose-built to act as the foundation for an LLM-driven application. We will eventually connect an AI to this database using Text-to-SQL to generate instant, mathematically flawless benchmarking insights, business cases, and target operating models for consulting engagements.
+The database is built to act as a high-fidelity foundation for downstream benchmarking and BI tools. We prioritize **mathematical flawless integrity** over experimental features.
 
-The Threat to the Goal: LLMs are notoriously bad at doing raw math on messy data. Furthermore, financial PDFs contain deeply inconsistent terminology across different institutions (e.g., Bank A uses "Advances to customers"; Bank B uses "Gross Loans"). If our extraction pipeline guesses or hallucinates these mappings, our database becomes untrustworthy, and the final Text-to-SQL application fails. 100% data integrity is our highest priority. 
+## 2. THE "MASTER-ALIAS" PARADIGM
+To solve terminology inconsistency across different institutions (e.g., Bank A vs Bank B), the architecture strictly adheres to:
+1.  **The Immutable Core:** Standardized metrics aligned with IFRS 2025.
+2.  **The Translation Engine:** A mapping layer linking bespoke PDF text to core metrics.
+3.  **The Zero-Hallucination Guardrail:** Unrecognized terms are routed to an `Unmapped_Staging` queue for manual CLI resolution.
 
-2. THE ARCHITECTURAL MANDATE: THE "MASTER-ALIAS" PARADIGM
-To solve the terminology inconsistency, your architecture must strictly adhere to a "Master-Alias" conceptual framework. You are responsible for designing the optimal database schema to support this, but it must obey these logical rules:
+## 3. ENGINEERING PRINCIPLES
+-   **Tidy Data:** Optimized for high-performance analytical querying in DuckDB.
+-   **Traceability:** Every data point tracks its `source_document` and `source_page_number`.
+-   **Bulk Operations:** Strict use of `conn.executemany()` to ensure OLAP performance.
+-   **Local-First:** Built for robust local execution without heavy cloud dependencies.
 
-- The Immutable Core: The primary data tables must only store strictly standardized, universal metric names aligned with international accounting standards (e.g., IFRS 9 / Basel III for banking). 
-
-- The Translation Engine: The system must contain a mapping layer that links bespoke terminology scraped from individual PDFs to the standardized core metrics.
-
-- The Zero-Hallucination Guardrail: When the extraction logic encounters a line item it has never seen before, it is strictly forbidden from autonomously creating a new core metric. The system must apply a "Soft Halt": processing the rest of the document but isolating that specific unrecognized data point in an `Unmapped_Staging` queue for batch "Human-in-the-Loop" review and manual mapping.
-
-Note: We are starting with the Banking sector, but your architecture must be globally scalable and adaptable enough to eventually handle Insurance (IFRS 17) and international institutions without requiring a structural rewrite.
-
-3. ENGINEERING PRINCIPLES & TECH STACK CONSTRAINTS
-I am not prescribing the specific libraries you must use, but your proposed tech stack and the coding standards you establish must adhere to these principles:
-
-- Tidy Data: The final storage format must be heavily optimized for Text-to-SQL querying (flat, normalized, and strictly typed). Do not optimize for human readability in the database layer; we will build presentation views/exports later.
-
-- Portability & Independence: Keep the stack lightweight, robust, and local-first for now. I want to avoid heavy cloud infrastructure bloat during this build phase.
-
-- AI-Assisted Raw Extraction: Instead of brittle regex/heuristic parsing, the initial extraction of complex banking tables from PDFs should leverage LLMs (e.g., Gemini 1.5 Pro) or Document AI APIs to produce structured JSON. However, the subsequent mapping phase must remain 100% deterministic Python/SQL.
-
-- Idempotency & Modularity: Do not write monolithic, shortcut scripts. Extraction, mapping, and database insertion must be distinct, repeatable steps. If a script fails halfway through a 300-page PDF, it should be able to restart cleanly.
-
-- Traceability: Every data point in the final database should ideally have a paper trail (e.g., tracking which source document, year, and page number it came from) to ensure we can audit the AI's extraction accuracy.
-
-4. PHASE 1: PLANNING & STANDARDIZATION (YOUR IMMEDIATE TASK)
-Do not write any PDF extraction code or database creation scripts yet. Your first task is to set up the rules of engagement and propose the blueprint. 
-
-Please analyze the constraints above and generate the following Artifacts:
-
-- ARCHITECTURE.md: Propose the technical architecture, the specific tech stack/libraries you recommend using to achieve our goals safely, and how you plan to structure the database to support the Master-Alias paradigm.
-
-- CODING_STANDARDS.md: Establish the strict coding rules, error-handling protocols, and logging conventions you will use to ensure this pipeline remains robust and avoids taking "quick and dirty" shortcuts.
-
-- DATA_DICTIONARY_PROPOSAL.md: Research and propose a starting list of the 10-15 most critical standardized IFRS banking metrics we should use to seed our "Immutable Core".
-
-Review these requirements and provide the artifacts. If you see any logical flaws in the requested approach, point them out now.
+## 🤖 Multi-Agent Workflow (Ticket-Driven)
+We use a **Multi-Agent Orchestration** pattern to manage the repository. Work is delegated via `tasks.md` tickets to specialized engineers operating in isolated, numbered workspaces (p00-p04).
+, point them out now.
