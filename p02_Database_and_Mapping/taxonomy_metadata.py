@@ -47,25 +47,35 @@ class TaxonomyMetadataParser:
             'xlink': 'http://www.w3.org/1999/xlink'
         }
 
-        # Extract the role from the filename or the roleRef
-        # Filenames like pre_ias_1_2025-03-27_role-210000.xml
+        # More robust role detection: look for the presentationLink's role
+        # or fall back to the filename if it matches the standard pattern
         filename = file_path.name
+        role_id = None
+        
         if "_role-" in filename:
             role_id = filename.split("_role-")[-1].replace(".xml", "")
         else:
+            # Look inside for presentationLink role
+            plink = root.find('.//link:presentationLink', ns)
+            if plink is not None:
+                role_uri = plink.get('{http://www.w3.org/1999/xlink}role')
+                if role_uri:
+                    role_id = role_uri.split('/')[-1]
+
+        if not role_id:
             return
 
-        # We only care about major financial statement roles for partitioning
-        valid_roles = ["210000", "310000", "320000", "410000", "420000", "510000", "520000", "610000"]
-        if role_id not in valid_roles:
-            return
-
+        # Simplified mapping: normalize role IDs to broad categories
+        # Balance Sheet: 210000, 220000
+        # Income Statement: 310000, 320000, 510000 (Equity statement often contains income items)
+        # Cash Flow: 520000, 610000
+        
         # Find all locators (concepts) in this role
         for loc in root.findall('.//link:loc', ns):
             href = loc.get('{http://www.w3.org/1999/xlink}href')
             if href:
+                # Format: "base_schema.xsd#concept_name"
                 concept_id = href.split('#')[-1]
-                # A concept can appear in multiple roles, but we assign it to the first major FS role it appears in
                 if concept_id not in self.concept_to_role:
                     self.concept_to_role[concept_id] = role_id
 
