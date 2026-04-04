@@ -26,6 +26,7 @@ class YearValue(BaseModel):
     scaling_factor: int = Field(description="The multiplier found in headers (1, 1000, 1000000).")
     confidence: float = Field(description="AI's confidence in this specific value (0.0 to 1.0)")
     source_page_number: Optional[int] = Field(None, description="The specific page number where this value was found.", validation_alias=AliasChoices("page_number", "source_page_number"))
+    entity_scope: str = Field(default="Group", description="Scope of the figures: 'Group', 'Bank', or 'Company'. Defaults to 'Group'")
     notes: Optional[str] = Field(None, description="Brief notes on any extraction difficulty.")
 
 class LineItem(BaseModel):
@@ -50,10 +51,12 @@ class LineItem(BaseModel):
                 continue
             
             # Extract year from key if possible
-            match = re.search(r"(\d{4})", key)
+            match = re.search(r"(GROUP|BANK|COMPANY)?.*?(\d{4})", key.upper())
             if match and (isinstance(val, (int, float)) or val is None):
-                year = int(match.group(1))
-                extracted_values.append({"reporting_year": year, "amount": val})
+                scope_prefix = match.group(1)
+                year = int(match.group(2))
+                entity_scope = scope_prefix.capitalize() if scope_prefix else "Group"
+                extracted_values.append({"reporting_year": year, "amount": val, "entity_scope": entity_scope})
         
         if extracted_values:
             data["data_points"] = extracted_values
@@ -108,6 +111,7 @@ class Statement(BaseModel):
                 if "is_cumulative" not in dp: dp["is_cumulative"] = is_cumulative
                 if "scaling_factor" not in dp: dp["scaling_factor"] = scaling_factor
                 if "source_page_number" not in dp and "page_number" not in dp: dp["source_page_number"] = source_page_number
+                if "entity_scope" not in dp: dp["entity_scope"] = "Group"
         
         return data
 
@@ -140,6 +144,82 @@ def clean_json_output(raw_text: str) -> str:
     cleaned = re.sub(r"```\s*", "", cleaned)
     return cleaned.strip()
 
+MANUAL_SCHEMA = {
+    "type": "OBJECT",
+    "properties": {
+        "institution_id": {"type": "STRING"},
+        "reporting_period": {"type": "STRING"},
+        "source_document": {"type": "STRING"},
+        "source_page_number": {"type": "INTEGER"},
+        "statements": {
+            "type": "ARRAY",
+            "items": {
+                "type": "OBJECT",
+                "properties": {
+                    "statement_type": {"type": "STRING"},
+                    "statement_name": {"type": "STRING"},
+                    "items": {
+                        "type": "ARRAY",
+                        "items": {
+                            "type": "OBJECT",
+                            "properties": {
+                                "item": {"type": "STRING"},
+                                "group": {"type": "STRING"},
+                                "values": {
+                                    "type": "ARRAY",
+                                    "items": {
+                                        "type": "OBJECT",
+                                        "properties": {
+                                            "reporting_year": {"type": "INTEGER"},
+                                            "amount": {"type": "NUMBER"},
+                                            "month_end": {"type": "INTEGER"},
+                                            "is_cumulative": {"type": "BOOLEAN"},
+                                            "scaling_factor": {"type": "INTEGER"},
+                                            "confidence": {"type": "NUMBER"},
+                                            "page_number": {"type": "INTEGER"},
+                                            "entity_scope": {"type": "STRING"},
+                                            "notes": {"type": "STRING"}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+def build_extraction_prompt(clipped_text: str, institution_id: str, reporting_period: str, filename: str, user_prompt: str, include_schema_text: bool = False) -> str:
+    prompt_text = (
+        "TASK: Extract standardized financial data from the provided text snippet.\n"
+        f"INSTITUTION: {institution_id}\n"
+        f"PRIMARY REPORTING PERIOD: {reporting_period}\n"
+        f"SOURCE FILE: {filename}\n"
+        f"USER TARGET: {user_prompt}\n\n"
+        "### EXTRACTION RULES ###\n"
+        "1. RAW SCALING: Extract the RAWEST numerical value exactly as it appears in the table. Identify multipliers from headers (RM'000, Millions) and store as 'scaling_factor' metadata. DO NOT multiply the value yourself.\n"
+        "2. TEMPORAL & ENTITY: Detect 'month_end' (1-12) and 'is_cumulative' (True for annual/balance sheet). If the table presents multiple entity columns (e.g., 'Group' vs 'Bank'/'Company'), extract figures for BOTH and tag them appropriately in the 'entity_scope' field. If only one set of figures is present, assume it is 'Group'.\n"
+        "3. PRECISION: Extract ONLY from the provided text. Do not hallucinate data points.\n"
+        "4. TRACEABILITY: Locate the '--- TARGET FINANCIAL PAGE {page_num} ---' markers in the text. For EACH extracted data point (YearValue), you MUST set 'source_page_number' to the {page_num} specified in the marker immediately preceding that section of text.\n"
+        "5. STRUCTURE: Comply exactly with the target JSON schema. Keep 'statement_type' and 'statement_name' SHORT AND CONCISE (e.g., 'Balance Sheet'). DO NOT include long descriptions in these fields.\n\n"
+    )
+
+    if include_schema_text:
+        prompt_text += (
+            "6. STRICT NO-FLUFF JSON ONLY: Return ONLY the raw JSON string matching the schema below. Do not provide ANY conversational text before or after (e.g. no 'Here is the extracted JSON'). Do not use markdown backticks around the JSON.\n\n"
+            "### TARGET JSON SCHEMA ###\n"
+            f"{json.dumps(MANUAL_SCHEMA, indent=2)}\n\n"
+        )
+        
+    prompt_text += (
+        "### TEXT SNIPPET ###\n"
+        f"{clipped_text}"
+    )
+
+    return prompt_text
+
 def extract_financials_from_text(clipped_text: str, institution_id: str, reporting_period: str, filename: str, user_prompt: str) -> str:
     """
     Uses the Gemini SDK with native JSON Schema enforcement to extract financial data.
@@ -162,28 +242,13 @@ def extract_financials_from_text(clipped_text: str, institution_id: str, reporti
             ]
         })
 
-    prompt_text = (
-        "TASK: Extract standardized financial data from the provided text snippet.\n"
-        f"INSTITUTION: {institution_id}\n"
-        f"PRIMARY REPORTING PERIOD: {reporting_period}\n"
-        f"SOURCE FILE: {filename}\n"
-        f"USER TARGET: {user_prompt}\n\n"
-        "### EXTRACTION RULES ###\n"
-        "1. RAW SCALING: Extract the RAWEST numerical value exactly as it appears in the table. Identify multipliers from headers (RM'000, Millions) and store as 'scaling_factor' metadata. DO NOT multiply the value yourself.\n"
-        "2. TEMPORAL: Detect 'month_end' (1-12) and 'is_cumulative' (True for annual/balance sheet).\n"
-        "3. PRECISION: Extract ONLY from the provided text. Do not hallucinate data points.\n"
-        "4. TRACEABILITY: Locate the '--- TARGET FINANCIAL PAGE {page_num} ---' markers in the text. For EACH extracted data point (YearValue), you MUST set 'source_page_number' to the {page_num} specified in the marker immediately preceding that section of text. If you extracted data from multiple pages, ensure each point is attributed to its correct source page.\n"
-        "5. STRUCTURE: Comply exactly with the target JSON schema.\n\n"
-        "### TEXT SNIPPET ###\n"
-        f"{clipped_text}"
-    )
+    prompt_text = build_extraction_prompt(clipped_text, institution_id, reporting_period, filename, user_prompt, include_schema_text=False)
 
     # Model tiered hierarchy for resilience
     trial_configs = [
-        {"name": "gemini-2.5-flash-lite", "retries": 2, "use_schema": True},
+        {"name": "gemini-2.0-flash", "retries": 3, "use_schema": True},
         {"name": "gemini-2.0-flash-lite", "retries": 2, "use_schema": True},
-        {"name": "gemini-2.0-flash", "retries": 2, "use_schema": True},
-        {"name": "gemini-2.5-flash", "retries": 1, "use_schema": True}
+        {"name": "gemini-1.5-flash", "retries": 2, "use_schema": True}
     ]
 
     for config in trial_configs:
@@ -206,51 +271,7 @@ def extract_financials_from_text(clipped_text: str, institution_id: str, reporti
                 }
                 
                 # GenAI-native schema dict (Proto compatible)
-                manual_schema = {
-                    "type": "OBJECT",
-                    "properties": {
-                        "institution_id": {"type": "STRING"},
-                        "reporting_period": {"type": "STRING"},
-                        "source_document": {"type": "STRING"},
-                        "source_page_number": {"type": "INTEGER"},
-                        "statements": {
-                            "type": "ARRAY",
-                            "items": {
-                                "type": "OBJECT",
-                                "properties": {
-                                    "statement_type": {"type": "STRING"},
-                                    "statement_name": {"type": "STRING"},
-                                    "items": {
-                                        "type": "ARRAY",
-                                        "items": {
-                                            "type": "OBJECT",
-                                            "properties": {
-                                                "item": {"type": "STRING"},
-                                                "group": {"type": "STRING"},
-                                                "values": {
-                                                    "type": "ARRAY",
-                                                    "items": {
-                                                        "type": "OBJECT",
-                                                        "properties": {
-                                                            "reporting_year": {"type": "INTEGER"},
-                                                            "amount": {"type": "NUMBER"},
-                                                            "month_end": {"type": "INTEGER"},
-                                                            "is_cumulative": {"type": "BOOLEAN"},
-                                                            "scaling_factor": {"type": "INTEGER"},
-                                                            "confidence": {"type": "NUMBER"},
-                                                            "page_number": {"type": "INTEGER"},
-                                                            "notes": {"type": "STRING"}
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                manual_schema = MANUAL_SCHEMA
     
                 if use_schema:
                     generation_config["response_schema"] = manual_schema

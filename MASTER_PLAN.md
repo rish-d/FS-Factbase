@@ -10,10 +10,12 @@ This document is the absolute ground truth for the FS Factbase ETL pipeline. It 
     *   **Rationale:** Custom UIs and experimental AI inference introduce massive technical debt and instability. The database is the product; downstream BI tools will handle visualization.
 2.  **The "Master-Alias" Paradigm (Structure vs. Semantics):** We use LLMs for extraction, but strictly Python/SQL for mapping. 
     *   **Rationale:** LLMs are powerful "Universal Readers" capable of navigating diverse PDF layouts to output strict JSON schemas, but they are non-deterministic accountants. By extracting the exact printed text (e.g., "Financing and advances") and using a deterministic Python mapper to translate it to an IFRS standard (e.g., "Gross Loans"), we prevent hallucinated accounting and guarantee an auditable paper trail to the source page.
-3.  **The API Quota Survival Strategy:** The extraction phase uses a tiered fallback mechanism heavily weighted toward "Lite" models. 
-    *   **Rationale:** Free Tier APIs (like Google AI Studio) severely rate-limit premium models, causing 429 Resource Exhausted crashes. We default to high-throughput models (`gemini-2.0-flash-lite`) to survive batch processing, only falling back to heavier models if extraction fails.
-4.  **The Role of the Orchestrator:** The `orchestrator.py` script remains as a lightweight workflow manager. 
-    *   **Rationale:** Separation of Concerns. The extraction layer (p01) and database layer (p02) must remain completely decoupled. The orchestrator acts as the "glue" that loops through files, passes the interim JSON between folders, and enforces critical API rate-limiting pauses.
+3.  **The API Quota Survival Strategy (Tiered & Offline):** The extraction phase uses a tiered fallback mechanism and a manual "Fast-Track" bypass.
+    *   **Rationale:** Free Tier APIs are severely rate-limited. We survive batch processing via "Lite" models and the **Offline Fast-Track Mode** (generating prompts for Gemini Web UI). This ensures high-priority reports can move through the pipeline even when API quotas are exhausted.
+4.  **Local-First Inference (Future-Proofing):** We are transitioning toward Local LLM support (Ollama/Llama 3).
+    *   **Rationale:** To achieve 24/7 autonomous extraction without API costs or token caps, shifting the "Universal Reader" role to local hardware is mandatory.
+5.  **The Role of the Orchestrator:** The `orchestrator.py` script remains as a lightweight workflow manager. 
+    *   **Rationale:** Separation of Concerns. The extraction layer (p01) and database layer (p02) must remain completely decoupled. The orchestrator acts as the "glue" that loops through files, enforces the "Claimed" status for manual runs, and manages rate-limiting pauses.
 
 ## 🏁 High-Level Roadmap & Status
 
@@ -25,6 +27,7 @@ This document is the absolute ground truth for the FS Factbase ETL pipeline. It 
 | **Phase 3** | **Extraction with Fallbacks** | ✅ DONE | `p01.../pdf_extractor.py` |
 | **Phase 4** | **Deterministic Mapping** | ✅ DONE | `p02.../mapper.py` |
 | **Phase 5** | **CLI HITL & Verification** | ✅ DONE | `cli_resolver.py`, `view_db.py` |
+| **Phase 6** | **Local LLM Inference** | 🏗️ PLANNED | `llm_factory.py`, `ollama` |
 
 ---
 
@@ -55,7 +58,13 @@ This document is the absolute ground truth for the FS Factbase ETL pipeline. It 
 ## 🏗️ Phase 5: CLI HITL & Verification (New)
 **Goal:** Build lightweight terminal tools for verification and queue clearing.
 *   **Smart CLI Resolver (`cli_resolver.py`):** Python script to query `Unmapped_Staging`. Integrates clustering logic to group similar terms for bulk mapping.
-*   **Terminal Auditing (`view_db.py`):** Polars-based terminal script to print balance sheet sum-checks and table previews directly to the CLI.
+*   **Terminal Auditing (`view_db.py` / `view_facts.py`):** Lightweight terminal scripts to audit balance sheet sum-checks and explore standardized facts across banks and years.
+
+## 🏗️ Phase 6: Local-First Inference (Upcoming)
+**Goal:** Eliminate API dependencies by routing extraction and reconciliation to local models.
+*   **Unified LLM Factory:** Implement `llm_factory.py` to abstract providers (Gemini vs. Ollama).
+*   **Hardware-Aware Extraction:** Configure high-throughput local models (Llama 3.1 8B, DeepSeek) to run constant extraction loops without cost.
+*   **Web UI Sync:** Fully integrate the `--offline-prep` and `--offline-ingest` workflows to ensure manual Web UI data is treated as first-class citizens in the queue.
 
 ---
 

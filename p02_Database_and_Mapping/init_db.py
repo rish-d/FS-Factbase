@@ -84,9 +84,10 @@ def init_database(db_path=None):
             month_end INTEGER,
             is_cumulative BOOLEAN DEFAULT TRUE,
             scaling_factor INTEGER DEFAULT 1,
+            entity_scope VARCHAR DEFAULT 'Group',
             FOREIGN KEY (metric_id) REFERENCES Core_Metrics(metric_id),
             FOREIGN KEY (institution_id) REFERENCES Institutions(institution_id),
-            UNIQUE (institution_id, metric_id, reporting_period, is_published)
+            UNIQUE (institution_id, metric_id, reporting_period, entity_scope, is_published)
         );
     """)
     logger.info("Table created: Fact_Financials")
@@ -110,7 +111,8 @@ def init_database(db_path=None):
             retry_count INTEGER DEFAULT 0,
             last_attempt_date TIMESTAMP,
             requires_human_review BOOLEAN DEFAULT FALSE,
-            statement_type VARCHAR -- e.g., 'Balance Sheet'
+            statement_type VARCHAR, -- e.g., 'Balance Sheet'
+            entity_scope VARCHAR DEFAULT 'Group'
         );
     """)
     logger.info("Table created: Unmapped_Staging")
@@ -127,6 +129,7 @@ def init_database(db_path=None):
             source_document VARCHAR,
             page_number INTEGER,
             reason VARCHAR,
+            entity_scope VARCHAR DEFAULT 'Group',
             timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (institution_id) REFERENCES Institutions(institution_id)
         );

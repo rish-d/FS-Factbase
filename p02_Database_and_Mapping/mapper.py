@@ -145,6 +145,7 @@ class StandardizedMapper:
                         scaling_factor = val_obj.get("scaling_factor", 1)
                         is_published = val_obj.get("is_published", True)
                         currency = val_obj.get("currency", val_obj.get("currency_code", "MYR"))
+                        entity_scope = val_obj.get("entity_scope", "Group")
                         # Traceability: Standardize page resolution
                         page_num = val_obj.get("source_page_number", val_obj.get("page_number", stmt.get("source_page_number", data.get("source_page_number", 0))))
                         
@@ -164,6 +165,7 @@ class StandardizedMapper:
                         scaling_factor = 1
                         is_published = True
                         currency = "MYR"
+                        entity_scope = "Group"
                         page_num = data.get("source_page_number", 0)
 
                     if year is None or val is None:
@@ -181,11 +183,11 @@ class StandardizedMapper:
                         metric_id = alias_map.get((raw_term.lower(), None))
 
                     if metric_id:
-                        # [metric_id, inst_id, year, val, curr, published, formula, doc, page, score, reason, month, cumulative, scale]
+                        # [metric_id, inst_id, year, val, curr, published, formula, doc, page, score, reason, month, cumulative, scale, entity_scope]
                         fact = [
                             metric_id, institution_id, str(year), normalized_val, currency, 
                             is_published, None, # formula_id
-                            source_doc, page_num, 1.0, "Initial Mapping", month_end, is_cumulative, scaling_factor
+                            source_doc, page_num, 1.0, "Initial Mapping", month_end, is_cumulative, scaling_factor, entity_scope
                         ]
                         
                         # Apply Traceability Audit
@@ -195,11 +197,11 @@ class StandardizedMapper:
                         facts_to_insert.append(tuple(fact))
                     else:
                         # Routing to Unmapped_Staging (Zero-Hallucination)
-                        # [term, val, inst_id, year, doc, page, score, reason, month, cumulative, scale]
+                        # [term, val, inst_id, year, doc, page, score, reason, month, cumulative, scale, stmt_type, entity_scope]
                         staging = [
                             raw_term, normalized_val, institution_id, str(year), 
                             source_doc, page_num, 0.5, "Unmapped Term", month_end, is_cumulative, scaling_factor,
-                            statement_type
+                            statement_type, entity_scope
                         ]
                         
                         # Apply Traceability Audit (Staging uses lower base score)
@@ -212,15 +214,15 @@ class StandardizedMapper:
         if facts_to_insert:
             conn.executemany("""
                 INSERT OR IGNORE INTO Fact_Financials 
-                (metric_id, institution_id, reporting_period, value, currency_code, is_published, formula_id, source_document, source_page_number, confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (metric_id, institution_id, reporting_period, value, currency_code, is_published, formula_id, source_document, source_page_number, confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor, entity_scope)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, facts_to_insert)
             
         if staging_to_insert:
             conn.executemany("""
                 INSERT INTO Unmapped_Staging 
-                (raw_term, raw_value, institution_id, reporting_period, source_document, source_page_number, confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor, statement_type)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (raw_term, raw_value, institution_id, reporting_period, source_document, source_page_number, confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor, statement_type, entity_scope)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, staging_to_insert)
             
         conn.close()
@@ -244,7 +246,7 @@ class StandardizedMapper:
             staged_records = conn.execute("""
                 SELECT staging_id, raw_term, raw_value, institution_id, reporting_period, 
                        source_document, source_page_number, confidence_score, confidence_reason,
-                       month_end, is_cumulative, scaling_factor, retry_count
+                       month_end, is_cumulative, scaling_factor, retry_count, entity_scope
                 FROM Unmapped_Staging
                 WHERE requires_human_review = FALSE
                 AND retry_count < 3
@@ -258,7 +260,7 @@ class StandardizedMapper:
             failed_count = 0
             
             for rec in staged_records:
-                staging_id, raw_term, val, inst_id, period, doc, page, score, reason, month, cumulative, scale, retry = rec
+                staging_id, raw_term, val, inst_id, period, doc, page, score, reason, month, cumulative, scale, retry, entity_scope = rec
                 
                 # Try to map again
                 metric_id = alias_map.get((raw_term.lower(), inst_id))
@@ -271,15 +273,15 @@ class StandardizedMapper:
                     fact = [
                         metric_id, inst_id, period, val, "MYR", 
                         True, None, doc, page, 0.9, "Auto-Resolved via Re-queue", 
-                        month, cumulative, scale
+                        month, cumulative, scale, entity_scope
                     ]
                     
                     conn.execute("""
                         INSERT OR IGNORE INTO Fact_Financials 
                         (metric_id, institution_id, reporting_period, value, currency_code, 
                          is_published, formula_id, source_document, source_page_number, 
-                         confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                         confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor, entity_scope)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, fact)
                     
                     # Delete from staging
