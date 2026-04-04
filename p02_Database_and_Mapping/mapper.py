@@ -4,11 +4,15 @@ import sys
 import duckdb
 from loguru import logger
 
-import db_config
-
 # Ensure project root is in sys.path for package imports
-if db_config.ROOT_DIR not in sys.path:
-    sys.path.append(db_config.ROOT_DIR)
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.append(ROOT_DIR)
+
+try:
+    from p02_Database_and_Mapping import db_config
+except ImportError:
+    import db_config
 
 class StandardizedMapper:
     def __init__(self, db_path=None):
@@ -40,33 +44,47 @@ class StandardizedMapper:
             mapping[base_name.replace(" ", "_")] = row[0]
         return mapping
 
-    def audit_traceability(self, fact):
-        """Audits a fact for traceability metadata and returns a refined confidence score."""
-        # fact: [metric_id, institution_id, period, value, currency, published, formula, doc, page, score, reason, month, cumulative, scale]
-        score = 1.0
+    def audit_traceability(self, fact_or_staging, is_mapped=True):
+        """
+        Audits a fact or staging record for traceability metadata.
+        Returns (refined_score, reason)
+        """
+        # index 8 is page_num for facts, index 5 for staging
+        page_num = fact_or_staging[8] if is_mapped else fact_or_staging[5]
+        # index 7 is doc for facts, index 4 for staging
+        source_doc = fact_or_staging[7] if is_mapped else fact_or_staging[4]
+        
+        score_penalty = 0.0
         reasons = []
         
-        page_num = fact[8]
-        source_doc = fact[7]
-        
-        if not page_num or page_num <= 0:
-            score -= 0.3
+        if not page_num or int(page_num) <= 0:
+            score_penalty += 0.3
             reasons.append("Missing source page number")
         
         if not source_doc or source_doc == "Unknown":
-            score -= 0.2
+            score_penalty += 0.2
             reasons.append("Unknown source document")
             
-        if reasons:
-            return score, " | ".join(reasons)
-        return 1.0, "Traceability Verified"
+        initial_score = fact_or_staging[9] if is_mapped else fact_or_staging[6]
+        final_score = max(0.0, initial_score - score_penalty)
+        
+        audit_reason = " | ".join(reasons) if reasons else "Traceability Verified"
+        if not is_mapped and not reasons:
+            audit_reason = "Unmapped Term (Traceable)"
+            
+        return final_score, audit_reason
 
     def process_file(self, json_path):
         logger.info(f"Processing extraction result: {json_path}")
         
-        with open(json_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
+        try:
+            with open(json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        except Exception as e:
+            logger.error(f"Failed to read {json_path}: {e}")
+            return
 
+        # Canonical ID resolution
         raw_inst_id = str(data.get("institution_id") or "").lower()
         source_doc = data.get("source_document", "Unknown")
         
@@ -83,11 +101,11 @@ class StandardizedMapper:
             institution_id = inst_map.get(basename) or inst_map.get(basename.replace(" ", "_")) or inst_map.get(base_name_stripped) or inst_map.get(base_name_stripped.replace(" ", "_"))
             
         if not institution_id:
-            logger.error(f"Could not resolve institution for '{raw_inst_id}' in {json_path}")
+            logger.error(f"CRITICAL: Could not resolve institution for '{raw_inst_id}' in {json_path}")
             conn.close()
             return
 
-        # Support both 'statements' and 'financial_statements'
+        # Standardize 'statements' vs 'financial_statements'
         statements = data.get("statements", data.get("financial_statements", []))
         if isinstance(statements, dict):
             statements = list(statements.values())
@@ -104,9 +122,13 @@ class StandardizedMapper:
 
         for stmt in statements:
             statement_type = stmt.get("statement_type", "").lower()
-            line_items = stmt.get("line_items", stmt.get("items", stmt.get("data", [])))
+            # Standardize 'items' vs 'line_items'
+            line_items = stmt.get("items", stmt.get("line_items", stmt.get("data", [])))
+            
             for item in line_items:
-                raw_term = item.get("item", item.get("item_name", item.get("line_item", item.get("name"))))
+                # Standardize 'item' vs 'item_name'
+                raw_term = item.get("item", item.get("item_name", item.get("line_item", "")))
+                # Standardize 'values' vs 'data_points'
                 values = item.get("values", item.get("data_points", item.get("data", [])))
                 
                 if not values and "value" in item:
@@ -123,13 +145,14 @@ class StandardizedMapper:
                         scaling_factor = val_obj.get("scaling_factor", 1)
                         is_published = val_obj.get("is_published", True)
                         currency = val_obj.get("currency", val_obj.get("currency_code", "MYR"))
-                        # Traceability: Look for specific page numbers in val_obj or stmt
-                        page_num = val_obj.get("source_page_number", val_obj.get("page_number", val_obj.get("source_page", stmt.get("source_page_number", stmt.get("page_number", 0)))))
+                        # Traceability: Standardize page resolution
+                        page_num = val_obj.get("source_page_number", val_obj.get("page_number", stmt.get("source_page_number", data.get("source_page_number", 0))))
                         
                         is_cumulative = val_obj.get("is_cumulative")
                         if is_cumulative is None:
-                            is_cumulative = "balance sheet" in statement_type
+                            is_cumulative = "balance sheet" in statement_type or "position" in statement_type
                     else:
+                        # Fallback for legacy/loose JSON structures
                         val = val_obj
                         try:
                             primary_year = int(data.get("reporting_period", 0))
@@ -141,12 +164,12 @@ class StandardizedMapper:
                         scaling_factor = 1
                         is_published = True
                         currency = "MYR"
-                        page_num = 0
+                        page_num = data.get("source_page_number", 0)
 
                     if year is None or val is None:
                         continue
 
-                    # NORMALIZE
+                    # NORMALIZE (Scale Factor Enforcement)
                     try:
                         normalized_val = float(val) * float(scaling_factor)
                     except:
@@ -158,6 +181,7 @@ class StandardizedMapper:
                         metric_id = alias_map.get((raw_term.lower(), None))
 
                     if metric_id:
+                        # [metric_id, inst_id, year, val, curr, published, formula, doc, page, score, reason, month, cumulative, scale]
                         fact = [
                             metric_id, institution_id, str(year), normalized_val, currency, 
                             is_published, None, # formula_id
@@ -165,25 +189,25 @@ class StandardizedMapper:
                         ]
                         
                         # Apply Traceability Audit
-                        final_score, audit_reason = self.audit_traceability(fact)
+                        final_score, audit_reason = self.audit_traceability(fact, is_mapped=True)
                         fact[9] = final_score
                         fact[10] = audit_reason
-                        
-                        if final_score < 0.7:
-                            logger.warning(f"Traceability warning for {raw_term}: {audit_reason}")
-                            
                         facts_to_insert.append(tuple(fact))
                     else:
-                        # Unmapped terms get 0.5 base score, adjusted by traceability
-                        base_score = 0.5
-                        if not page_num or page_num <= 0:
-                            base_score = 0.3
+                        # Routing to Unmapped_Staging (Zero-Hallucination)
+                        # [term, val, inst_id, year, doc, page, score, reason, month, cumulative, scale]
+                        staging = [
+                            raw_term, normalized_val, institution_id, str(year), 
+                            source_doc, page_num, 0.5, "Unmapped Term", month_end, is_cumulative, scaling_factor
+                        ]
                         
-                        staging_to_insert.append((
-                            raw_term, normalized_val, institution_id, str(year), source_doc, page_num, base_score, "Unmapped Term", month_end, is_cumulative, scaling_factor
-                        ))
+                        # Apply Traceability Audit (Staging uses lower base score)
+                        final_score, audit_reason = self.audit_traceability(staging, is_mapped=False)
+                        staging[6] = final_score
+                        staging[7] = audit_reason
+                        staging_to_insert.append(tuple(staging))
 
-        # Bulk Insert
+        # Bulk Insert using DuckDB executemany
         if facts_to_insert:
             conn.executemany("""
                 INSERT OR IGNORE INTO Fact_Financials 
@@ -198,8 +222,6 @@ class StandardizedMapper:
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, staging_to_insert)
             
-        conn.close()
-
         conn.close()
         logger.success(f"Finished {json_path}: Mapped {len(facts_to_insert)}, Unmapped {len(staging_to_insert)}")
 

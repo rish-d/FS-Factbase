@@ -1,5 +1,8 @@
 import duckdb
 from loguru import logger
+import os
+import csv
+import sys
 
 # 100% IFRSAT-2025 COMPLIANT CORE METRIC DICTIONARY (65+ Metrics)
 # IDs follow the official 'ifrs-full_' prefix from the 2025-03-27 taxonomy files.
@@ -168,7 +171,15 @@ FX_RATES = [
     ("SGD", "MYR", 3.52, "2024-01-01"),
 ]
 
-import db_config
+# Ensure project root is in sys.path
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.append(ROOT_DIR)
+
+try:
+    from p02_Database_and_Mapping import db_config
+except ImportError:
+    import db_config
 
 def seed_database(db_path=None):
     if db_path is None:
@@ -229,6 +240,30 @@ def seed_database(db_path=None):
 
     # Exchange Rates
     conn.executemany("INSERT INTO Exchange_Rates (from_currency, to_currency, rate, as_of_date) VALUES (?, ?, ?, ?)", FX_RATES)
+
+    # Custom Aliases Ingestion (Decoupled Persistence)
+    custom_aliases_path = os.path.join(db_config.ROOT_DIR, "data", "dictionary", "custom_aliases.csv")
+    if os.path.exists(custom_aliases_path):
+        logger.info(f"Ingesting custom aliases from {custom_aliases_path}...")
+        try:
+            with open(custom_aliases_path, mode='r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                custom_aliases = []
+                for row in reader:
+                    # Clean up empty strings to None (NULL in DB)
+                    inst_id = row['institution_id'] if row['institution_id'] and row['institution_id'].strip() else None
+                    custom_aliases.append((row['raw_term'], row['metric_id'], inst_id))
+                
+                if custom_aliases:
+                    conn.executemany(
+                        "INSERT OR IGNORE INTO Metric_Aliases (raw_term, metric_id, institution_id) VALUES (?, ?, ?)",
+                        custom_aliases
+                    )
+                    logger.success(f"Seeded {len(custom_aliases)} custom aliases.")
+        except Exception as e:
+            logger.error(f"Failed to ingest custom aliases: {e}")
+    else:
+        logger.warning(f"Custom aliases file not found at {custom_aliases_path}")
 
     conn.close()
     logger.info("Database seeding (IFRS 2025 Phase) completed.")

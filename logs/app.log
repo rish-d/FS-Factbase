@@ -14,3 +14,983 @@
 2026-04-03 23:17:11.696 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
 2026-04-03 23:17:24.928 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
 2026-04-03 23:17:24.932 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\malayan_banking_berhad_2022_extracted.json
+2026-04-04 14:09:09.315 | INFO     | __main__:run_pipeline:33 - Sample mode ACTIVE: Limiting to 2 reports per institution.
+2026-04-04 14:09:09.333 | INFO     | __main__:run_pipeline:44 - Discovered 16 reports for processing. Target: Balance Sheet and Income Statement
+2026-04-04 14:09:09.333 | INFO     | __main__:run_pipeline:53 - >>> Processing: ALLIANCE BANK MALAYSIA BERHAD | 2021 <<<
+2026-04-04 14:09:09.333 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: ALLIANCE BANK MALAYSIA BERHAD (2021) ---
+2026-04-04 14:09:09.334 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\ALLIANCE BANK MALAYSIA BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 14:09:10.494 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [123, 159]
+2026-04-04 14:09:10.505 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 14:11:08.861 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 The request timed out. Please try again.
+2026-04-04 14:11:08.864 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 14:11:08.947 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 14:11:18.949 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 14:11:19.027 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 14:11:39.028 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 14:11:39.126 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 14:11:49.127 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 14:11:49.258 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 14:12:09.259 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 14:12:50.759 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 14:12:51.046 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\ALLIANCE BANK MALAYSIA BERHAD_2021_extracted.json
+2026-04-04 14:12:51.047 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\ALLIANCE BANK MALAYSIA BERHAD_2021_extracted.json
+2026-04-04 14:12:58.198 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\ALLIANCE BANK MALAYSIA BERHAD_2021_extracted.json: Mapped 0, Unmapped 78
+2026-04-04 14:12:58.199 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 14:13:08.200 | INFO     | __main__:run_pipeline:53 - >>> Processing: ALLIANCE BANK MALAYSIA BERHAD | 2022 <<<
+2026-04-04 14:13:08.201 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: ALLIANCE BANK MALAYSIA BERHAD (2022) ---
+2026-04-04 14:13:08.202 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\ALLIANCE BANK MALAYSIA BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 14:13:14.095 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [119, 161]
+2026-04-04 14:13:14.933 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 14:13:17.677 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 14:13:17.689 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\ALLIANCE BANK MALAYSIA BERHAD_2022_extracted.json
+2026-04-04 14:13:17.690 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\ALLIANCE BANK MALAYSIA BERHAD_2022_extracted.json
+2026-04-04 14:13:21.746 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\ALLIANCE BANK MALAYSIA BERHAD_2022_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 14:13:21.747 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 14:13:31.748 | INFO     | __main__:run_pipeline:53 - >>> Processing: AMMB HOLDINGS BERHAD | 2021 <<<
+2026-04-04 14:13:31.748 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: AMMB HOLDINGS BERHAD (2021) ---
+2026-04-04 14:13:31.748 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 14:13:33.491 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [5, 89]
+2026-04-04 14:13:33.512 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 14:13:35.378 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 14:13:35.400 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2021_extracted.json
+2026-04-04 14:13:35.401 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2021_extracted.json
+2026-04-04 14:13:35.507 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2021_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 14:13:35.509 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 14:13:45.510 | INFO     | __main__:run_pipeline:53 - >>> Processing: AMMB HOLDINGS BERHAD | 2022 <<<
+2026-04-04 14:13:45.511 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: AMMB HOLDINGS BERHAD (2022) ---
+2026-04-04 14:13:45.511 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 14:13:49.444 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [3, 285]
+2026-04-04 14:13:49.551 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 14:13:50.637 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 14:13:50.639 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2022_extracted.json
+2026-04-04 14:13:50.639 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2022_extracted.json
+2026-04-04 14:13:50.755 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2022_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 14:13:50.755 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 14:14:00.772 | INFO     | __main__:run_pipeline:53 - >>> Processing: BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2021 <<<
+2026-04-04 14:14:00.776 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: BANK KERJASAMA RAKYAT MALAYSIA BERHAD (2021) ---
+2026-04-04 14:14:00.777 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\BANK KERJASAMA RAKYAT MALAYSIA BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 14:14:04.949 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [168, 169]
+2026-04-04 14:14:05.062 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 14:16:04.001 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 Stream cancelled; RPC from prefill servable to decode servable failed; Failed to close the streaming context; status = CANCELLED: Stream cancelled; RPC from prefill servable to decode servable failed [type.googleapis.com/util.ErrorSpacePayload='RPC::CANCELLED']
+=== Source Location Trace: ===
+net/rpc/rpc-errorspace-util.cc:19
+learning/serving/servables/wiz/remote_wiz_servable.cc:231
+learning/serving/servables/wiz/prefill_remote_wiz_servable.cc:223
+learning/serving/servables/wiz/wiz_servable.cc:3410
+;  Failed to run inference for model: go/debugstr   
+name: "prod-common-global__/aistudio/gemini-v3smmm-rev19-prowlridge-sc__main__/aistudio/gemini-v3smmm-rev19-prowlridge-sc__2025121701__prefill__variantglp__c44240e8-8ed4-4bba-9705-b1018a9814b4"
+version {
+  value: 1
+}
+signature_name: "serving_stream"
+
+2026-04-04 14:16:04.002 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 14:16:04.078 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 14:16:14.079 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 14:16:14.155 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 14:16:34.157 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 14:16:34.234 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 14:16:44.235 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 14:16:44.337 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 14:17:04.338 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 14:17:25.821 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 14:17:25.895 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2021_extracted.json
+2026-04-04 14:17:25.896 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2021_extracted.json
+2026-04-04 14:17:28.514 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2021_extracted.json: Mapped 0, Unmapped 32
+2026-04-04 14:17:28.515 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 14:17:38.516 | INFO     | __main__:run_pipeline:53 - >>> Processing: BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2022 <<<
+2026-04-04 14:17:38.516 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: BANK KERJASAMA RAKYAT MALAYSIA BERHAD (2022) ---
+2026-04-04 14:17:38.516 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\BANK KERJASAMA RAKYAT MALAYSIA BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 14:17:39.500 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [176, 185]
+2026-04-04 14:17:39.506 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 14:19:38.067 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 The request timed out. Please try again.
+2026-04-04 14:19:38.067 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 14:19:38.149 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 14:19:48.151 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 14:19:48.230 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 14:20:08.232 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 14:20:08.318 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 14:20:18.319 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 14:20:18.396 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 14:20:38.398 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 14:21:08.286 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 14:21:08.296 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2022_extracted.json
+2026-04-04 14:21:08.296 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2022_extracted.json
+2026-04-04 14:21:11.390 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2022_extracted.json: Mapped 0, Unmapped 38
+2026-04-04 14:21:11.390 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 14:21:21.391 | INFO     | __main__:run_pipeline:53 - >>> Processing: CIMB GROUP HOLDINGS BERHAD | 2021 <<<
+2026-04-04 14:21:21.391 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: CIMB GROUP HOLDINGS BERHAD (2021) ---
+2026-04-04 14:21:21.391 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\CIMB GROUP HOLDINGS BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 14:21:23.657 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [122, 348]
+2026-04-04 14:21:23.710 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 14:23:21.639 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 The request timed out. Please try again.
+2026-04-04 14:23:21.639 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 14:23:21.716 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 14:23:31.717 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 14:23:31.793 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 14:23:51.795 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 14:23:51.877 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 14:24:01.878 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 14:24:01.955 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 14:24:21.957 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 14:25:11.018 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 14:25:11.032 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\CIMB GROUP HOLDINGS BERHAD_2021_extracted.json
+2026-04-04 14:25:11.032 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\CIMB GROUP HOLDINGS BERHAD_2021_extracted.json
+2026-04-04 14:25:15.396 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\CIMB GROUP HOLDINGS BERHAD_2021_extracted.json: Mapped 0, Unmapped 56
+2026-04-04 14:25:15.396 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 14:25:25.400 | INFO     | __main__:run_pipeline:53 - >>> Processing: CIMB GROUP HOLDINGS BERHAD | 2022 <<<
+2026-04-04 14:25:25.400 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: CIMB GROUP HOLDINGS BERHAD (2022) ---
+2026-04-04 14:25:25.401 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\CIMB GROUP HOLDINGS BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 14:25:27.380 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [115, 340]
+2026-04-04 14:25:27.409 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 14:25:32.986 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 14:25:32.991 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\CIMB GROUP HOLDINGS BERHAD_2022_extracted.json
+2026-04-04 14:25:32.993 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\CIMB GROUP HOLDINGS BERHAD_2022_extracted.json
+2026-04-04 14:25:33.174 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\CIMB GROUP HOLDINGS BERHAD_2022_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 14:25:33.179 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 14:25:43.180 | INFO     | __main__:run_pipeline:53 - >>> Processing: HONG LEONG FINANCIAL GROUP BERHAD | 2021 <<<
+2026-04-04 14:25:43.180 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: HONG LEONG FINANCIAL GROUP BERHAD (2021) ---
+2026-04-04 14:25:43.180 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\HONG LEONG FINANCIAL GROUP BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 14:25:44.578 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [96, 240]
+2026-04-04 14:25:44.588 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 14:27:42.206 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 The request timed out. Please try again.
+2026-04-04 14:27:42.206 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 14:27:42.309 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 14:27:52.311 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 14:27:52.393 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 14:28:12.394 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 14:28:12.475 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 14:28:22.476 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 14:28:22.554 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 14:28:42.554 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 14:29:04.073 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 14:29:04.124 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\HONG LEONG FINANCIAL GROUP BERHAD_2021_extracted.json
+2026-04-04 14:29:04.124 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\HONG LEONG FINANCIAL GROUP BERHAD_2021_extracted.json
+2026-04-04 14:29:06.056 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\HONG LEONG FINANCIAL GROUP BERHAD_2021_extracted.json: Mapped 0, Unmapped 22
+2026-04-04 14:29:06.057 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 14:29:16.058 | INFO     | __main__:run_pipeline:53 - >>> Processing: HONG LEONG FINANCIAL GROUP BERHAD | 2022 <<<
+2026-04-04 14:29:16.059 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: HONG LEONG FINANCIAL GROUP BERHAD (2022) ---
+2026-04-04 14:29:16.059 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\HONG LEONG FINANCIAL GROUP BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 14:29:17.619 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [189, 190]
+2026-04-04 14:29:17.632 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 14:31:17.650 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 Deadline Exceeded
+2026-04-04 14:31:17.651 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 14:31:17.739 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 14:31:27.740 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 14:31:27.824 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 14:31:47.826 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 14:31:47.894 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 14:31:57.894 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 14:31:57.972 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 14:32:17.974 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 14:32:36.952 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 14:32:36.958 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\HONG LEONG FINANCIAL GROUP BERHAD_2022_extracted.json
+2026-04-04 14:32:36.958 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\HONG LEONG FINANCIAL GROUP BERHAD_2022_extracted.json
+2026-04-04 14:32:37.939 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\HONG LEONG FINANCIAL GROUP BERHAD_2022_extracted.json: Mapped 0, Unmapped 8
+2026-04-04 14:32:37.939 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 14:32:47.943 | INFO     | __main__:run_pipeline:53 - >>> Processing: MALAYAN BANKING BERHAD | 2021 <<<
+2026-04-04 14:32:47.944 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: MALAYAN BANKING BERHAD (2021) ---
+2026-04-04 14:32:47.944 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\MALAYAN BANKING BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 14:32:49.480 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [56, 64]
+2026-04-04 14:32:49.505 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 14:32:51.055 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 14:32:51.057 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\MALAYAN BANKING BERHAD_2021_extracted.json
+2026-04-04 14:32:51.057 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\MALAYAN BANKING BERHAD_2021_extracted.json
+2026-04-04 14:32:51.209 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\MALAYAN BANKING BERHAD_2021_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 14:32:51.209 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 14:33:01.210 | INFO     | __main__:run_pipeline:53 - >>> Processing: MALAYAN BANKING BERHAD | 2022 <<<
+2026-04-04 14:33:01.210 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: MALAYAN BANKING BERHAD (2022) ---
+2026-04-04 14:33:01.210 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\MALAYAN BANKING BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 14:33:02.534 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [57, 65]
+2026-04-04 14:33:02.549 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 14:33:04.153 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 14:33:04.155 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\MALAYAN BANKING BERHAD_2022_extracted.json
+2026-04-04 14:33:04.155 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\MALAYAN BANKING BERHAD_2022_extracted.json
+2026-04-04 14:33:04.285 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\MALAYAN BANKING BERHAD_2022_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 14:33:04.285 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 14:33:14.286 | INFO     | __main__:run_pipeline:53 - >>> Processing: PUBLIC BANK BERHAD | 2021 <<<
+2026-04-04 14:33:14.286 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: PUBLIC BANK BERHAD (2021) ---
+2026-04-04 14:33:14.286 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\PUBLIC BANK BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 14:33:15.480 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [202, 204]
+2026-04-04 14:33:15.494 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 14:35:14.034 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 Stream cancelled; RPC from prefill servable to decode servable failed; Failed to close the streaming context; status = CANCELLED: Stream cancelled; RPC from prefill servable to decode servable failed [type.googleapis.com/util.ErrorSpacePayload='RPC::CANCELLED']
+=== Source Location Trace: ===
+net/rpc/rpc-errorspace-util.cc:19
+learning/serving/servables/wiz/remote_wiz_servable.cc:231
+learning/serving/servables/wiz/prefill_remote_wiz_servable.cc:223
+learning/serving/servables/wiz/wiz_servable.cc:3410
+;  Failed to run inference for model: go/debugonly    
+name: "prod-common-global__/aistudio/gemini-v3smmm-rev19-prowlridge-sc__main__/aistudio/gemini-v3smmm-rev19-prowlridge-sc__2025121701__prefill__variantglp__f84f606f-dbe8-49f8-a579-68762ce9f9cb"
+version {
+  value: 1
+}
+signature_name: "serving_stream"
+
+2026-04-04 14:35:14.034 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 14:35:14.124 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 14:35:24.131 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 14:35:24.200 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 14:35:44.201 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 14:35:44.269 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 14:35:54.270 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 14:35:54.353 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 14:36:14.354 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 14:36:43.607 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 14:36:43.668 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\PUBLIC BANK BERHAD_2021_extracted.json
+2026-04-04 14:36:43.668 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\PUBLIC BANK BERHAD_2021_extracted.json
+2026-04-04 14:36:47.729 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\PUBLIC BANK BERHAD_2021_extracted.json: Mapped 0, Unmapped 57
+2026-04-04 14:36:47.729 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 14:36:57.730 | INFO     | __main__:run_pipeline:53 - >>> Processing: PUBLIC BANK BERHAD | 2022 <<<
+2026-04-04 14:36:57.730 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: PUBLIC BANK BERHAD (2022) ---
+2026-04-04 14:36:57.730 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\PUBLIC BANK BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 14:36:59.327 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [190, 192]
+2026-04-04 14:36:59.357 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 14:36:59.666 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 10s...
+2026-04-04 14:37:09.669 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 2/2)
+2026-04-04 14:37:09.745 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 20s...
+2026-04-04 14:37:29.746 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 14:37:29.828 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 14:37:39.829 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 14:37:39.899 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 14:37:59.901 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 14:37:59.984 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 14:38:09.986 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 14:38:10.062 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 14:38:30.063 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 14:39:02.672 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 14:39:02.681 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\PUBLIC BANK BERHAD_2022_extracted.json
+2026-04-04 14:39:02.682 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\PUBLIC BANK BERHAD_2022_extracted.json
+2026-04-04 14:39:07.654 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\PUBLIC BANK BERHAD_2022_extracted.json: Mapped 0, Unmapped 57
+2026-04-04 14:39:07.655 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 14:39:17.656 | INFO     | __main__:run_pipeline:53 - >>> Processing: RHB BANK BERHAD | 2021 <<<
+2026-04-04 14:39:17.659 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: RHB BANK BERHAD (2021) ---
+2026-04-04 14:39:17.659 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\RHB BANK BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 14:39:19.021 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [246, 274]
+2026-04-04 14:39:19.029 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 14:39:19.326 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 10s...
+2026-04-04 14:39:29.328 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 2/2)
+2026-04-04 14:39:29.397 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 20s...
+2026-04-04 14:39:49.399 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 14:39:49.502 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 14:39:59.503 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 14:39:59.573 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 14:40:19.574 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 14:40:19.662 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 14:40:29.664 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 14:40:29.746 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 14:40:49.747 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 14:42:13.911 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 14:42:13.935 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\RHB BANK BERHAD_2021_extracted.json
+2026-04-04 14:42:13.936 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\RHB BANK BERHAD_2021_extracted.json
+2026-04-04 14:42:23.110 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\RHB BANK BERHAD_2021_extracted.json: Mapped 0, Unmapped 138
+2026-04-04 14:42:23.110 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 14:42:33.112 | INFO     | __main__:run_pipeline:53 - >>> Processing: RHB BANK BERHAD | 2022 <<<
+2026-04-04 14:42:33.112 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: RHB BANK BERHAD (2022) ---
+2026-04-04 14:42:33.112 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\RHB BANK BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 14:42:34.185 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [221, 223]
+2026-04-04 14:42:34.193 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 14:42:34.484 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 10s...
+2026-04-04 14:42:44.486 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 2/2)
+2026-04-04 14:42:44.558 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 20s...
+2026-04-04 14:43:04.559 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 14:43:04.647 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 14:43:14.648 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 14:43:14.723 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 14:43:34.724 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 14:43:34.793 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 14:43:44.794 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 14:43:44.869 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 14:44:04.870 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 14:44:17.837 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 14:44:17.839 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\RHB BANK BERHAD_2022_extracted.json
+2026-04-04 14:44:17.839 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\RHB BANK BERHAD_2022_extracted.json
+2026-04-04 14:44:17.970 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\RHB BANK BERHAD_2022_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 15:43:20.656 | INFO     | __main__:run_pipeline:33 - Sample mode ACTIVE: Limiting to 2 reports per institution.
+2026-04-04 15:43:20.656 | INFO     | __main__:run_pipeline:44 - Discovered 16 reports for processing. Target: Balance Sheet and Income Statement
+2026-04-04 15:43:20.656 | INFO     | __main__:run_pipeline:53 - >>> Processing: ALLIANCE BANK MALAYSIA BERHAD | 2021 <<<
+2026-04-04 15:43:20.656 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: ALLIANCE BANK MALAYSIA BERHAD (2021) ---
+2026-04-04 15:43:20.656 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\ALLIANCE BANK MALAYSIA BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:43:21.197 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [123, 159]
+2026-04-04 15:43:21.205 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:44:56.306 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 15:44:56.309 | ERROR    | p01_Data_Extraction.pdf_extractor:process_report:307 - Validation Error: Unterminated string starting at: line 8 column 25 (char 195)
+2026-04-04 15:44:56.319 | ERROR    | __main__:run_pipeline:65 - Extraction failed for data/raw/reports\ALLIANCE BANK MALAYSIA BERHAD\2021_fs.pdf
+2026-04-04 15:44:56.319 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 15:45:06.321 | INFO     | __main__:run_pipeline:53 - >>> Processing: ALLIANCE BANK MALAYSIA BERHAD | 2022 <<<
+2026-04-04 15:45:06.321 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: ALLIANCE BANK MALAYSIA BERHAD (2022) ---
+2026-04-04 15:45:06.321 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\ALLIANCE BANK MALAYSIA BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:45:07.963 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [119, 161]
+2026-04-04 15:45:08.139 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:45:11.282 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 15:45:11.285 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\ALLIANCE BANK MALAYSIA BERHAD_2022_extracted.json
+2026-04-04 15:45:11.286 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\ALLIANCE BANK MALAYSIA BERHAD_2022_extracted.json
+2026-04-04 15:45:11.357 | ERROR    | p02_Database_and_Mapping.mapper:process_file:104 - CRITICAL: Could not resolve institution for 'alliance bank malaysia berhad' in data/interim/extracted_metrics\ALLIANCE BANK MALAYSIA BERHAD_2022_extracted.json
+2026-04-04 15:45:11.363 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 15:45:21.364 | INFO     | __main__:run_pipeline:53 - >>> Processing: AMMB HOLDINGS BERHAD | 2021 <<<
+2026-04-04 15:45:21.364 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: AMMB HOLDINGS BERHAD (2021) ---
+2026-04-04 15:45:21.364 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:45:24.222 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [5, 89]
+2026-04-04 15:45:24.233 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:45:26.829 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 15:45:26.844 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2021_extracted.json
+2026-04-04 15:45:26.857 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2021_extracted.json
+2026-04-04 15:45:27.286 | ERROR    | p02_Database_and_Mapping.mapper:process_file:104 - CRITICAL: Could not resolve institution for 'ammb holdings berhad' in data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2021_extracted.json
+2026-04-04 15:45:27.301 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 15:45:37.303 | INFO     | __main__:run_pipeline:53 - >>> Processing: AMMB HOLDINGS BERHAD | 2022 <<<
+2026-04-04 15:45:37.303 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: AMMB HOLDINGS BERHAD (2022) ---
+2026-04-04 15:45:37.304 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:45:39.384 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [3, 285]
+2026-04-04 15:45:40.010 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:45:42.375 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 15:45:42.378 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2022_extracted.json
+2026-04-04 15:45:42.378 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2022_extracted.json
+2026-04-04 15:45:42.483 | ERROR    | p02_Database_and_Mapping.mapper:process_file:104 - CRITICAL: Could not resolve institution for 'ammb holdings berhad' in data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2022_extracted.json
+2026-04-04 15:45:42.497 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 15:45:52.503 | INFO     | __main__:run_pipeline:53 - >>> Processing: BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2021 <<<
+2026-04-04 15:45:52.503 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: BANK KERJASAMA RAKYAT MALAYSIA BERHAD (2021) ---
+2026-04-04 15:45:52.503 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\BANK KERJASAMA RAKYAT MALAYSIA BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:45:53.301 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [168, 169]
+2026-04-04 15:45:53.308 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:47:50.171 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 The request timed out. Please try again.
+2026-04-04 15:47:50.171 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 15:47:50.411 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 15:48:00.411 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 15:48:00.490 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 15:48:06.143 | INFO     | __main__:run_pipeline:33 - Sample mode ACTIVE: Limiting to 2 reports per institution.
+2026-04-04 15:48:06.143 | INFO     | __main__:run_pipeline:44 - Discovered 16 reports for processing. Target: Balance Sheet and Income Statement
+2026-04-04 15:48:06.143 | INFO     | __main__:run_pipeline:53 - >>> Processing: ALLIANCE BANK MALAYSIA BERHAD | 2021 <<<
+2026-04-04 15:48:06.144 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: ALLIANCE BANK MALAYSIA BERHAD (2021) ---
+2026-04-04 15:48:06.144 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\ALLIANCE BANK MALAYSIA BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:48:06.634 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [123, 159]
+2026-04-04 15:48:06.641 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:48:08.631 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 15:48:08.632 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\ALLIANCE BANK MALAYSIA BERHAD_2021_extracted.json
+2026-04-04 15:48:08.633 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\ALLIANCE BANK MALAYSIA BERHAD_2021_extracted.json
+2026-04-04 15:48:08.696 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\ALLIANCE BANK MALAYSIA BERHAD_2021_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 15:48:08.696 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 15:48:18.697 | INFO     | __main__:run_pipeline:53 - >>> Processing: ALLIANCE BANK MALAYSIA BERHAD | 2022 <<<
+2026-04-04 15:48:18.697 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: ALLIANCE BANK MALAYSIA BERHAD (2022) ---
+2026-04-04 15:48:18.697 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\ALLIANCE BANK MALAYSIA BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:48:20.251 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [119, 161]
+2026-04-04 15:48:20.324 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:48:20.492 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 15:48:20.578 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 15:48:30.581 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 15:48:30.657 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 15:48:50.659 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 15:49:14.745 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 15:49:14.752 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2021_extracted.json
+2026-04-04 15:49:14.752 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2021_extracted.json
+2026-04-04 15:49:19.226 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2021_extracted.json: Mapped 0, Unmapped 32
+2026-04-04 15:49:19.226 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 15:49:29.266 | INFO     | __main__:run_pipeline:53 - >>> Processing: BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2022 <<<
+2026-04-04 15:49:29.267 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: BANK KERJASAMA RAKYAT MALAYSIA BERHAD (2022) ---
+2026-04-04 15:49:29.267 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\BANK KERJASAMA RAKYAT MALAYSIA BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:49:30.105 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [176, 185]
+2026-04-04 15:49:30.111 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:50:20.100 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 Stream cancelled; RPC from prefill servable to decode servable failed; Failed to close the streaming context; status = CANCELLED: Stream cancelled; RPC from prefill servable to decode servable failed [type.googleapis.com/util.ErrorSpacePayload='RPC::CANCELLED']
+=== Source Location Trace: ===
+net/rpc/rpc-errorspace-util.cc:19
+learning/serving/servables/wiz/remote_wiz_servable.cc:231
+learning/serving/servables/wiz/prefill_remote_wiz_servable.cc:223
+learning/serving/servables/wiz/wiz_servable.cc:3410
+;  Failed to run inference for model: go/debugproto   
+name: "prod-common-global__/aistudio/gemini-v3smmm-rev19-prowlridge-sc__main__/aistudio/gemini-v3smmm-rev19-prowlridge-sc__2025121701__prefill__variantglp__37653ebe-72d2-4983-ab84-5fe5530c56bd"
+version {
+  value: 1
+}
+signature_name: "serving_stream"
+
+2026-04-04 15:50:20.100 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 15:50:20.178 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 15:50:30.179 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 15:50:30.263 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 15:50:50.264 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 15:50:50.337 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 15:51:00.338 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 15:51:00.401 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 15:51:20.402 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 15:51:27.844 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 The request timed out. Please try again.
+2026-04-04 15:51:27.844 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 15:51:27.906 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 15:51:37.908 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 15:51:37.970 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 15:51:53.818 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 15:51:53.825 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\ALLIANCE BANK MALAYSIA BERHAD_2022_extracted.json
+2026-04-04 15:51:53.826 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\ALLIANCE BANK MALAYSIA BERHAD_2022_extracted.json
+2026-04-04 15:51:57.971 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 15:51:58.060 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 15:51:59.521 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\ALLIANCE BANK MALAYSIA BERHAD_2022_extracted.json: Mapped 0, Unmapped 68
+2026-04-04 15:51:59.522 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 15:52:08.062 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 15:52:08.129 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 15:52:09.523 | INFO     | __main__:run_pipeline:53 - >>> Processing: AMMB HOLDINGS BERHAD | 2021 <<<
+2026-04-04 15:52:09.523 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: AMMB HOLDINGS BERHAD (2021) ---
+2026-04-04 15:52:09.523 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:52:10.895 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [5, 89]
+2026-04-04 15:52:10.910 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:52:12.256 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 15:52:12.258 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2021_extracted.json
+2026-04-04 15:52:12.258 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2021_extracted.json
+2026-04-04 15:52:12.325 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2021_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 15:52:12.326 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 15:52:22.326 | INFO     | __main__:run_pipeline:53 - >>> Processing: AMMB HOLDINGS BERHAD | 2022 <<<
+2026-04-04 15:52:22.326 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: AMMB HOLDINGS BERHAD (2022) ---
+2026-04-04 15:52:22.327 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:52:23.938 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [3, 285]
+2026-04-04 15:52:24.019 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:52:25.702 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 15:52:25.704 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2022_extracted.json
+2026-04-04 15:52:25.706 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2022_extracted.json
+2026-04-04 15:52:25.752 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\AMMB HOLDINGS BERHAD_2022_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 15:52:25.752 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 15:52:28.130 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 15:52:35.753 | INFO     | __main__:run_pipeline:53 - >>> Processing: BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2021 <<<
+2026-04-04 15:52:35.753 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: BANK KERJASAMA RAKYAT MALAYSIA BERHAD (2021) ---
+2026-04-04 15:52:35.753 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\BANK KERJASAMA RAKYAT MALAYSIA BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:52:36.585 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [168, 169]
+2026-04-04 15:52:36.590 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:52:49.627 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 15:52:49.639 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2022_extracted.json
+2026-04-04 15:52:49.640 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2022_extracted.json
+2026-04-04 15:52:52.884 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2022_extracted.json: Mapped 0, Unmapped 36
+2026-04-04 15:52:52.885 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 15:53:02.886 | INFO     | __main__:run_pipeline:53 - >>> Processing: CIMB GROUP HOLDINGS BERHAD | 2021 <<<
+2026-04-04 15:53:02.886 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: CIMB GROUP HOLDINGS BERHAD (2021) ---
+2026-04-04 15:53:02.888 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\CIMB GROUP HOLDINGS BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:53:04.988 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [122, 348]
+2026-04-04 15:53:05.031 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:54:36.617 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 Deadline Exceeded
+2026-04-04 15:54:36.617 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 15:54:36.678 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 15:54:46.680 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 15:54:46.757 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 15:55:01.453 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 The request timed out. Please try again.
+2026-04-04 15:55:01.455 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 15:55:01.532 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 15:55:06.757 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 15:55:06.832 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 15:55:11.533 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 15:55:11.584 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 15:55:16.833 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 15:55:16.897 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 15:55:31.654 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 15:55:31.842 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 15:55:36.901 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 15:55:41.843 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 15:55:41.922 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 15:55:58.597 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 15:55:58.603 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2021_extracted.json
+2026-04-04 15:55:58.603 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2021_extracted.json
+2026-04-04 15:55:58.971 | ERROR    | __main__:run_pipeline:75 - Pipeline failed for data/raw/reports\BANK KERJASAMA RAKYAT MALAYSIA BERHAD\2021_fs.pdf: IO Error: Cannot open file "\\?\D:\FS Factbase\fs_factbase.duckdb": The process cannot access the file because it is being used by another process.
+
+File is already open in 
+C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\python3.11.exe (PID 15456)
+2026-04-04 15:55:58.972 | INFO     | __main__:run_pipeline:53 - >>> Processing: BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2022 <<<
+2026-04-04 15:55:58.972 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: BANK KERJASAMA RAKYAT MALAYSIA BERHAD (2022) ---
+2026-04-04 15:55:58.972 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\BANK KERJASAMA RAKYAT MALAYSIA BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:56:01.973 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 15:56:02.041 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [176, 185]
+2026-04-04 15:56:02.055 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:56:24.460 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 15:56:24.472 | ERROR    | p01_Data_Extraction.pdf_extractor:process_report:307 - Validation Error: 14 validation errors for FSDataPayload
+statements.0.line_items.0.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.0.values.1.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.1.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.1.values.1.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.2.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.2.values.1.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.3.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.3.values.1.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.4.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.4.values.1.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.5.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.5.values.1.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.6.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.6.values.1.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+2026-04-04 15:56:24.474 | ERROR    | __main__:run_pipeline:65 - Extraction failed for data/raw/reports\CIMB GROUP HOLDINGS BERHAD\2021_fs.pdf
+2026-04-04 15:56:24.475 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 15:56:34.476 | INFO     | __main__:run_pipeline:53 - >>> Processing: CIMB GROUP HOLDINGS BERHAD | 2022 <<<
+2026-04-04 15:56:34.476 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: CIMB GROUP HOLDINGS BERHAD (2022) ---
+2026-04-04 15:56:34.476 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\CIMB GROUP HOLDINGS BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:56:36.413 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [115, 340]
+2026-04-04 15:56:36.441 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:56:37.660 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 15:56:37.662 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\CIMB GROUP HOLDINGS BERHAD_2022_extracted.json
+2026-04-04 15:56:37.663 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\CIMB GROUP HOLDINGS BERHAD_2022_extracted.json
+2026-04-04 15:56:37.800 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\CIMB GROUP HOLDINGS BERHAD_2022_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 15:56:37.801 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 15:56:47.802 | INFO     | __main__:run_pipeline:53 - >>> Processing: HONG LEONG FINANCIAL GROUP BERHAD | 2021 <<<
+2026-04-04 15:56:47.802 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: HONG LEONG FINANCIAL GROUP BERHAD (2021) ---
+2026-04-04 15:56:47.802 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\HONG LEONG FINANCIAL GROUP BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:56:49.658 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [96, 240]
+2026-04-04 15:56:49.676 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:58:01.163 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 The request timed out. Please try again.
+2026-04-04 15:58:01.163 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 15:58:01.234 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 15:58:11.235 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 15:58:11.309 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 15:58:31.311 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 15:58:31.401 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 15:58:41.403 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 15:58:41.500 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 15:58:47.319 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 The request timed out. Please try again.
+2026-04-04 15:58:47.319 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 15:58:47.395 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 15:58:57.397 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 15:58:57.464 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 15:59:01.502 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 15:59:17.465 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 15:59:17.548 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 15:59:22.324 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 15:59:22.332 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2022_extracted.json
+2026-04-04 15:59:22.333 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2022_extracted.json
+2026-04-04 15:59:25.015 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\BANK KERJASAMA RAKYAT MALAYSIA BERHAD_2022_extracted.json: Mapped 0, Unmapped 38
+2026-04-04 15:59:25.016 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 15:59:27.549 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 15:59:27.624 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 15:59:35.016 | INFO     | __main__:run_pipeline:53 - >>> Processing: CIMB GROUP HOLDINGS BERHAD | 2021 <<<
+2026-04-04 15:59:35.016 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: CIMB GROUP HOLDINGS BERHAD (2021) ---
+2026-04-04 15:59:35.016 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\CIMB GROUP HOLDINGS BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:59:37.093 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [122, 348]
+2026-04-04 15:59:37.127 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:59:41.744 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 15:59:41.745 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\CIMB GROUP HOLDINGS BERHAD_2021_extracted.json
+2026-04-04 15:59:41.746 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\CIMB GROUP HOLDINGS BERHAD_2021_extracted.json
+2026-04-04 15:59:41.833 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\CIMB GROUP HOLDINGS BERHAD_2021_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 15:59:41.833 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 15:59:47.626 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 15:59:51.834 | INFO     | __main__:run_pipeline:53 - >>> Processing: CIMB GROUP HOLDINGS BERHAD | 2022 <<<
+2026-04-04 15:59:51.834 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: CIMB GROUP HOLDINGS BERHAD (2022) ---
+2026-04-04 15:59:51.834 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\CIMB GROUP HOLDINGS BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 15:59:53.682 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [115, 340]
+2026-04-04 15:59:53.721 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 15:59:55.074 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 15:59:55.077 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\CIMB GROUP HOLDINGS BERHAD_2022_extracted.json
+2026-04-04 15:59:55.078 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\CIMB GROUP HOLDINGS BERHAD_2022_extracted.json
+2026-04-04 15:59:55.145 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\CIMB GROUP HOLDINGS BERHAD_2022_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 15:59:55.145 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 16:00:03.128 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 16:00:03.133 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\HONG LEONG FINANCIAL GROUP BERHAD_2021_extracted.json
+2026-04-04 16:00:03.133 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\HONG LEONG FINANCIAL GROUP BERHAD_2021_extracted.json
+2026-04-04 16:00:04.295 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\HONG LEONG FINANCIAL GROUP BERHAD_2021_extracted.json: Mapped 0, Unmapped 14
+2026-04-04 16:00:04.295 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 16:00:05.153 | INFO     | __main__:run_pipeline:53 - >>> Processing: HONG LEONG FINANCIAL GROUP BERHAD | 2021 <<<
+2026-04-04 16:00:05.154 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: HONG LEONG FINANCIAL GROUP BERHAD (2021) ---
+2026-04-04 16:00:05.154 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\HONG LEONG FINANCIAL GROUP BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 16:00:07.823 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [96, 240]
+2026-04-04 16:00:07.832 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 16:00:11.553 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 16:00:11.558 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\HONG LEONG FINANCIAL GROUP BERHAD_2021_extracted.json
+2026-04-04 16:00:11.559 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\HONG LEONG FINANCIAL GROUP BERHAD_2021_extracted.json
+2026-04-04 16:00:11.631 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\HONG LEONG FINANCIAL GROUP BERHAD_2021_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 16:00:11.631 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 16:00:14.298 | INFO     | __main__:run_pipeline:53 - >>> Processing: HONG LEONG FINANCIAL GROUP BERHAD | 2022 <<<
+2026-04-04 16:00:14.298 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: HONG LEONG FINANCIAL GROUP BERHAD (2022) ---
+2026-04-04 16:00:14.298 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\HONG LEONG FINANCIAL GROUP BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 16:00:15.274 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [189, 190]
+2026-04-04 16:00:15.282 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 16:00:17.506 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash-lite
+2026-04-04 16:00:17.509 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\HONG LEONG FINANCIAL GROUP BERHAD_2022_extracted.json
+2026-04-04 16:00:17.510 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\HONG LEONG FINANCIAL GROUP BERHAD_2022_extracted.json
+2026-04-04 16:00:17.576 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\HONG LEONG FINANCIAL GROUP BERHAD_2022_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 16:00:17.576 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 16:00:21.632 | INFO     | __main__:run_pipeline:53 - >>> Processing: HONG LEONG FINANCIAL GROUP BERHAD | 2022 <<<
+2026-04-04 16:00:21.632 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: HONG LEONG FINANCIAL GROUP BERHAD (2022) ---
+2026-04-04 16:00:21.632 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\HONG LEONG FINANCIAL GROUP BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 16:00:22.555 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [189, 190]
+2026-04-04 16:00:22.563 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 16:00:27.577 | INFO     | __main__:run_pipeline:53 - >>> Processing: MALAYAN BANKING BERHAD | 2021 <<<
+2026-04-04 16:00:27.578 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: MALAYAN BANKING BERHAD (2021) ---
+2026-04-04 16:00:27.578 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\MALAYAN BANKING BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 16:00:28.439 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [56, 64]
+2026-04-04 16:00:28.453 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 16:00:28.509 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 10s...
+2026-04-04 16:00:38.510 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 2/2)
+2026-04-04 16:00:38.570 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 20s...
+2026-04-04 16:00:58.571 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 16:00:58.643 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 16:01:08.645 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 16:01:08.726 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 16:01:28.728 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 16:01:28.799 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 16:01:38.802 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 16:01:38.884 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 16:01:58.886 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 16:02:05.942 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 16:02:05.944 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\MALAYAN BANKING BERHAD_2021_extracted.json
+2026-04-04 16:02:05.945 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\MALAYAN BANKING BERHAD_2021_extracted.json
+2026-04-04 16:02:06.885 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\MALAYAN BANKING BERHAD_2021_extracted.json: Mapped 0, Unmapped 4
+2026-04-04 16:02:06.885 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 16:02:16.886 | INFO     | __main__:run_pipeline:53 - >>> Processing: MALAYAN BANKING BERHAD | 2022 <<<
+2026-04-04 16:02:16.886 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: MALAYAN BANKING BERHAD (2022) ---
+2026-04-04 16:02:16.886 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\MALAYAN BANKING BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 16:02:18.125 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [57, 65]
+2026-04-04 16:02:18.136 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 16:02:18.419 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 10s...
+2026-04-04 16:02:21.551 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash-lite: 504 Stream cancelled; RPC from prefill servable to decode servable failed; Failed to close the streaming context; status = CANCELLED: Stream cancelled; RPC from prefill servable to decode servable failed [type.googleapis.com/util.ErrorSpacePayload='RPC::CANCELLED']
+=== Source Location Trace: === 
+net/rpc/rpc-errorspace-util.cc:19
+learning/serving/servables/wiz/remote_wiz_servable.cc:231
+learning/serving/servables/wiz/prefill_remote_wiz_servable.cc:223
+learning/serving/servables/wiz/wiz_servable.cc:3410
+;  Failed to run inference for model: go/debugproto  
+name: "prod-common-global__/aistudio/gemini-v3smmm-rev19-prowlridge-sc__main__/aistudio/gemini-v3smmm-rev19-prowlridge-sc__2025121701__prefill__variantglp__fe19c9b9-2441-4fdb-a12c-f6134c30aa38"
+version {
+  value: 1
+}
+signature_name: "serving_stream"
+
+2026-04-04 16:02:21.553 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 16:02:21.616 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 16:02:28.420 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 2/2)
+2026-04-04 16:02:28.483 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 20s...
+2026-04-04 16:02:31.617 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 16:02:31.693 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 16:02:48.484 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 16:02:48.568 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 16:02:51.695 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 16:02:51.774 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 16:02:58.569 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 16:02:58.629 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 16:03:01.776 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 16:03:01.851 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 16:03:18.631 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 16:03:18.708 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 16:03:21.853 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 16:03:28.710 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 16:03:28.789 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 16:03:48.791 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 16:04:16.981 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 16:04:16.983 | ERROR    | p01_Data_Extraction.pdf_extractor:process_report:307 - Validation Error: 46 validation errors for FSDataPayload
+statements.0.line_items.0.values.0.confidence
+  Field required [type=missing, input_value={'amount': 587601391, 'is... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.0.line_items.0.values.1.confidence
+  Field required [type=missing, input_value={'amount': 472900647, 'is... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.0.line_items.1.values.0.confidence
+  Field required [type=missing, input_value={'amount': -552359573, 'i... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.0.line_items.1.values.1.confidence
+  Field required [type=missing, input_value={'amount': -442862536, 'i... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.0.line_items.2.values.0.confidence
+  Field required [type=missing, input_value={'amount': 35241818, 'is_... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.0.line_items.2.values.1.confidence
+  Field required [type=missing, input_value={'amount': 30038111, 'is_... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.0.values.0.confidence
+  Field required [type=missing, input_value={'amount': 20952823, 'is_... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.0.values.1.confidence
+  Field required [type=missing, input_value={'amount': 16344249, 'is_... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.1.values.0.confidence
+  Field required [type=missing, input_value={'amount': -10666498, 'is... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.1.values.1.confidence
+  Field required [type=missing, input_value={'amount': -8212463, 'is_... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.2.values.0.confidence
+  Field required [type=missing, input_value={'amount': 2410797, 'is_c... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.2.values.1.confidence
+  Field required [type=missing, input_value={'amount': 2060225, 'is_c... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.3.values.0.confidence
+  Field required [type=missing, input_value={'amount': 6675167, 'is_c... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.3.values.1.confidence
+  Field required [type=missing, input_value={'amount': 4698078, 'is_c... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.4.values.0.confidence
+  Field required [type=missing, input_value={'amount': 5629205, 'is_c... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.4.values.1.confidence
+  Field required [type=missing, input_value={'amount': 4005497, 'is_c... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.5.values.0.confidence
+  Field required [type=missing, input_value={'amount': 5536137, 'is_c... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.5.values.1.confidence
+  Field required [type=missing, input_value={'amount': 3922011, 'is_c... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.6.values.0.confidence
+  Field required [type=missing, input_value={'amount': 1493002, 'is_c... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.6.values.1.confidence
+  Field required [type=missing, input_value={'amount': 961734, 'is_cu... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.7.values.0.confidence
+  Field required [type=missing, input_value={'amount': 1012694, 'is_c... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.7.values.1.confidence
+  Field required [type=missing, input_value={'amount': 720589, 'is_cu... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.8.values.0.confidence
+  Field required [type=missing, input_value={'amount': 268591, 'is_cu... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.1.line_items.8.values.1.confidence
+  Field required [type=missing, input_value={'amount': 173016, 'is_cu... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.2.line_items.0.values.0.confidence
+  Field required [type=missing, input_value={'amount': 6423664, 'is_c... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.2.line_items.0.values.1.confidence
+  Field required [type=missing, input_value={'amount': 5818179, 'is_c... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.2.line_items.1.values.0.confidence
+  Field required [type=missing, input_value={'amount': -3141819, 'is_... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.2.line_items.1.values.1.confidence
+  Field required [type=missing, input_value={'amount': -2354907, 'is_... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.2.line_items.2.values.0.confidence
+  Field required [type=missing, input_value={'amount': 3281845, 'is_c... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.2.line_items.2.values.1.confidence
+  Field required [type=missing, input_value={'amount': 3463272, 'is_c... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.3.line_items.0.values.0.confidence
+  Field required [type=missing, input_value={'amount': 20285, 'is_cum... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.3.line_items.0.values.1.confidence
+  Field required [type=missing, input_value={'amount': 22477, 'is_cum... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.3.line_items.1.values.0.confidence
+  Field required [type=missing, input_value={'amount': 558510, 'is_cu... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.3.line_items.1.values.1.confidence
+  Field required [type=missing, input_value={'amount': 595469, 'is_cu... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.3.line_items.2.values.0.confidence
+  Field required [type=missing, input_value={'amount': 324719, 'is_cu... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.3.line_items.2.values.1.confidence
+  Field required [type=missing, input_value={'amount': 340845, 'is_cu... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.3.line_items.3.values.0.confidence
+  Field required [type=missing, input_value={'amount': 260894, 'is_cu... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.3.line_items.3.values.1.confidence
+  Field required [type=missing, input_value={'amount': 266095, 'is_cu... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.3.line_items.4.values.0.confidence
+  Field required [type=missing, input_value={'amount': 218344, 'is_cu... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.3.line_items.4.values.1.confidence
+  Field required [type=missing, input_value={'amount': 231678, 'is_cu... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.3.line_items.5.values.0.confidence
+  Field required [type=missing, input_value={'amount': 78268, 'is_cum... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.3.line_items.5.values.1.confidence
+  Field required [type=missing, input_value={'amount': 79829, 'is_cum... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.3.line_items.6.values.0.confidence
+  Field required [type=missing, input_value={'amount': 119931, 'is_cu... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.3.line_items.6.values.1.confidence
+  Field required [type=missing, input_value={'amount': 11993, 'is_cum... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.4.line_items.0.values.0.confidence
+  Field required [type=missing, input_value={'amount': 6340003, 'is_c... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+statements.4.line_items.0.values.1.confidence
+  Field required [type=missing, input_value={'amount': 5403856, 'is_c... 'scaling_factor': 1000}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+2026-04-04 16:04:16.987 | ERROR    | __main__:run_pipeline:65 - Extraction failed for data/raw/reports\HONG LEONG FINANCIAL GROUP BERHAD\2022_fs.pdf
+2026-04-04 16:04:16.987 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 16:04:26.988 | INFO     | __main__:run_pipeline:53 - >>> Processing: MALAYAN BANKING BERHAD | 2021 <<<
+2026-04-04 16:04:26.988 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: MALAYAN BANKING BERHAD (2021) ---
+2026-04-04 16:04:26.988 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\MALAYAN BANKING BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 16:04:28.072 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [56, 64]
+2026-04-04 16:04:28.087 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 16:04:28.369 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 10s...
+2026-04-04 16:04:38.415 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 2/2)
+2026-04-04 16:04:38.566 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 20s...
+2026-04-04 16:04:58.568 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 16:04:58.645 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 16:05:08.646 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 16:05:08.708 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 16:05:28.709 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 16:05:28.791 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 16:05:38.792 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 16:05:38.850 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 16:05:46.370 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash: 504 The request timed out. Please try again.
+2026-04-04 16:05:46.370 | CRITICAL | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:280 - All models and retries exhausted. Extraction failed.
+2026-04-04 16:05:46.370 | ERROR    | __main__:run_pipeline:65 - Extraction failed for data/raw/reports\MALAYAN BANKING BERHAD\2022_fs.pdf
+2026-04-04 16:05:46.370 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 16:05:56.373 | INFO     | __main__:run_pipeline:53 - >>> Processing: PUBLIC BANK BERHAD | 2021 <<<
+2026-04-04 16:05:56.373 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: PUBLIC BANK BERHAD (2021) ---
+2026-04-04 16:05:56.373 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\PUBLIC BANK BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 16:05:57.150 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [202, 204]
+2026-04-04 16:05:57.159 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 16:05:57.446 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 10s...
+2026-04-04 16:05:58.851 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 16:06:07.448 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 2/2)
+2026-04-04 16:06:07.513 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 20s...
+2026-04-04 16:06:10.482 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 16:06:10.486 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\MALAYAN BANKING BERHAD_2021_extracted.json
+2026-04-04 16:06:10.487 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\MALAYAN BANKING BERHAD_2021_extracted.json
+2026-04-04 16:06:10.638 | ERROR    | __main__:run_pipeline:75 - Pipeline failed for data/raw/reports\MALAYAN BANKING BERHAD\2021_fs.pdf: IO Error: Cannot open file "\\?\D:\FS Factbase\fs_factbase.duckdb": The process cannot access the file because it is being used by another process.
+
+File is already open in 
+C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\python3.11.exe (PID 588)
+2026-04-04 16:06:10.639 | INFO     | __main__:run_pipeline:53 - >>> Processing: MALAYAN BANKING BERHAD | 2022 <<<
+2026-04-04 16:06:10.639 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: MALAYAN BANKING BERHAD (2022) ---
+2026-04-04 16:06:10.639 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\MALAYAN BANKING BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 16:06:11.417 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [57, 65]
+2026-04-04 16:06:11.427 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 16:06:11.507 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 10s...
+2026-04-04 16:06:21.507 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 2/2)
+2026-04-04 16:06:21.582 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 20s...
+2026-04-04 16:06:27.514 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 16:06:27.578 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 16:06:37.579 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 16:06:37.660 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 16:06:41.583 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 16:06:41.649 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 16:06:51.651 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 16:06:51.706 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 16:06:57.661 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 16:06:57.728 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 16:07:07.730 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 16:07:07.799 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 16:07:11.708 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 16:07:11.771 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 16:07:21.772 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 16:07:21.851 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 16:07:27.800 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 16:07:41.854 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 16:08:00.225 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 16:08:00.227 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\MALAYAN BANKING BERHAD_2022_extracted.json
+2026-04-04 16:08:00.227 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\MALAYAN BANKING BERHAD_2022_extracted.json
+2026-04-04 16:08:00.273 | WARNING  | p02_Database_and_Mapping.mapper:process_file:114 - No statements found in data/interim/extracted_metrics\MALAYAN BANKING BERHAD_2022_extracted.json
+2026-04-04 16:08:00.277 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 16:08:10.279 | INFO     | __main__:run_pipeline:53 - >>> Processing: PUBLIC BANK BERHAD | 2021 <<<
+2026-04-04 16:08:10.279 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: PUBLIC BANK BERHAD (2021) ---
+2026-04-04 16:08:10.279 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\PUBLIC BANK BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 16:08:11.088 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [202, 204]
+2026-04-04 16:08:11.100 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 16:08:11.412 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 10s...
+2026-04-04 16:08:21.413 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 2/2)
+2026-04-04 16:08:21.477 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 20s...
+2026-04-04 16:08:28.453 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 16:08:28.461 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\PUBLIC BANK BERHAD_2021_extracted.json
+2026-04-04 16:08:28.461 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\PUBLIC BANK BERHAD_2021_extracted.json
+2026-04-04 16:08:33.352 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\PUBLIC BANK BERHAD_2021_extracted.json: Mapped 0, Unmapped 57
+2026-04-04 16:08:33.352 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 16:08:41.478 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 16:08:41.542 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 16:08:43.353 | INFO     | __main__:run_pipeline:53 - >>> Processing: PUBLIC BANK BERHAD | 2022 <<<
+2026-04-04 16:08:43.357 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: PUBLIC BANK BERHAD (2022) ---
+2026-04-04 16:08:43.357 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\PUBLIC BANK BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 16:08:44.505 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [190, 192]
+2026-04-04 16:08:44.520 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 16:08:44.592 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 10s...
+2026-04-04 16:08:51.544 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 16:08:51.602 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 16:08:54.593 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 2/2)
+2026-04-04 16:08:54.649 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 20s...
+2026-04-04 16:09:11.603 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 16:09:11.658 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 16:09:14.649 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 16:09:14.736 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 16:09:21.660 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 16:09:21.746 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 16:09:24.738 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 16:09:24.805 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 16:09:41.748 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 16:09:44.805 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 16:09:44.867 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 16:09:54.869 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 16:09:54.923 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 16:10:14.373 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 16:10:14.380 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\PUBLIC BANK BERHAD_2021_extracted.json
+2026-04-04 16:10:14.380 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\PUBLIC BANK BERHAD_2021_extracted.json
+2026-04-04 16:10:14.925 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 16:10:18.082 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\PUBLIC BANK BERHAD_2021_extracted.json: Mapped 0, Unmapped 57
+2026-04-04 16:10:18.082 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 16:10:28.083 | INFO     | __main__:run_pipeline:53 - >>> Processing: PUBLIC BANK BERHAD | 2022 <<<
+2026-04-04 16:10:28.083 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: PUBLIC BANK BERHAD (2022) ---
+2026-04-04 16:10:28.083 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\PUBLIC BANK BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 16:10:29.004 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [190, 192]
+2026-04-04 16:10:29.019 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 16:10:29.295 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 10s...
+2026-04-04 16:10:39.297 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 2/2)
+2026-04-04 16:10:39.352 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 20s...
+2026-04-04 16:10:45.574 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 16:10:45.582 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\PUBLIC BANK BERHAD_2022_extracted.json
+2026-04-04 16:10:45.582 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\PUBLIC BANK BERHAD_2022_extracted.json
+2026-04-04 16:10:49.336 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\PUBLIC BANK BERHAD_2022_extracted.json: Mapped 0, Unmapped 57
+2026-04-04 16:10:49.336 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 16:10:59.338 | INFO     | __main__:run_pipeline:53 - >>> Processing: RHB BANK BERHAD | 2021 <<<
+2026-04-04 16:10:59.339 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: RHB BANK BERHAD (2021) ---
+2026-04-04 16:10:59.340 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\RHB BANK BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 16:10:59.353 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 16:10:59.423 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 16:11:00.382 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [246, 274]
+2026-04-04 16:11:00.389 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 16:11:00.453 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 10s...
+2026-04-04 16:11:09.425 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 16:11:09.645 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 16:11:10.455 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 2/2)
+2026-04-04 16:11:10.509 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 20s...
+2026-04-04 16:11:29.647 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 16:11:29.698 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 16:11:30.510 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 16:11:31.034 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 16:11:39.699 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 16:11:39.772 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 16:11:41.035 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 16:11:41.092 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 16:11:59.773 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 16:12:01.093 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 16:12:01.158 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 16:12:11.158 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 16:12:11.228 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 16:12:31.229 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 16:12:36.335 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 16:12:36.344 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\PUBLIC BANK BERHAD_2022_extracted.json
+2026-04-04 16:12:36.344 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\PUBLIC BANK BERHAD_2022_extracted.json
+2026-04-04 16:12:40.252 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\PUBLIC BANK BERHAD_2022_extracted.json: Mapped 0, Unmapped 57
+2026-04-04 16:12:40.252 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 16:12:50.253 | INFO     | __main__:run_pipeline:53 - >>> Processing: RHB BANK BERHAD | 2021 <<<
+2026-04-04 16:12:50.253 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: RHB BANK BERHAD (2021) ---
+2026-04-04 16:12:50.253 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\RHB BANK BERHAD\2021_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 16:12:51.053 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [246, 274]
+2026-04-04 16:12:51.059 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 16:12:51.352 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 10s...
+2026-04-04 16:13:01.353 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 2/2)
+2026-04-04 16:13:01.419 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 20s...

@@ -20,11 +20,11 @@ This document is the absolute ground truth for the FS Factbase ETL pipeline. It 
 | Phase | Description | Status | Target Scripts |
 | :--- | :--- | :--- | :--- |
 | **Phase 0** | **Decommissioning & Cleanup** | ✅ DONE | `.archive/p03`, `rm` logs |
-| **Phase 1** | **IFRS Dictionary Seeding** | 🏗️ ACTIVE | `p02.../seed_data.py` |
+| **Phase 1** | **IFRS Dictionary Seeding** | ✅ DONE | `p02.../seed_data.py` |
 | **Phase 2** | **DuckDB Foundation** | ✅ DONE | `p02.../init_db.py` |
-| **Phase 3** | **Extraction with Fallbacks** | 🏗️ ACTIVE | `p01.../pdf_extractor.py` |
-| **Phase 4** | **Deterministic Mapping** | 🏗️ ACTIVE | `p02.../mapper.py` |
-| **Phase 5** | **CLI HITL & Verification** | 🏗️ PLANNED | `cli_resolver.py`, `view_db.py` |
+| **Phase 3** | **Extraction with Fallbacks** | ✅ DONE | `p01.../pdf_extractor.py` |
+| **Phase 4** | **Deterministic Mapping** | ✅ DONE | `p02.../mapper.py` |
+| **Phase 5** | **CLI HITL & Verification** | ✅ DONE | `cli_resolver.py`, `view_db.py` |
 
 ---
 

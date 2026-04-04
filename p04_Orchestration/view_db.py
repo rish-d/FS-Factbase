@@ -18,13 +18,13 @@ def get_db_summary():
     
     # Tables summary
     tables = conn.execute("SHOW TABLES").fetchall()
-    print("\n--- 📊 FS Factbase Overview ---")
+    print("\n--- [STATUS] FS Factbase Overview ---")
     for (table,) in tables:
         count = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
         print(f"Table: {table:<25} | Records: {count}")
 
     # Balance Sheet Audit (Asset = Liab + Equity)
-    print("\n--- ⚖️ Balance Sheet Integrity Check (IFRS) ---")
+    print("\n--- [AUDIT] Balance Sheet Integrity Check (IFRS) ---")
     
     query = """
     SELECT 
@@ -38,9 +38,10 @@ def get_db_summary():
     ORDER BY institution_id, reporting_period DESC
     """
     
-    df = pl.from_arrow(conn.execute(query).arrow())
+    results = conn.execute(query).arrow().read_all()
     
-    if not df.is_empty():
+    if results.num_rows > 0:
+        df = pl.from_arrow(results)
         df = df.with_columns([
             (pl.col("Total_Liabilities") + pl.col("Total_Equity")).alias("Liab_Plus_Eq")
         ])
@@ -52,7 +53,7 @@ def get_db_summary():
         print("No mapped financial data available for integrity check.")
 
     # Unmapped Terms Priority
-    print("\n--- ⚠️ Top Unmapped Terms (Action Required) ---")
+    print("\n--- [WARNING] Top Unmapped Terms (Action Required) ---")
     unmapped = conn.execute("""
         SELECT raw_term, COUNT(*) as frequency
         FROM Unmapped_Staging
@@ -64,6 +65,12 @@ def get_db_summary():
     for term, freq in unmapped:
         print(f"[{freq:3}] {term}")
 
+    # Core Metric Dictionary
+    print("\n--- [HELP] Core Metric Dictionary (IFRS 2025) ---")
+    metrics = conn.execute("SELECT standardized_metric_name FROM Core_Metrics ORDER BY standardized_metric_name").fetchall()
+    for i, (m_name,) in enumerate(metrics):
+        print(f"{i+1:2}. {m_name}")
+    
     conn.close()
 
 if __name__ == "__main__":
