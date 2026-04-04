@@ -994,3 +994,75 @@ C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x6
 2026-04-04 16:12:51.352 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 10s...
 2026-04-04 16:13:01.353 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 2/2)
 2026-04-04 16:13:01.419 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 20s...
+2026-04-04 16:13:21.420 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 16:13:21.497 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 16:13:31.498 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 16:13:31.567 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 16:13:39.026 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 16:13:39.028 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\RHB BANK BERHAD_2021_extracted.json
+2026-04-04 16:13:39.029 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\RHB BANK BERHAD_2021_extracted.json
+2026-04-04 16:13:39.088 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\RHB BANK BERHAD_2021_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 16:13:39.088 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 16:13:49.090 | INFO     | __main__:run_pipeline:53 - >>> Processing: RHB BANK BERHAD | 2022 <<<
+2026-04-04 16:13:49.090 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: RHB BANK BERHAD (2022) ---
+2026-04-04 16:13:49.090 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\RHB BANK BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 16:13:50.084 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [221, 223]
+2026-04-04 16:13:50.092 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 16:13:50.160 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 10s...
+2026-04-04 16:13:51.583 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 16:13:51.688 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 16:14:00.187 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 2/2)
+2026-04-04 16:14:00.342 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 20s...
+2026-04-04 16:14:01.696 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 16:14:01.783 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 16:14:20.343 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 16:14:20.422 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 16:14:21.784 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 16:14:30.423 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 16:14:30.496 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 16:14:50.499 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 16:14:50.569 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 16:15:00.570 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 16:15:00.653 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 16:15:09.143 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 16:15:09.149 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\RHB BANK BERHAD_2021_extracted.json
+2026-04-04 16:15:09.149 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\RHB BANK BERHAD_2021_extracted.json
+2026-04-04 16:15:09.217 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:226 - Finished data/interim/extracted_metrics\RHB BANK BERHAD_2021_extracted.json: Mapped 0, Unmapped 0
+2026-04-04 16:15:09.217 | INFO     | __main__:run_pipeline:71 - Sleeping for 10s to respect API rate limits...
+2026-04-04 16:15:19.218 | INFO     | __main__:run_pipeline:53 - >>> Processing: RHB BANK BERHAD | 2022 <<<
+2026-04-04 16:15:19.218 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:285 - --- Processing: RHB BANK BERHAD (2022) ---
+2026-04-04 16:15:19.218 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:92 - Scanning PDF 'data/raw/reports\RHB BANK BERHAD\2022_fs.pdf' dynamically for: 'Balance Sheet and Income Statement'
+2026-04-04 16:15:19.877 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:122 - Dynamic target pages localized: [221, 223]
+2026-04-04 16:15:19.883 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 1/2)
+2026-04-04 16:15:20.160 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 10s...
+2026-04-04 16:15:20.654 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 16:15:30.161 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash-lite (Attempt 2/2)
+2026-04-04 16:15:30.234 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.5-flash-lite. Backing off for 20s...
+2026-04-04 16:15:50.234 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 1/2)
+2026-04-04 16:15:50.304 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 10s...
+2026-04-04 16:16:00.305 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash-lite (Attempt 2/2)
+2026-04-04 16:16:00.386 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash-lite. Backing off for 20s...
+2026-04-04 16:16:20.387 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 1/2)
+2026-04-04 16:16:20.446 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 10s...
+2026-04-04 16:16:30.448 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.0-flash (Attempt 2/2)
+2026-04-04 16:16:30.518 | WARNING  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:273 - 429 RESOURCE_EXHAUSTED on gemini-2.0-flash. Backing off for 20s...
+2026-04-04 16:16:50.519 | INFO     | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:202 - Targeting model: gemini-2.5-flash (Attempt 1/1)
+2026-04-04 16:16:56.635 | SUCCESS  | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:266 - Successfully extracted data using gemini-2.5-flash
+2026-04-04 16:16:56.637 | SUCCESS  | p01_Data_Extraction.pdf_extractor:process_report:304 - Saved: data/interim/extracted_metrics\RHB BANK BERHAD_2022_extracted.json
+2026-04-04 16:16:56.637 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data/interim/extracted_metrics\RHB BANK BERHAD_2022_extracted.json
+2026-04-04 16:16:56.695 | WARNING  | p02_Database_and_Mapping.mapper:process_file:114 - No statements found in data/interim/extracted_metrics\RHB BANK BERHAD_2022_extracted.json
+2026-04-04 16:17:19.553 | ERROR    | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:276 - Unexpected error with gemini-2.5-flash: 504 Stream cancelled; RPC from prefill servable to decode servable failed; Failed to close the streaming context; status = CANCELLED: Stream cancelled; RPC from prefill servable to decode servable failed [type.googleapis.com/util.ErrorSpacePayload='RPC::CANCELLED']
+=== Source Location Trace: ===
+net/rpc/rpc-errorspace-util.cc:19
+learning/serving/servables/wiz/remote_wiz_servable.cc:227
+learning/serving/servables/wiz/prefill_remote_wiz_servable.cc:221
+learning/serving/servables/wiz/wiz_servable.cc:3180
+;  Failed to run inference for model: go/debugproto  
+name: "prod-common-global__/aistudio/gemini-v3p1s-rev19-calmriver-sc__main__/aistudio/gemini-v3p1s-rev19-calmriver-sc__2025112500__prefill__variantvlp__c72c0f2c-ae75-42f9-8322-875b1a094115"
+version {
+  value: 1
+}
+signature_name: "serving_stream"
+
+2026-04-04 16:17:19.553 | CRITICAL | p01_Data_Extraction.pdf_extractor:extract_financials_from_text:280 - All models and retries exhausted. Extraction failed.
+2026-04-04 16:17:19.553 | ERROR    | __main__:run_pipeline:65 - Extraction failed for data/raw/reports\RHB BANK BERHAD\2022_fs.pdf

@@ -20,16 +20,16 @@
 - **Environment Variables**: Avoid hardcoded URIs. Rely on `.venv` or `.env` implementations (via `pydantic-settings`) for database paths, API keys for the extraction models, and debug flags.
 - **Modular Scripts**: Code organization should visually mirror the pipeline:
   ```
-  /extractors/   (LLM/DocAI prompts & API calls)
-  /transformers/ (Pydantic validation, Master-Alias mapping)
-  /loaders/      (DuckDB insertion logic)
+  /p01_Data_Extraction/       (LLM prompts, PDF clipping, and API calls)
+  /p02_Database_and_Mapping/  (Schema, IFRS seeding, and Master-Alias mapping)
+  /p04_Orchestration/         (Workflow glue and CLI HITL tools)
   ```
 
 ## 5. LLM API Governance
-- **Zero-Redundancy Calls:** Do not chain LLM calls if the data is already structured. For example, if a Text-to-SQL agent successfully returns a data payload to the UI, do not trigger a second LLM call to "summarize" the data unless explicitly requested by the user. 
-- **Strict JSON Enforcement:** Do not rely on "prompt engineering" alone to get JSON. You must pass explicit Pydantic schemas to the LLM API using the `response_schema` parameter to guarantee deterministic structuring and save tokens on markdown formatting.
+- **Zero-Redundancy Calls:** Do not chain LLM calls if the data is already structured. Reserve LLM compute strictly for semantic table extraction and diagnostic rule-rewriting.
+- **Strict JSON Enforcement:** Do not rely on "prompt engineering" alone to get JSON. You must pass explicit Pydantic schemas to the LLM API using the `response_schema` parameter to guarantee deterministic structuring.
 
 ## 6. Database I/O Optimization
 - **Ban on Iterative Inserts:** Never place a `conn.execute("INSERT INTO...")` statement inside a `for` loop. 
 - **Bulk Execution:** Accumulate tuples in a list during iteration, then perform a single `conn.executemany()` outside the loop.
-- **Connection Pooling:** For API endpoints (e.g., FastAPI), avoid opening and closing `duckdb.connect()` on every single GET request. Use a shared, global read-only connection where possible, reserving write-locks strictly for background ETL orchestration and manual HITL (Human-In-The-Loop) resolutions.
+- **Connection Management:** For CLI tools and extraction loops, avoid opening and closing `duckdb.connect()` unnecessarily. Maintain a stable connection for the duration of the batch operation to minimize overhead.

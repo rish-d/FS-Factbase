@@ -5,11 +5,11 @@
 | Phase | Description | Status | Target Scripts |
 | :--- | :--- | :--- | :--- |
 | **Phase 0** | **Decommissioning & Cleanup** | ✅ DONE | `.archive/` |
-| **Phase 1** | **IFRS Dictionary Seeding** | 🏗️ ACTIVE | `p02.../seed_data.py` |
+| **Phase 1** | **IFRS Dictionary Seeding** | ✅ DONE | `p02.../seed_data.py` |
 | **Phase 2** | **DuckDB Foundation** | ✅ DONE | `p02.../init_db.py` |
-| **Phase 3** | **Extraction with Fallbacks** | 🏗️ ACTIVE | `p01.../pdf_extractor.py` |
-| **Phase 4** | **Deterministic Mapping** | 🏗️ ACTIVE | `p02.../mapper.py` |
-| **Phase 5** | **CLI HITL & Verification** | 🏗️ PLANNED | `cli_resolver.py` |
+| **Phase 3** | **Extraction with Fallbacks** | ✅ DONE | `p01.../pdf_extractor.py` |
+| **Phase 4** | **Deterministic Mapping** | ✅ DONE | `p02.../mapper.py` |
+| **Phase 5** | **CLI HITL & Verification** | ✅ DONE | `cli_resolver.py`, `view_db.py` |
 
 ## 🚀 Core Architectural Mandates
 
@@ -42,4 +42,3 @@ To solve terminology inconsistency across different institutions (e.g., Bank A v
 
 ## 🤖 Multi-Agent Workflow (Ticket-Driven)
 We use a **Multi-Agent Orchestration** pattern to manage the repository. Work is delegated via `tasks.md` tickets to specialized engineers operating in isolated, numbered workspaces (p00-p04).
-, point them out now.
