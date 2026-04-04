@@ -31,7 +31,9 @@ def init_database(db_path=None):
             standardized_metric_name VARCHAR NOT NULL,
             accounting_standard VARCHAR,
             sector VARCHAR DEFAULT 'universal', -- 'banking', 'insurance', 'universal'
-            data_type VARCHAR NOT NULL
+            data_type VARCHAR NOT NULL,
+            source_metadata VARCHAR, -- e.g., 'source: "auto-expanded"'
+            statement_role VARCHAR -- e.g., '210000' (Balance Sheet)
         );
     """)
     logger.info("Table created: Core_Metrics")
@@ -104,7 +106,11 @@ def init_database(db_path=None):
             confidence_reason VARCHAR,
             month_end INTEGER,
             is_cumulative BOOLEAN,
-            scaling_factor INTEGER
+            scaling_factor INTEGER,
+            retry_count INTEGER DEFAULT 0,
+            last_attempt_date TIMESTAMP,
+            requires_human_review BOOLEAN DEFAULT FALSE,
+            statement_type VARCHAR -- e.g., 'Balance Sheet'
         );
     """)
     logger.info("Table created: Unmapped_Staging")

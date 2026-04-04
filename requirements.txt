@@ -5,3 +5,4 @@ polars
 loguru
 python-dotenv
 google-generativeai
+rapidfuzz

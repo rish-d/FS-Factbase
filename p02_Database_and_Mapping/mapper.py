@@ -198,7 +198,8 @@ class StandardizedMapper:
                         # [term, val, inst_id, year, doc, page, score, reason, month, cumulative, scale]
                         staging = [
                             raw_term, normalized_val, institution_id, str(year), 
-                            source_doc, page_num, 0.5, "Unmapped Term", month_end, is_cumulative, scaling_factor
+                            source_doc, page_num, 0.5, "Unmapped Term", month_end, is_cumulative, scaling_factor,
+                            statement_type
                         ]
                         
                         # Apply Traceability Audit (Staging uses lower base score)
@@ -218,12 +219,89 @@ class StandardizedMapper:
         if staging_to_insert:
             conn.executemany("""
                 INSERT INTO Unmapped_Staging 
-                (raw_term, raw_value, institution_id, reporting_period, source_document, source_page_number, confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (raw_term, raw_value, institution_id, reporting_period, source_document, source_page_number, confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor, statement_type)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, staging_to_insert)
             
         conn.close()
         logger.success(f"Finished {json_path}: Mapped {len(facts_to_insert)}, Unmapped {len(staging_to_insert)}")
+
+    def process_unmapped_staging(self):
+        """
+        Re-evaluates items in Unmapped_Staging against the current Metric_Aliases.
+        Successfully mapped items move to Fact_Financials.
+        Failing items have their retry_count incremented.
+        """
+        logger.info("Scanning Unmapped_Staging for newly resolvable matches...")
+        conn = duckdb.connect(self.db_path)
+        
+        try:
+            # 1. Load latest aliases
+            alias_map = self.load_aliases(conn)
+            
+            # 2. Fetch unmapped records that haven't hit the retry limit
+            # Note: We fetch the full row to move it if mapped
+            staged_records = conn.execute("""
+                SELECT staging_id, raw_term, raw_value, institution_id, reporting_period, 
+                       source_document, source_page_number, confidence_score, confidence_reason,
+                       month_end, is_cumulative, scaling_factor, retry_count
+                FROM Unmapped_Staging
+                WHERE requires_human_review = FALSE
+                AND retry_count < 3
+            """).fetchall()
+            
+            if not staged_records:
+                logger.info("No records in staging suitable for re-processing.")
+                return
+
+            mapped_count = 0
+            failed_count = 0
+            
+            for rec in staged_records:
+                staging_id, raw_term, val, inst_id, period, doc, page, score, reason, month, cumulative, scale, retry = rec
+                
+                # Try to map again
+                metric_id = alias_map.get((raw_term.lower(), inst_id))
+                if not metric_id:
+                    metric_id = alias_map.get((raw_term.lower(), None))
+                
+                if metric_id:
+                    # Success! Move to Fact_Financials
+                    # We reset confidence to 0.9 as it's now auto-resolved but was previously unmapped
+                    fact = [
+                        metric_id, inst_id, period, val, "MYR", 
+                        True, None, doc, page, 0.9, "Auto-Resolved via Re-queue", 
+                        month, cumulative, scale
+                    ]
+                    
+                    conn.execute("""
+                        INSERT OR IGNORE INTO Fact_Financials 
+                        (metric_id, institution_id, reporting_period, value, currency_code, 
+                         is_published, formula_id, source_document, source_page_number, 
+                         confidence_score, confidence_reason, month_end, is_cumulative, scaling_factor)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, fact)
+                    
+                    # Delete from staging
+                    conn.execute("DELETE FROM Unmapped_Staging WHERE staging_id = ?", [staging_id])
+                    mapped_count += 1
+                else:
+                    # Still unmapped, increment retry
+                    new_retry = retry + 1
+                    requires_review = (new_retry >= 3)
+                    conn.execute("""
+                        UPDATE Unmapped_Staging
+                        SET retry_count = ?, 
+                            last_attempt_date = CURRENT_TIMESTAMP,
+                            requires_human_review = ?
+                        WHERE staging_id = ?
+                    """, [new_retry, requires_review, staging_id])
+                    failed_count += 1
+                    
+            logger.success(f"Re-queue complete: {mapped_count} resolved, {failed_count} still unmapped.")
+            
+        finally:
+            conn.close()
 
 def run_mapping():
     # Use db_config.ROOT_DIR to find the data folder reliably
