@@ -32,6 +32,17 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         else:
             self.send_error(404)
 
+    def get_recent_logs(self, num_lines=50):
+        log_path = os.path.join("p01_Data_Extraction", "logs", "app.log")
+        if not os.path.exists(log_path):
+            return ["Log file not found."]
+        try:
+            with open(log_path, "r", encoding="utf-8") as f:
+                content = f.readlines()
+                return [line.strip() for line in content[-num_lines:]]
+        except Exception as e:
+            return [f"Error reading logs: {str(e)}"]
+
     def get_status(self):
         # 1. Load basic status
         status = {}
@@ -45,7 +56,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             conn = duckdb.connect(db_path, read_only=True)
             facts_count = conn.execute("SELECT count(*) FROM Fact_Financials").fetchone()[0]
             unmapped_count = conn.execute("SELECT count(*) FROM Unmapped_Staging").fetchone()[0]
-            metrics_count = conn.execute("SELECT count(*) FROM Metric_Dictionary").fetchone()[0]
+            metrics_count = conn.execute("SELECT count(*) FROM Core_Metrics").fetchone()[0]
             
             # Fetch last 5 mapped facts
             recent_facts = conn.execute("""
@@ -63,6 +74,9 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             conn.close()
         except Exception as e:
             status["db_stats"] = {"error": str(e)}
+
+        # 3. Add recent system logs
+        status["system_logs"] = self.get_recent_logs()
 
         self.send_response(200)
         self.send_header("Content-type", "application/json")

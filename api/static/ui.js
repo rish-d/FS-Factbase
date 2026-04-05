@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const unmappedCount = document.getElementById('unmapped-count');
     const coreMetrics = document.getElementById('core-metrics');
     const activityList = document.getElementById('activity-list');
+    const logsList = document.getElementById('logs-list');
     const factsList = document.getElementById('facts-list');
     
     const btnStart = document.getElementById('btn-start');
@@ -74,6 +75,31 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             activityList.innerHTML = '<div class="activity-item">No recent activity.</div>';
         }
+
+        // System Logs
+        if (data.system_logs && data.system_logs.length > 0) {
+            const isAtBottom = logsList.scrollHeight - logsList.scrollTop <= logsList.clientHeight + 50;
+            
+            logsList.innerHTML = data.system_logs.map(line => {
+                let cls = 'log-info';
+                if (line.includes('| ERROR')) cls = 'log-error';
+                else if (line.includes('| SUCCESS')) cls = 'log-success';
+                else if (line.includes('| WARNING')) cls = 'log-warning';
+                else if (line.includes('| CRITICAL')) cls = 'log-critical';
+                
+                return `<div class="log-line ${cls}">${escapeHtml(line)}</div>`;
+            }).join('');
+
+            if (isAtBottom) {
+                logsList.scrollTop = logsList.scrollHeight;
+            }
+        }
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     async function sendControl(command) {

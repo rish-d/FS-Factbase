@@ -38,10 +38,13 @@ class CheckpointManager:
     def get_pending_targets(self, targets_list):
         """
         Returns a list of (institution_id, reporting_period, task_name) that are not COMPLETED.
+        Optimized to use a single DB connection.
         """
-        # First, discover all reports from the reports folder to avoid processing non-existent files
         base_path = "data/raw/reports"
         reports = []
+        if not os.path.exists(base_path):
+            return []
+            
         for root, dirs, files in os.walk(base_path):
             for file in files:
                 if file.endswith(".pdf"):
@@ -52,10 +55,13 @@ class CheckpointManager:
         pending = []
         conn = duckdb.connect(self.db_path)
         try:
+            # Pre-fetch all checkpoints to avoid nested connections
+            rows = conn.execute("SELECT institution_id, reporting_period, task_name, status FROM Pipeline_Checkpoints").fetchall()
+            completed_map = { (r[0], r[1], r[2]): r[3] for r in rows if r[3] == "COMPLETED" }
+
             for inst_id, period in reports:
                 for task in targets_list:
-                    status = self.get_checkpoint(inst_id, period, task)
-                    if status != "COMPLETED":
+                    if (inst_id, period, task) not in completed_map:
                         pending.append((inst_id, period, task))
             return pending
         finally:
