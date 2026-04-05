@@ -26,7 +26,7 @@ This document is the absolute ground truth for the FS Factbase ETL pipeline. It 
 | **Phase 2** | **DuckDB Foundation** | ✅ DONE | `p02.../init_db.py` |
 | **Phase 3** | **Extraction with Fallbacks** | ✅ DONE | `p01.../pdf_extractor.py` |
 | **Phase 4** | **Deterministic Mapping** | ✅ DONE | `p02.../mapper.py` |
-| **Phase 5** | **CLI HITL & Verification** | ✅ DONE | `cli_resolver.py`, `view_db.py` |
+| **Phase 5** | **Batch AI & CLI HITL** | ✅ DONE | `ai_batch_manager.py`, `rollback_batch.py` |
 | **Phase 6** | **Local LLM Inference** | 🏗️ PLANNED | `llm_factory.py`, `ollama` |
 
 ---
@@ -55,9 +55,10 @@ This document is the absolute ground truth for the FS Factbase ETL pipeline. It 
 *   **Zero-Hallucination Guardrail:** Strictly forbidden from bypassing alias checks. Any `raw_term` failing a match against `Metric_Aliases` MUST be routed to `Unmapped_Staging`.
 *   **Traceability:** Every fact in `Fact_Financials` MUST include `source_document` and `source_page_number`.
 
-## 🏗️ Phase 5: CLI HITL & Verification (New)
-**Goal:** Build lightweight terminal tools for verification and queue clearing.
-*   **Smart CLI Resolver (`cli_resolver.py`):** Python script to query `Unmapped_Staging`. Integrates clustering logic to group similar terms for bulk mapping.
+## 🏗️ Phase 5: Optimistic AI & CLI HITL
+**Goal:** Build lightweight terminal tools for verification and high-speed queue clearing.
+*   **Optimistic AI Batcher (`ai_batch_manager.py`):** Automated resolution of unmapped terms. Groups frequent terms and maps them using high-confidence LLM suggestions (90%+ threshold).
+*   **Batch Rollback Engine (`rollback_batch.py`):** Ensures 100% auditability and safety. Allows reversing any AI-generated batch without metadata loss.
 *   **Terminal Auditing (`view_db.py` / `view_facts.py`):** Lightweight terminal scripts to audit balance sheet sum-checks and explore standardized facts across banks and years.
 
 ## 🏗️ Phase 6: Local-First Inference (Upcoming)

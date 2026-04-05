@@ -9,7 +9,7 @@
 | **Phase 2** | **DuckDB Foundation** | ✅ DONE | `p02.../init_db.py` |
 | **Phase 3** | **Extraction with Fallbacks** | ✅ DONE | `p01.../pdf_extractor.py` |
 | **Phase 4** | **Deterministic Mapping** | ✅ DONE | `p02.../mapper.py` |
-| **Phase 5** | **CLI HITL & Verification** | ✅ DONE | `cli_resolver.py`, `view_db.py` |
+| **Phase 5** | **Batch AI & CLI HITL** | ✅ DONE | `ai_batch_manager.py`, `rollback_batch.py` |
 
 ## 🚀 Core Architectural Mandates
 
@@ -17,6 +17,7 @@
 -   **Universal Reader (LLM):** LLMs are used strictly for raw extraction into structured JSON. No autonomous mapping or accounting "guessing" is permitted.
 -   **Tiered Fallback Mechanism:** Survival strategy for API rate-limits. Automatically switches from High-Throughput models (`gemini-2.0-flash-lite`) to Reliable/Deep-Reasoning models if quotas are exhausted.
 -   **Terminal-First Verification:** Lightweight CLI tools replace heavy dashboards for human-in-the-loop (HITL) auditing and mapping.
+-   **Optimistic AI Batching:** A hybrid resolution strategy. Frequent unmapped terms are automatically mapped by high-confidence AI batches, significantly reducing manual intervention while maintaining a perfect "undo" (rollback) capability.
 
 > [!NOTE]
 > For a detailed technical breakdown of each phase and agent instructions, please see the [Master Plan](file:///d:/FS%20Factbase/MASTER_PLAN.md).

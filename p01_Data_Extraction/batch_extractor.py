@@ -61,11 +61,7 @@ def run_2021_2024_batch():
                 
             pdf_path = inst_path / report_file
             
-            # Check if already extracted
-            output_path = interim_base / f"{institution}_{year}_extracted.json"
-            if output_path.exists():
-                logger.info(f"⏩ Skipping {institution} {year} - already extracted.")
-                continue
+            # Removed existence check to support fluid multi-focus extraction on same reports
             
             logger.info(f"📄 Processing {institution} ({year})...")
             try:

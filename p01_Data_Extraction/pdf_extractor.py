@@ -125,105 +125,11 @@ class FSDataPayload(BaseModel):
         validation_alias=AliasChoices("financial_statements", "statements")
     )
 
-import google.generativeai as genai
-from google.api_core import exceptions as g_exceptions
-
-# Load Gemini API Key
-genai.configure(api_key=API_KEY)
-
-def clean_json_output(raw_text: str) -> str:
-    """
-    Removes markdown code blocks (```json ... ```) from Gemini's response 
-    to ensure it's a valid JSON string.
-    """
-    if not raw_text:
-        return ""
-    
-    # Remove markdown backticks if present
-    cleaned = re.sub(r"```json\s*", "", raw_text)
-    cleaned = re.sub(r"```\s*", "", cleaned)
-    return cleaned.strip()
-
-MANUAL_SCHEMA = {
-    "type": "OBJECT",
-    "properties": {
-        "institution_id": {"type": "STRING"},
-        "reporting_period": {"type": "STRING"},
-        "source_document": {"type": "STRING"},
-        "source_page_number": {"type": "INTEGER"},
-        "statements": {
-            "type": "ARRAY",
-            "items": {
-                "type": "OBJECT",
-                "properties": {
-                    "statement_type": {"type": "STRING"},
-                    "statement_name": {"type": "STRING"},
-                    "items": {
-                        "type": "ARRAY",
-                        "items": {
-                            "type": "OBJECT",
-                            "properties": {
-                                "item": {"type": "STRING"},
-                                "group": {"type": "STRING"},
-                                "values": {
-                                    "type": "ARRAY",
-                                    "items": {
-                                        "type": "OBJECT",
-                                        "properties": {
-                                            "reporting_year": {"type": "INTEGER"},
-                                            "amount": {"type": "NUMBER"},
-                                            "month_end": {"type": "INTEGER"},
-                                            "is_cumulative": {"type": "BOOLEAN"},
-                                            "scaling_factor": {"type": "INTEGER"},
-                                            "confidence": {"type": "NUMBER"},
-                                            "page_number": {"type": "INTEGER"},
-                                            "entity_scope": {"type": "STRING"},
-                                            "notes": {"type": "STRING"}
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-def build_extraction_prompt(clipped_text: str, institution_id: str, reporting_period: str, filename: str, user_prompt: str, include_schema_text: bool = False) -> str:
-    prompt_text = (
-        "TASK: Extract standardized financial data from the provided text snippet.\n"
-        f"INSTITUTION: {institution_id}\n"
-        f"PRIMARY REPORTING PERIOD: {reporting_period}\n"
-        f"SOURCE FILE: {filename}\n"
-        f"USER TARGET: {user_prompt}\n\n"
-        "### EXTRACTION RULES ###\n"
-        "1. RAW SCALING: Extract the RAWEST numerical value exactly as it appears in the table. Identify multipliers from headers (RM'000, Millions) and store as 'scaling_factor' metadata. DO NOT multiply the value yourself.\n"
-        "2. TEMPORAL & ENTITY: Detect 'month_end' (1-12) and 'is_cumulative' (True for annual/balance sheet). If the table presents multiple entity columns (e.g., 'Group' vs 'Bank'/'Company'), extract figures for BOTH and tag them appropriately in the 'entity_scope' field. If only one set of figures is present, assume it is 'Group'.\n"
-        "3. PRECISION: Extract ONLY from the provided text. Do not hallucinate data points.\n"
-        "4. TRACEABILITY: Locate the '--- TARGET FINANCIAL PAGE {page_num} ---' markers in the text. For EACH extracted data point (YearValue), you MUST set 'source_page_number' to the {page_num} specified in the marker immediately preceding that section of text.\n"
-        "5. STRUCTURE: Comply exactly with the target JSON schema. Keep 'statement_type' and 'statement_name' SHORT AND CONCISE (e.g., 'Balance Sheet'). DO NOT include long descriptions in these fields.\n\n"
-    )
-
-    if include_schema_text:
-        prompt_text += (
-            "6. STRICT NO-FLUFF JSON ONLY: Return ONLY the raw JSON string matching the schema below. Do not provide ANY conversational text before or after (e.g. no 'Here is the extracted JSON'). Do not use markdown backticks around the JSON.\n\n"
-            "### TARGET JSON SCHEMA ###\n"
-            f"{json.dumps(MANUAL_SCHEMA, indent=2)}\n\n"
-        )
-        
-    prompt_text += (
-        "### TEXT SNIPPET ###\n"
-        f"{clipped_text}"
-    )
-
-    return prompt_text
+from p01_Data_Extraction.llm_factory import LLMFactory, MANUAL_SCHEMA, build_extraction_prompt, clean_json_output
 
 def extract_financials_from_text(clipped_text: str, institution_id: str, reporting_period: str, filename: str, user_prompt: str) -> str:
     """
-    Uses the Gemini SDK with native JSON Schema enforcement to extract financial data.
-    Implements exponential backoff for 429 RESOURCE_EXHAUSTED errors and model fallback.
+    Uses the LLMFactory to extract financial data with fallback logic.
     """
     if DUMMY_MODE:
         logger.warning("Running in DUMMY_MODE. Returning simulated JSON.")
@@ -231,12 +137,12 @@ def extract_financials_from_text(clipped_text: str, institution_id: str, reporti
             "institution_id": institution_id,
             "reporting_period": reporting_period,
             "source_document": filename,
-            "financial_statements": [
+            "statements": [
                 {
                     "statement_type": "Balance Sheet",
-                    "line_items": [{
+                    "items": [{
                         "item": "Total Assets", 
-                        "values": [{"year": int(reporting_period), "value": 1000000, "month_end": 12, "is_cumulative": True, "scaling_factor": 1000}]
+                        "values": [{"year": int(reporting_period), "value": 1000000, "month_end": 12, "is_cumulative": True, "scaling_factor": 1000, "confidence": 0.9}]
                     }]
                 }
             ]
@@ -244,68 +150,34 @@ def extract_financials_from_text(clipped_text: str, institution_id: str, reporti
 
     prompt_text = build_extraction_prompt(clipped_text, institution_id, reporting_period, filename, user_prompt, include_schema_text=False)
 
-    # Model tiered hierarchy for resilience
-    trial_configs = [
-        {"name": "gemini-2.0-flash", "retries": 3, "use_schema": True},
-        {"name": "gemini-2.0-flash-lite", "retries": 2, "use_schema": True},
-        {"name": "gemini-1.5-flash", "retries": 2, "use_schema": True}
-    ]
+    # Load provider and model from environment
+    provider = os.getenv("LLM_PROVIDER", "ollama")
+    model = os.getenv("OLLAMA_MODEL", "llama3.2:latest")
 
-    for config in trial_configs:
-        model_name = config["name"]
-        max_retries = config["retries"]
-        use_schema = config["use_schema"]
-        
-        # Prepare the prompt for the specific model
-        current_prompt = prompt_text
-        if not use_schema:
-            current_prompt += "\n\nCRITICAL: Return valid JSON following the schema requirements for FSDataPayload."
+    raw_json = LLMFactory.extract_with_fallback(
+        prompt=prompt_text,
+        schema=MANUAL_SCHEMA,
+        initial_provider=provider,
+        initial_model=model
+    )
 
-        for attempt in range(max_retries):
-            try:
-                model = genai.GenerativeModel(model_name=model_name)
-                logger.info(f"Targeting model: {model_name} (Attempt {attempt + 1}/{max_retries})")
-                
-                generation_config = {
-                    "response_mime_type": "application/json",
-                }
-                
-                # GenAI-native schema dict (Proto compatible)
-                manual_schema = MANUAL_SCHEMA
-    
-                if use_schema:
-                    generation_config["response_schema"] = manual_schema
-                    logger.debug(f"Using manual schema for {model_name}")
-
-                response = model.generate_content(
-                    current_prompt,
-                    generation_config=generation_config,
-                    request_options={"timeout": 120}
-                )
-                
-                if response.text:
-                    logger.success(f"Successfully extracted data using {model_name}")
-                    return clean_json_output(response.text)
-                else:
-                    logger.error(f"Empty response from {model_name}")
-                    
-            except g_exceptions.ResourceExhausted:
-                wait_time = (2 ** attempt) * 10 # 10, 20, 40s
-                logger.warning(f"429 RESOURCE_EXHAUSTED on {model_name}. Backing off for {wait_time}s...")
-                time.sleep(wait_time)
-            except Exception as e:
-                logger.error(f"Unexpected error with {model_name}: {e}")
-                # For non-retriable errors, we break retry loop and try next model or fail
-                break 
-
-    logger.critical("All models and retries exhausted. Extraction failed.")
-    return ""
+    return clean_json_output(raw_json) if raw_json else ""
 
 def process_report(pdf_path: str, institution_id: str, reporting_period: str, user_prompt: str = "Balance Sheet and Income Statement"):
     filename = os.path.basename(pdf_path)
     logger.info(f"--- Processing: {institution_id} ({reporting_period}) ---")
     
-    clipped_text = get_clipped_financial_text_dynamic(pdf_path, user_prompt)
+    # Hardware-aware chunking: Scale down pages for heavy local models
+    active_model = os.getenv("OLLAMA_MODEL", "llama3.2:latest")
+    max_pages = 2 # Default for Llama 3.2 or Cloud
+    
+    if "qwen" in active_model.lower() and "7b" in active_model.lower():
+        logger.warning(f"Heavy model detected ({active_model}). Restricting to 1-page payload to save VRAM.")
+        max_pages = 1
+    elif "llama" in active_model.lower() and "3b" in active_model.lower():
+        max_pages = 3 # 3B has more room for context
+        
+    clipped_text = get_clipped_financial_text_dynamic(pdf_path, user_prompt, max_pages=max_pages)
     if not clipped_text: return None
         
     raw_json = extract_financials_from_text(clipped_text, institution_id, reporting_period, filename, user_prompt)
@@ -318,7 +190,8 @@ def process_report(pdf_path: str, institution_id: str, reporting_period: str, us
         data_dict = json.loads(raw_json)
         payload = FSDataPayload.model_validate(data_dict)
         
-        output_path = os.path.join(output_dir, f"{institution_id}_{reporting_period}_extracted.json")
+        timestamp = int(time.time())
+        output_path = os.path.join(output_dir, f"{institution_id}_{reporting_period}_extracted_{timestamp}.json")
         with open(output_path, "w") as f:
             json.dump(payload.model_dump(), f, indent=2)
             
@@ -327,7 +200,8 @@ def process_report(pdf_path: str, institution_id: str, reporting_period: str, us
     except Exception as e:
         logger.error(f"Validation Error: {e}")
         # Save raw failing JSON for analysis
-        fail_path = os.path.join(output_dir, f"{institution_id}_{reporting_period}_FAILED.json")
+        timestamp = int(time.time())
+        fail_path = os.path.join(output_dir, f"{institution_id}_{reporting_period}_FAILED_{timestamp}.json")
         with open(fail_path, "w") as f:
             f.write(raw_json)
         return None

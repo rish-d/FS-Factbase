@@ -87,9 +87,11 @@ def locate_target_financial_pages_dynamic(pages_text: dict[int, str], user_promp
     
     return top_pages
     
-def get_clipped_financial_text_dynamic(pdf_path: str, user_prompt: str) -> str:
-    """Efficiently scans a PDF for dynamically targeted pages based on a user prompt."""
-    logger.info(f"Scanning PDF '{pdf_path}' dynamically for: '{user_prompt}'")
+def get_clipped_financial_text_dynamic(pdf_path: str, user_prompt: str, max_pages: int = 2) -> str:
+    """Efficiently scans a PDF for dynamically targeted pages based on a user prompt.
+    Supports a 'max_pages' limit to prevent VRAM overflow in local models.
+    """
+    logger.info(f"Scanning PDF '{pdf_path}' dynamically (limit: {max_pages}) for: '{user_prompt}'")
     try:
         doc = fitz.open(pdf_path)
     except Exception as e:
@@ -109,10 +111,12 @@ def get_clipped_financial_text_dynamic(pdf_path: str, user_prompt: str) -> str:
             logger.warning(f"Failed to extract text from page {page_num}: {e}")
             continue
             
-    # Filter out anything with zero relevance and take top 2 pages
+    # Filter out anything with zero relevance and take top N pages
     valid_candidates = [p for p in scores if p[1] > 5.0]
     candidates = sorted(valid_candidates, key=lambda x: x[1], reverse=True)
-    target_pages = sorted(list(set([p[0] for p in candidates[:2]])))
+    
+    # Take top N pages based on max_pages
+    target_pages = sorted(list(set([p[0] for p in candidates[:max_pages]])))
     
     if not target_pages:
         logger.warning(f"No pages met the threshold in {pdf_path} for query: '{user_prompt}'.")

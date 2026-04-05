@@ -28,37 +28,16 @@ def discover_reports(base_path="data/raw/reports"):
                 reports.append((path, inst_id, period))
     return reports
 
-def check_if_claimed(inst_id: str, period: str) -> bool:
-    """
-    State-Aware check to see if a report is already fast-tracked or processed.
-    Returns True if it should be SKIPPED by the API.
-    """
-    prompt_path = os.path.join("data", "manual_runs", "prompts", f"{inst_id}_{period}_prompt.md")
-    interim_path = os.path.join("data", "interim", "extracted_metrics", f"{inst_id}_{period}_extracted.json")
-    
-    if os.path.exists(interim_path):
-        return True # Already successfully extracted
-        
-    responses_dir = os.path.join("data", "manual_runs", "responses")
-    if os.path.exists(responses_dir):
-        # Broad response check: if user named response arbitrarily, we might just look for inst_id string in filename
-        # A more rigorous check would require parsing all responses, but a simple prefix match usually works if user follows convention.
-        for f in os.listdir(responses_dir):
-            if f.startswith(f"{inst_id}_{period}_response"):
-                return True
+# CLAIMING LOGIC REMOVED TO SUPPORT FLUID MULTI-FOCUS EXTRACTION
 
-    if os.path.exists(prompt_path):
-        # Fallback check: 2-hour timeout
-        file_age_hours = (time.time() - os.path.getmtime(prompt_path)) / 3600
-        if file_age_hours > 2:
-            logger.warning(f"Manual prompt for {inst_id} {period} is older than 2 hours. API mode will hijack and process it.")
-            return False
-        return True # In the offline queue recently
-        
-    return False
-
-def run_pipeline(user_prompt: str = "Balance Sheet and Income Statement", sample: bool = False):
+def run_pipeline(user_prompt: str = "Balance Sheet and Income Statement", sample: bool = False, target_year: str = None, target_bank: str = None):
     reports = discover_reports()
+    
+    # Filter by Year and Bank if provided
+    if target_year:
+        reports = [r for r in reports if r[2] == target_year]
+    if target_bank:
+        reports = [r for r in reports if target_bank.lower() in r[1].lower()]
     
     if sample:
         logger.info("Sample mode ACTIVE: Limiting to 2 reports per institution.")
@@ -81,9 +60,7 @@ def run_pipeline(user_prompt: str = "Balance Sheet and Income Statement", sample
     results_log = []
     
     for pdf_path, inst_id, period in reports:
-        if check_if_claimed(inst_id, period):
-            logger.info(f">>> Skipping {inst_id} | {period} (Claimed by Fast-Track or already processed)")
-            continue
+        # No 'claimed' check, execute fluid extraction on demand
             
         logger.info(f">>> Processing: {inst_id} | {period} <<<")
         
@@ -121,7 +98,7 @@ def run_pipeline(user_prompt: str = "Balance Sheet and Income Statement", sample
     print("="*50)
     logger.success(f"Orchestration Complete. Success: {success_count}, Fail: {fail_count}")
 
-def run_offline_prep(user_prompt: str = "Balance Sheet and Income Statement", sample: bool = False):
+def run_offline_prep(user_prompt: str = "Balance Sheet and Income Statement", sample: bool = False, target_year: str = None, target_bank: str = None):
     """
     Generates markdown prompt files for use with Gemini Web UI.
     """
@@ -129,6 +106,12 @@ def run_offline_prep(user_prompt: str = "Balance Sheet and Income Statement", sa
     os.makedirs(os.path.join("data", "manual_runs", "responses"), exist_ok=True)
     
     reports = discover_reports()
+    
+    # Filter by Year and Bank if provided
+    if target_year:
+        reports = [r for r in reports if r[2] == target_year]
+    if target_bank:
+        reports = [r for r in reports if target_bank.lower() in r[1].lower()]
     
     if sample:
         logger.info("Sample mode ACTIVE: Limiting to 2 reports per institution.")
@@ -146,9 +129,7 @@ def run_offline_prep(user_prompt: str = "Balance Sheet and Income Statement", sa
     
     generated = 0
     for pdf_path, inst_id, period in reports:
-        if check_if_claimed(inst_id, period):
-            logger.info(f"Skipping {inst_id} {period} (already prepped or processed)")
-            continue
+        # No 'claimed' check, execute prep on demand
             
         logger.info(f"Prep: Generating prompt for {inst_id} {period}")
         filename = os.path.basename(pdf_path)
@@ -228,15 +209,35 @@ def run_offline_ingest():
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Orchestrate the extraction pipeline.")
-    parser.add_argument("--prompt", default="Balance Sheet and Income Statement", help="Target financial context to extract")
+    parser.add_argument("--prompt", default=None, help="Target financial context to extract")
+    parser.add_argument("--year", default=None, help="Target reporting year")
+    parser.add_argument("--bank", default=None, help="Target institution keyword")
     parser.add_argument("--sample", action="store_true", help="Run only 2 reports per bank for validation")
     parser.add_argument("--offline-prep", action="store_true", help="Generate prompts for Web UI rather than calling API")
     parser.add_argument("--offline-ingest", action="store_true", help="Ingest parsed responses from Gemini Web UI")
     args = parser.parse_args()
     
-    if args.offline_prep:
-        run_offline_prep(args.prompt, args.sample)
-    elif args.offline_ingest:
+    if args.offline_ingest:
         run_offline_ingest()
     else:
-        run_pipeline(args.prompt, args.sample)
+        # Interactive Mode if no prompt is explicitly provided
+        user_prompt = args.prompt
+        target_year = args.year
+        target_bank = args.bank
+        
+        if not user_prompt:
+            print("\n🤖 FS-Factbase Interactive CLI 🤖")
+            print("==================================")
+            u_input = input("Enter extraction focus/target (e.g. 'Customer deposits') [Default: Balance Sheet and Income Statement]: ").strip()
+            user_prompt = u_input if u_input else "Balance Sheet and Income Statement"
+            
+            y_input = input("Enter target year (or press Enter for ALL): ").strip()
+            target_year = y_input if y_input else None
+            
+            b_input = input("Enter target bank keyword (or press Enter for ALL): ").strip()
+            target_bank = b_input if b_input else None
+        
+        if args.offline_prep:
+            run_offline_prep(user_prompt, args.sample, target_year, target_bank)
+        else:
+            run_pipeline(user_prompt, args.sample, target_year, target_bank)

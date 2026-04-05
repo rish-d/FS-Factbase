@@ -46,6 +46,8 @@ def init_database(db_path=None):
             metric_id VARCHAR NOT NULL,
             raw_term VARCHAR NOT NULL,
             institution_id VARCHAR,
+            batch_id VARCHAR,
+            is_ai_generated BOOLEAN DEFAULT FALSE,
             FOREIGN KEY (metric_id) REFERENCES Core_Metrics(metric_id),
             FOREIGN KEY (institution_id) REFERENCES Institutions(institution_id)
         );
@@ -85,6 +87,7 @@ def init_database(db_path=None):
             is_cumulative BOOLEAN DEFAULT TRUE,
             scaling_factor INTEGER DEFAULT 1,
             entity_scope VARCHAR DEFAULT 'Group',
+            batch_id VARCHAR,
             FOREIGN KEY (metric_id) REFERENCES Core_Metrics(metric_id),
             FOREIGN KEY (institution_id) REFERENCES Institutions(institution_id),
             UNIQUE (institution_id, metric_id, reporting_period, entity_scope, is_published)
@@ -116,6 +119,31 @@ def init_database(db_path=None):
         );
     """)
     logger.info("Table created: Unmapped_Staging")
+
+    # Create AI_Resolution_Log Table
+    conn.execute("""
+        CREATE SEQUENCE IF NOT EXISTS seq_ai_log_id;
+        CREATE TABLE IF NOT EXISTS AI_Resolution_Log (
+            log_id INTEGER PRIMARY KEY DEFAULT nextval('seq_ai_log_id'),
+            batch_id VARCHAR NOT NULL,
+            raw_term VARCHAR NOT NULL,
+            metric_id VARCHAR NOT NULL,
+            institution_id VARCHAR NOT NULL,
+            reporting_period VARCHAR NOT NULL,
+            raw_value DOUBLE,
+            source_document VARCHAR,
+            source_page_number INTEGER,
+            confidence_score DOUBLE,
+            confidence_reason VARCHAR,
+            month_end INTEGER,
+            is_cumulative BOOLEAN,
+            scaling_factor INTEGER,
+            statement_type VARCHAR,
+            entity_scope VARCHAR,
+            resolved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    """)
+    logger.info("Table created: AI_Resolution_Log")
 
     # Create Extraction_Corrections Table
     conn.execute("""

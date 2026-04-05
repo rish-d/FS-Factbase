@@ -2092,3 +2092,412 @@ signature_name: "serving_stream"
 2026-04-05 02:27:27.969 | SUCCESS  | __main__:run_offline_ingest:216 - Validated and saved: data\interim\extracted_metrics\MALAYAN BANKING BERHAD_2023_extracted.json
 2026-04-05 02:27:27.975 | INFO     | p02_Database_and_Mapping.mapper:process_file:78 - Processing extraction result: data\interim\extracted_metrics\MALAYAN BANKING BERHAD_2023_extracted.json
 2026-04-05 02:27:30.691 | SUCCESS  | p02_Database_and_Mapping.mapper:process_file:229 - Finished data\interim\extracted_metrics\MALAYAN BANKING BERHAD_2023_extracted.json: Mapped 8, Unmapped 26
+2026-04-05 16:31:49.941 | INFO     | __main__:run_pipeline:64 - Sample mode ACTIVE: Limiting to 2 reports per institution.
+2026-04-05 16:31:49.958 | INFO     | __main__:run_pipeline:75 - Discovered 16 reports for processing. Target: Balance Sheet and Income Statement
+2026-04-05 16:31:49.960 | INFO     | __main__:run_pipeline:85 - >>> Skipping ALLIANCE BANK MALAYSIA BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:31:49.961 | INFO     | __main__:run_pipeline:85 - >>> Skipping ALLIANCE BANK MALAYSIA BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:31:49.961 | INFO     | __main__:run_pipeline:85 - >>> Skipping AMMB HOLDINGS BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:31:49.962 | INFO     | __main__:run_pipeline:85 - >>> Skipping AMMB HOLDINGS BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:31:49.962 | INFO     | __main__:run_pipeline:85 - >>> Skipping BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:31:49.963 | INFO     | __main__:run_pipeline:85 - >>> Skipping BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:31:49.963 | INFO     | __main__:run_pipeline:85 - >>> Skipping CIMB GROUP HOLDINGS BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:31:49.964 | INFO     | __main__:run_pipeline:85 - >>> Skipping CIMB GROUP HOLDINGS BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:31:49.964 | INFO     | __main__:run_pipeline:85 - >>> Skipping HONG LEONG FINANCIAL GROUP BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:31:49.964 | INFO     | __main__:run_pipeline:85 - >>> Skipping HONG LEONG FINANCIAL GROUP BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:31:49.967 | INFO     | __main__:run_pipeline:85 - >>> Skipping MALAYAN BANKING BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:31:49.967 | INFO     | __main__:run_pipeline:85 - >>> Skipping MALAYAN BANKING BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:31:49.967 | INFO     | __main__:run_pipeline:85 - >>> Skipping PUBLIC BANK BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:31:49.968 | INFO     | __main__:run_pipeline:85 - >>> Skipping PUBLIC BANK BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:31:49.968 | INFO     | __main__:run_pipeline:85 - >>> Skipping RHB BANK BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:31:49.969 | INFO     | __main__:run_pipeline:85 - >>> Skipping RHB BANK BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:31:49.976 | SUCCESS  | __main__:run_pipeline:122 - Orchestration Complete. Success: 0, Fail: 0
+2026-04-05 16:32:13.559 | INFO     | __main__:run_pipeline:64 - Sample mode ACTIVE: Limiting to 2 reports per institution.
+2026-04-05 16:32:13.560 | INFO     | __main__:run_pipeline:75 - Discovered 16 reports for processing. Target: Balance Sheet and Income Statement
+2026-04-05 16:32:13.560 | INFO     | __main__:run_pipeline:85 - >>> Skipping ALLIANCE BANK MALAYSIA BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:32:13.561 | INFO     | __main__:run_pipeline:85 - >>> Skipping ALLIANCE BANK MALAYSIA BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:32:13.576 | INFO     | __main__:run_pipeline:88 - >>> Processing: AMMB HOLDINGS BERHAD | 2021 <<<
+2026-04-05 16:32:13.577 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:168 - --- Processing: AMMB HOLDINGS BERHAD (2021) ---
+2026-04-05 16:32:13.578 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:94 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2021_fs.pdf' dynamically (limit: 2) for: 'Balance Sheet and Income Statement'
+2026-04-05 16:32:15.232 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:126 - Dynamic target pages localized: [5, 89]
+2026-04-05 16:32:15.244 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:194 - Attempting extraction via ollama (llama3.2:latest)...
+2026-04-05 16:32:15.248 | INFO     | p01_Data_Extraction.llm_factory:extract:167 - Requesting Ollama: llama3.2:latest...
+2026-04-05 16:33:48.879 | ERROR    | p01_Data_Extraction.pdf_extractor:process_report:200 - Validation Error: 30 validation errors for FSDataPayload
+statements.0.line_items.0.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.0.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.0.line_items.1.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.1.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.0.line_items.2.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.2.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.1.line_items.0.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.1.line_items.0.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.1.line_items.1.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.1.line_items.1.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.1.line_items.2.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.1.line_items.2.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.2.line_items.0.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.2.line_items.0.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.3.line_items.0.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.3.line_items.0.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.3.line_items.1.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.3.line_items.1.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.4.line_items.0.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.4.line_items.0.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.4.line_items.1.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.4.line_items.1.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.4.line_items.2.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.4.line_items.2.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.5.line_items.0.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.5.line_items.0.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.5.line_items.1.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.5.line_items.1.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.5.line_items.2.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.5.line_items.2.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+2026-04-05 16:33:49.151 | ERROR    | __main__:run_pipeline:100 - Extraction failed for data/raw/reports\AMMB HOLDINGS BERHAD\2021_fs.pdf
+2026-04-05 16:33:49.153 | INFO     | __main__:run_pipeline:106 - Sleeping for 10s to respect API rate limits...
+2026-04-05 16:33:59.154 | INFO     | __main__:run_pipeline:88 - >>> Processing: AMMB HOLDINGS BERHAD | 2022 <<<
+2026-04-05 16:33:59.156 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:168 - --- Processing: AMMB HOLDINGS BERHAD (2022) ---
+2026-04-05 16:33:59.157 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:94 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2022_fs.pdf' dynamically (limit: 2) for: 'Balance Sheet and Income Statement'
+2026-04-05 16:34:01.068 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:126 - Dynamic target pages localized: [3, 285]
+2026-04-05 16:34:01.138 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:194 - Attempting extraction via ollama (llama3.2:latest)...
+2026-04-05 16:34:01.138 | INFO     | p01_Data_Extraction.llm_factory:extract:167 - Requesting Ollama: llama3.2:latest...
+2026-04-05 16:34:23.521 | INFO     | __main__:run_pipeline:64 - Sample mode ACTIVE: Limiting to 2 reports per institution.
+2026-04-05 16:34:23.522 | INFO     | __main__:run_pipeline:75 - Discovered 16 reports for processing. Target: Balance Sheet and Income Statement
+2026-04-05 16:34:23.522 | INFO     | __main__:run_pipeline:85 - >>> Skipping ALLIANCE BANK MALAYSIA BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:34:23.523 | INFO     | __main__:run_pipeline:85 - >>> Skipping ALLIANCE BANK MALAYSIA BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:34:23.526 | INFO     | __main__:run_pipeline:88 - >>> Processing: AMMB HOLDINGS BERHAD | 2021 <<<
+2026-04-05 16:34:23.529 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:168 - --- Processing: AMMB HOLDINGS BERHAD (2021) ---
+2026-04-05 16:34:23.532 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:94 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2021_fs.pdf' dynamically (limit: 2) for: 'Balance Sheet and Income Statement'
+2026-04-05 16:34:24.984 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:126 - Dynamic target pages localized: [5, 89]
+2026-04-05 16:34:24.994 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:194 - Attempting extraction via ollama (qwen2.5:latest)...
+2026-04-05 16:34:24.996 | INFO     | p01_Data_Extraction.llm_factory:extract:167 - Requesting Ollama: qwen2.5:latest...
+2026-04-05 16:34:29.237 | ERROR    | p01_Data_Extraction.pdf_extractor:process_report:200 - Validation Error: 15 validation errors for FSDataPayload
+statements.0.line_items.0.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.0.values.0.scaling_factor
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.0.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.0.line_items.0.values.1.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.0.values.1.scaling_factor
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.0.values.1.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.0.line_items.1.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.1.values.0.scaling_factor
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.1.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.0.line_items.1.values.1.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.1.values.1.scaling_factor
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.1.values.1.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+statements.0.line_items.2.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.2.values.0.scaling_factor
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.2.values.0.confidence
+  Input should be a valid number [type=float_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/float_type
+2026-04-05 16:34:29.248 | ERROR    | __main__:run_pipeline:100 - Extraction failed for data/raw/reports\AMMB HOLDINGS BERHAD\2022_fs.pdf
+2026-04-05 16:34:29.249 | INFO     | __main__:run_pipeline:106 - Sleeping for 10s to respect API rate limits...
+2026-04-05 16:34:39.250 | INFO     | __main__:run_pipeline:85 - >>> Skipping BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:34:39.251 | INFO     | __main__:run_pipeline:85 - >>> Skipping BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:34:39.251 | INFO     | __main__:run_pipeline:85 - >>> Skipping CIMB GROUP HOLDINGS BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:34:39.252 | INFO     | __main__:run_pipeline:85 - >>> Skipping CIMB GROUP HOLDINGS BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:34:39.252 | INFO     | __main__:run_pipeline:85 - >>> Skipping HONG LEONG FINANCIAL GROUP BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:34:39.254 | INFO     | __main__:run_pipeline:85 - >>> Skipping HONG LEONG FINANCIAL GROUP BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:34:39.255 | INFO     | __main__:run_pipeline:85 - >>> Skipping MALAYAN BANKING BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:34:39.255 | INFO     | __main__:run_pipeline:85 - >>> Skipping MALAYAN BANKING BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:34:39.256 | INFO     | __main__:run_pipeline:85 - >>> Skipping PUBLIC BANK BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:34:39.256 | INFO     | __main__:run_pipeline:85 - >>> Skipping PUBLIC BANK BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:34:39.257 | INFO     | __main__:run_pipeline:85 - >>> Skipping RHB BANK BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:34:39.258 | INFO     | __main__:run_pipeline:85 - >>> Skipping RHB BANK BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:34:39.262 | SUCCESS  | __main__:run_pipeline:122 - Orchestration Complete. Success: 0, Fail: 2
+2026-04-05 16:35:31.374 | ERROR    | p01_Data_Extraction.pdf_extractor:process_report:200 - Validation Error: 1 validation error for FSDataPayload
+financial_statements
+  Field required [type=missing, input_value={'type': 'OBJECT', 'prope...source_page_number': 89}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+2026-04-05 16:35:31.438 | ERROR    | __main__:run_pipeline:100 - Extraction failed for data/raw/reports\AMMB HOLDINGS BERHAD\2021_fs.pdf
+2026-04-05 16:35:31.439 | INFO     | __main__:run_pipeline:106 - Sleeping for 10s to respect API rate limits...
+2026-04-05 16:35:41.440 | INFO     | __main__:run_pipeline:88 - >>> Processing: AMMB HOLDINGS BERHAD | 2022 <<<
+2026-04-05 16:35:41.441 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:168 - --- Processing: AMMB HOLDINGS BERHAD (2022) ---
+2026-04-05 16:35:41.444 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:94 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2022_fs.pdf' dynamically (limit: 2) for: 'Balance Sheet and Income Statement'
+2026-04-05 16:35:43.268 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:126 - Dynamic target pages localized: [3, 285]
+2026-04-05 16:35:43.340 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:194 - Attempting extraction via ollama (qwen2.5:latest)...
+2026-04-05 16:35:43.341 | INFO     | p01_Data_Extraction.llm_factory:extract:167 - Requesting Ollama: qwen2.5:latest...
+2026-04-05 16:36:18.120 | INFO     | __main__:run_pipeline:64 - Sample mode ACTIVE: Limiting to 2 reports per institution.
+2026-04-05 16:36:18.120 | INFO     | __main__:run_pipeline:75 - Discovered 16 reports for processing. Target: Balance Sheet and Income Statement
+2026-04-05 16:36:18.121 | INFO     | __main__:run_pipeline:85 - >>> Skipping ALLIANCE BANK MALAYSIA BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:36:18.121 | INFO     | __main__:run_pipeline:85 - >>> Skipping ALLIANCE BANK MALAYSIA BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:36:18.122 | INFO     | __main__:run_pipeline:88 - >>> Processing: AMMB HOLDINGS BERHAD | 2021 <<<
+2026-04-05 16:36:18.124 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:168 - --- Processing: AMMB HOLDINGS BERHAD (2021) ---
+2026-04-05 16:36:18.125 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:94 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2021_fs.pdf' dynamically (limit: 2) for: 'Balance Sheet and Income Statement'
+2026-04-05 16:36:21.921 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:126 - Dynamic target pages localized: [5, 89]
+2026-04-05 16:36:21.932 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:198 - Attempting extraction via ollama (qwen2.5:latest)...
+2026-04-05 16:36:21.976 | INFO     | p01_Data_Extraction.llm_factory:extract:170 - Requesting Ollama: qwen2.5:latest...
+2026-04-05 16:36:57.893 | INFO     | __main__:run_pipeline:64 - Sample mode ACTIVE: Limiting to 2 reports per institution.
+2026-04-05 16:36:57.894 | INFO     | __main__:run_pipeline:75 - Discovered 16 reports for processing. Target: Balance Sheet and Income Statement
+2026-04-05 16:36:57.897 | INFO     | __main__:run_pipeline:85 - >>> Skipping ALLIANCE BANK MALAYSIA BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:36:57.898 | INFO     | __main__:run_pipeline:85 - >>> Skipping ALLIANCE BANK MALAYSIA BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:36:57.898 | INFO     | __main__:run_pipeline:88 - >>> Processing: AMMB HOLDINGS BERHAD | 2021 <<<
+2026-04-05 16:36:57.899 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:168 - --- Processing: AMMB HOLDINGS BERHAD (2021) ---
+2026-04-05 16:36:57.912 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:94 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2021_fs.pdf' dynamically (limit: 2) for: 'Balance Sheet and Income Statement'
+2026-04-05 16:37:01.072 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:126 - Dynamic target pages localized: [5, 89]
+2026-04-05 16:37:01.160 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:214 - Attempting extraction via ollama (qwen2.5:latest)...
+2026-04-05 16:37:01.161 | INFO     | p01_Data_Extraction.llm_factory:extract:170 - Requesting Ollama: qwen2.5:latest...
+2026-04-05 16:38:45.406 | ERROR    | p01_Data_Extraction.llm_factory:extract:173 - Ollama error with qwen2.5:latest: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=180)
+2026-04-05 16:38:45.407 | WARNING  | p01_Data_Extraction.llm_factory:extract_with_fallback:202 - Primary provider ollama failed. Falling back to Gemini Tier...
+2026-04-05 16:38:45.408 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:205 - Attempting fallback via Gemini (gemini-2.0-flash)...
+2026-04-05 16:38:45.970 | WARNING  | p01_Data_Extraction.llm_factory:extract:132 - Gemini 429 Resource Exhausted for gemini-2.0-flash
+2026-04-05 16:38:45.971 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:205 - Attempting fallback via Gemini (gemini-1.5-flash)...
+2026-04-05 16:38:46.155 | ERROR    | p01_Data_Extraction.llm_factory:extract:135 - Gemini error with gemini-1.5-flash: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+2026-04-05 16:38:46.156 | ERROR    | p01_Data_Extraction.llm_factory:extract_with_fallback:211 - All LLM providers failed.
+2026-04-05 16:38:46.156 | ERROR    | __main__:run_pipeline:100 - Extraction failed for data/raw/reports\AMMB HOLDINGS BERHAD\2022_fs.pdf
+2026-04-05 16:38:46.157 | INFO     | __main__:run_pipeline:106 - Sleeping for 10s to respect API rate limits...
+2026-04-05 16:38:56.158 | INFO     | __main__:run_pipeline:85 - >>> Skipping BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:38:56.158 | INFO     | __main__:run_pipeline:85 - >>> Skipping BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:38:56.159 | INFO     | __main__:run_pipeline:85 - >>> Skipping CIMB GROUP HOLDINGS BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:38:56.160 | INFO     | __main__:run_pipeline:85 - >>> Skipping CIMB GROUP HOLDINGS BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:38:56.163 | INFO     | __main__:run_pipeline:85 - >>> Skipping HONG LEONG FINANCIAL GROUP BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:38:56.163 | INFO     | __main__:run_pipeline:85 - >>> Skipping HONG LEONG FINANCIAL GROUP BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:38:56.164 | INFO     | __main__:run_pipeline:85 - >>> Skipping MALAYAN BANKING BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:38:56.165 | INFO     | __main__:run_pipeline:85 - >>> Skipping MALAYAN BANKING BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:38:56.165 | INFO     | __main__:run_pipeline:85 - >>> Skipping PUBLIC BANK BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:38:56.166 | INFO     | __main__:run_pipeline:85 - >>> Skipping PUBLIC BANK BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:38:56.166 | INFO     | __main__:run_pipeline:85 - >>> Skipping RHB BANK BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:38:56.167 | INFO     | __main__:run_pipeline:85 - >>> Skipping RHB BANK BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:38:56.171 | SUCCESS  | __main__:run_pipeline:122 - Orchestration Complete. Success: 0, Fail: 2
+2026-04-05 16:40:24.695 | ERROR    | p01_Data_Extraction.llm_factory:extract:177 - Ollama error with qwen2.5:latest: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=240)
+2026-04-05 16:40:24.728 | WARNING  | p01_Data_Extraction.llm_factory:extract_with_fallback:206 - Primary provider ollama failed. Falling back to Gemini Tier...
+2026-04-05 16:40:24.731 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:209 - Attempting fallback via Gemini (gemini-2.0-flash)...
+2026-04-05 16:40:25.560 | WARNING  | p01_Data_Extraction.llm_factory:extract:132 - Gemini 429 Resource Exhausted for gemini-2.0-flash
+2026-04-05 16:40:25.613 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:209 - Attempting fallback via Gemini (gemini-1.5-flash)...
+2026-04-05 16:40:25.772 | ERROR    | p01_Data_Extraction.llm_factory:extract:135 - Gemini error with gemini-1.5-flash: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+2026-04-05 16:40:25.773 | ERROR    | p01_Data_Extraction.llm_factory:extract_with_fallback:215 - All LLM providers failed.
+2026-04-05 16:40:25.776 | ERROR    | __main__:run_pipeline:100 - Extraction failed for data/raw/reports\AMMB HOLDINGS BERHAD\2021_fs.pdf
+2026-04-05 16:40:25.777 | INFO     | __main__:run_pipeline:106 - Sleeping for 10s to respect API rate limits...
+2026-04-05 16:40:35.790 | INFO     | __main__:run_pipeline:88 - >>> Processing: AMMB HOLDINGS BERHAD | 2022 <<<
+2026-04-05 16:40:35.791 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:168 - --- Processing: AMMB HOLDINGS BERHAD (2022) ---
+2026-04-05 16:40:35.791 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:94 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2022_fs.pdf' dynamically (limit: 2) for: 'Balance Sheet and Income Statement'
+2026-04-05 16:40:40.430 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:126 - Dynamic target pages localized: [3, 285]
+2026-04-05 16:40:40.784 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:198 - Attempting extraction via ollama (qwen2.5:latest)...
+2026-04-05 16:40:40.841 | INFO     | p01_Data_Extraction.llm_factory:extract:170 - Requesting Ollama: qwen2.5:latest...
+2026-04-05 16:41:03.564 | ERROR    | p01_Data_Extraction.llm_factory:extract:193 - Ollama error with qwen2.5:latest: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=240)
+2026-04-05 16:41:04.396 | WARNING  | p01_Data_Extraction.llm_factory:extract_with_fallback:222 - Primary provider ollama failed. Falling back to Gemini Tier...
+2026-04-05 16:41:04.397 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:225 - Attempting fallback via Gemini (gemini-2.0-flash)...
+2026-04-05 16:41:04.791 | WARNING  | p01_Data_Extraction.llm_factory:extract:132 - Gemini 429 Resource Exhausted for gemini-2.0-flash
+2026-04-05 16:41:04.799 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:225 - Attempting fallback via Gemini (gemini-1.5-flash)...
+2026-04-05 16:41:06.291 | ERROR    | p01_Data_Extraction.llm_factory:extract:135 - Gemini error with gemini-1.5-flash: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+2026-04-05 16:41:06.292 | ERROR    | p01_Data_Extraction.llm_factory:extract_with_fallback:231 - All LLM providers failed.
+2026-04-05 16:41:06.292 | ERROR    | __main__:run_pipeline:100 - Extraction failed for data/raw/reports\AMMB HOLDINGS BERHAD\2021_fs.pdf
+2026-04-05 16:41:06.293 | INFO     | __main__:run_pipeline:106 - Sleeping for 10s to respect API rate limits...
+2026-04-05 16:41:16.415 | INFO     | __main__:run_pipeline:88 - >>> Processing: AMMB HOLDINGS BERHAD | 2022 <<<
+2026-04-05 16:41:16.430 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:168 - --- Processing: AMMB HOLDINGS BERHAD (2022) ---
+2026-04-05 16:41:16.431 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:94 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2022_fs.pdf' dynamically (limit: 2) for: 'Balance Sheet and Income Statement'
+2026-04-05 16:41:28.543 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:126 - Dynamic target pages localized: [3, 285]
+2026-04-05 16:41:28.779 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:214 - Attempting extraction via ollama (qwen2.5:latest)...
+2026-04-05 16:41:28.781 | INFO     | p01_Data_Extraction.llm_factory:extract:170 - Requesting Ollama: qwen2.5:latest...
+2026-04-05 16:44:43.101 | ERROR    | p01_Data_Extraction.llm_factory:extract:177 - Ollama error with qwen2.5:latest: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=240)
+2026-04-05 16:44:43.109 | WARNING  | p01_Data_Extraction.llm_factory:extract_with_fallback:206 - Primary provider ollama failed. Falling back to Gemini Tier...
+2026-04-05 16:44:43.110 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:209 - Attempting fallback via Gemini (gemini-2.0-flash)...
+2026-04-05 16:44:43.639 | WARNING  | p01_Data_Extraction.llm_factory:extract:132 - Gemini 429 Resource Exhausted for gemini-2.0-flash
+2026-04-05 16:44:44.526 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:209 - Attempting fallback via Gemini (gemini-1.5-flash)...
+2026-04-05 16:44:45.418 | ERROR    | p01_Data_Extraction.llm_factory:extract:135 - Gemini error with gemini-1.5-flash: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+2026-04-05 16:44:45.491 | ERROR    | p01_Data_Extraction.llm_factory:extract_with_fallback:215 - All LLM providers failed.
+2026-04-05 16:44:45.500 | ERROR    | __main__:run_pipeline:100 - Extraction failed for data/raw/reports\AMMB HOLDINGS BERHAD\2022_fs.pdf
+2026-04-05 16:44:45.506 | INFO     | __main__:run_pipeline:106 - Sleeping for 10s to respect API rate limits...
+2026-04-05 16:44:55.524 | INFO     | __main__:run_pipeline:85 - >>> Skipping BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:44:55.526 | INFO     | __main__:run_pipeline:85 - >>> Skipping BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:44:55.527 | INFO     | __main__:run_pipeline:85 - >>> Skipping CIMB GROUP HOLDINGS BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:44:55.581 | INFO     | __main__:run_pipeline:85 - >>> Skipping CIMB GROUP HOLDINGS BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:44:55.582 | INFO     | __main__:run_pipeline:85 - >>> Skipping HONG LEONG FINANCIAL GROUP BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:44:55.583 | INFO     | __main__:run_pipeline:85 - >>> Skipping HONG LEONG FINANCIAL GROUP BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:44:55.583 | INFO     | __main__:run_pipeline:85 - >>> Skipping MALAYAN BANKING BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:44:55.584 | INFO     | __main__:run_pipeline:85 - >>> Skipping MALAYAN BANKING BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:44:55.586 | INFO     | __main__:run_pipeline:85 - >>> Skipping PUBLIC BANK BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:44:55.588 | INFO     | __main__:run_pipeline:85 - >>> Skipping PUBLIC BANK BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:44:55.589 | INFO     | __main__:run_pipeline:85 - >>> Skipping RHB BANK BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:44:55.589 | INFO     | __main__:run_pipeline:85 - >>> Skipping RHB BANK BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:44:55.591 | SUCCESS  | __main__:run_pipeline:122 - Orchestration Complete. Success: 0, Fail: 2
+2026-04-05 16:45:31.042 | ERROR    | p01_Data_Extraction.llm_factory:extract:193 - Ollama error with qwen2.5:latest: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=240)
+2026-04-05 16:45:31.050 | WARNING  | p01_Data_Extraction.llm_factory:extract_with_fallback:222 - Primary provider ollama failed. Falling back to Gemini Tier...
+2026-04-05 16:45:31.050 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:225 - Attempting fallback via Gemini (gemini-2.0-flash)...
+2026-04-05 16:45:31.310 | WARNING  | p01_Data_Extraction.llm_factory:extract:132 - Gemini 429 Resource Exhausted for gemini-2.0-flash
+2026-04-05 16:45:31.310 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:225 - Attempting fallback via Gemini (gemini-1.5-flash)...
+2026-04-05 16:45:31.429 | ERROR    | p01_Data_Extraction.llm_factory:extract:135 - Gemini error with gemini-1.5-flash: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+2026-04-05 16:45:31.430 | ERROR    | p01_Data_Extraction.llm_factory:extract_with_fallback:231 - All LLM providers failed.
+2026-04-05 16:45:31.430 | ERROR    | __main__:run_pipeline:100 - Extraction failed for data/raw/reports\AMMB HOLDINGS BERHAD\2022_fs.pdf
+2026-04-05 16:45:31.431 | INFO     | __main__:run_pipeline:106 - Sleeping for 10s to respect API rate limits...
+2026-04-05 16:45:41.432 | INFO     | __main__:run_pipeline:85 - >>> Skipping BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:45:41.432 | INFO     | __main__:run_pipeline:85 - >>> Skipping BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:45:41.433 | INFO     | __main__:run_pipeline:85 - >>> Skipping CIMB GROUP HOLDINGS BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:45:41.435 | INFO     | __main__:run_pipeline:85 - >>> Skipping CIMB GROUP HOLDINGS BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:45:41.435 | INFO     | __main__:run_pipeline:85 - >>> Skipping HONG LEONG FINANCIAL GROUP BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:45:41.436 | INFO     | __main__:run_pipeline:85 - >>> Skipping HONG LEONG FINANCIAL GROUP BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:45:41.436 | INFO     | __main__:run_pipeline:85 - >>> Skipping MALAYAN BANKING BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:45:41.437 | INFO     | __main__:run_pipeline:85 - >>> Skipping MALAYAN BANKING BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:45:41.437 | INFO     | __main__:run_pipeline:85 - >>> Skipping PUBLIC BANK BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:45:41.438 | INFO     | __main__:run_pipeline:85 - >>> Skipping PUBLIC BANK BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:45:41.438 | INFO     | __main__:run_pipeline:85 - >>> Skipping RHB BANK BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:45:41.439 | INFO     | __main__:run_pipeline:85 - >>> Skipping RHB BANK BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:45:41.443 | SUCCESS  | __main__:run_pipeline:122 - Orchestration Complete. Success: 0, Fail: 2
+2026-04-05 16:45:50.390 | INFO     | __main__:run_pipeline:64 - Sample mode ACTIVE: Limiting to 2 reports per institution.
+2026-04-05 16:45:50.391 | INFO     | __main__:run_pipeline:75 - Discovered 16 reports for processing. Target: Balance Sheet and Income Statement
+2026-04-05 16:45:50.391 | INFO     | __main__:run_pipeline:85 - >>> Skipping ALLIANCE BANK MALAYSIA BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:45:50.394 | INFO     | __main__:run_pipeline:85 - >>> Skipping ALLIANCE BANK MALAYSIA BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:45:50.395 | INFO     | __main__:run_pipeline:88 - >>> Processing: AMMB HOLDINGS BERHAD | 2021 <<<
+2026-04-05 16:45:50.395 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:168 - --- Processing: AMMB HOLDINGS BERHAD (2021) ---
+2026-04-05 16:45:50.396 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:94 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2021_fs.pdf' dynamically (limit: 2) for: 'Balance Sheet and Income Statement'
+2026-04-05 16:45:51.860 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:126 - Dynamic target pages localized: [5, 89]
+2026-04-05 16:45:51.873 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:214 - Attempting extraction via ollama (qwen2.5:latest)...
+2026-04-05 16:45:51.875 | INFO     | p01_Data_Extraction.llm_factory:extract:170 - Requesting Ollama: qwen2.5:latest...
+2026-04-05 16:47:30.959 | ERROR    | p01_Data_Extraction.pdf_extractor:process_report:200 - Validation Error: 4 validation errors for FSDataPayload
+statements.0.line_items.0.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.1.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.1.line_items.0.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.1.line_items.1.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+2026-04-05 16:47:30.963 | ERROR    | __main__:run_pipeline:100 - Extraction failed for data/raw/reports\AMMB HOLDINGS BERHAD\2021_fs.pdf
+2026-04-05 16:47:30.966 | INFO     | __main__:run_pipeline:106 - Sleeping for 10s to respect API rate limits...
+2026-04-05 16:47:40.973 | INFO     | __main__:run_pipeline:88 - >>> Processing: AMMB HOLDINGS BERHAD | 2022 <<<
+2026-04-05 16:47:40.974 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:168 - --- Processing: AMMB HOLDINGS BERHAD (2022) ---
+2026-04-05 16:47:40.975 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:94 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2022_fs.pdf' dynamically (limit: 2) for: 'Balance Sheet and Income Statement'
+2026-04-05 16:47:42.736 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:126 - Dynamic target pages localized: [3, 285]
+2026-04-05 16:47:42.811 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:214 - Attempting extraction via ollama (qwen2.5:latest)...
+2026-04-05 16:47:42.812 | INFO     | p01_Data_Extraction.llm_factory:extract:170 - Requesting Ollama: qwen2.5:latest...
+2026-04-05 16:51:44.863 | ERROR    | p01_Data_Extraction.llm_factory:extract:193 - Ollama error with qwen2.5:latest: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=240)
+2026-04-05 16:51:44.863 | WARNING  | p01_Data_Extraction.llm_factory:extract_with_fallback:222 - Primary provider ollama failed. Falling back to Gemini Tier...
+2026-04-05 16:51:44.863 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:225 - Attempting fallback via Gemini (gemini-2.0-flash)...
+2026-04-05 16:51:45.330 | WARNING  | p01_Data_Extraction.llm_factory:extract:132 - Gemini 429 Resource Exhausted for gemini-2.0-flash
+2026-04-05 16:51:45.332 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:225 - Attempting fallback via Gemini (gemini-1.5-flash)...
+2026-04-05 16:51:45.436 | ERROR    | p01_Data_Extraction.llm_factory:extract:135 - Gemini error with gemini-1.5-flash: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+2026-04-05 16:51:45.437 | ERROR    | p01_Data_Extraction.llm_factory:extract_with_fallback:231 - All LLM providers failed.
+2026-04-05 16:51:45.438 | ERROR    | __main__:run_pipeline:100 - Extraction failed for data/raw/reports\AMMB HOLDINGS BERHAD\2022_fs.pdf
+2026-04-05 16:51:45.438 | INFO     | __main__:run_pipeline:106 - Sleeping for 10s to respect API rate limits...
+2026-04-05 16:51:55.439 | INFO     | __main__:run_pipeline:85 - >>> Skipping BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:51:55.442 | INFO     | __main__:run_pipeline:85 - >>> Skipping BANK KERJASAMA RAKYAT MALAYSIA BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:51:55.444 | INFO     | __main__:run_pipeline:85 - >>> Skipping CIMB GROUP HOLDINGS BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:51:55.445 | INFO     | __main__:run_pipeline:85 - >>> Skipping CIMB GROUP HOLDINGS BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:51:55.451 | INFO     | __main__:run_pipeline:85 - >>> Skipping HONG LEONG FINANCIAL GROUP BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:51:55.453 | INFO     | __main__:run_pipeline:85 - >>> Skipping HONG LEONG FINANCIAL GROUP BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:51:55.457 | INFO     | __main__:run_pipeline:85 - >>> Skipping MALAYAN BANKING BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:51:55.458 | INFO     | __main__:run_pipeline:85 - >>> Skipping MALAYAN BANKING BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:51:55.460 | INFO     | __main__:run_pipeline:85 - >>> Skipping PUBLIC BANK BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:51:55.464 | INFO     | __main__:run_pipeline:85 - >>> Skipping PUBLIC BANK BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:51:55.465 | INFO     | __main__:run_pipeline:85 - >>> Skipping RHB BANK BERHAD | 2021 (Claimed by Fast-Track or already processed)
+2026-04-05 16:51:55.467 | INFO     | __main__:run_pipeline:85 - >>> Skipping RHB BANK BERHAD | 2022 (Claimed by Fast-Track or already processed)
+2026-04-05 16:51:55.471 | SUCCESS  | __main__:run_pipeline:122 - Orchestration Complete. Success: 0, Fail: 2
+2026-04-05 17:18:16.551 | INFO     | __main__:run_pipeline:43 - Sample mode ACTIVE: Limiting to 2 reports per institution.
+2026-04-05 17:18:16.553 | INFO     | __main__:run_pipeline:54 - Discovered 1 reports for processing. Target: Customer Deposits
+2026-04-05 17:18:16.554 | INFO     | __main__:run_pipeline:65 - >>> Processing: AMMB HOLDINGS BERHAD | 2024 <<<
+2026-04-05 17:18:16.556 | INFO     | p01_Data_Extraction.pdf_extractor:process_report:168 - --- Processing: AMMB HOLDINGS BERHAD (2024) ---
+2026-04-05 17:18:16.556 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:94 - Scanning PDF 'data/raw/reports\AMMB HOLDINGS BERHAD\2024_fs.pdf' dynamically (limit: 2) for: 'Customer Deposits'
+2026-04-05 17:18:17.438 | INFO     | p01_Data_Extraction.text_clipper:get_clipped_financial_text_dynamic:126 - Dynamic target pages localized: [102, 175]
+2026-04-05 17:18:17.444 | INFO     | p01_Data_Extraction.llm_factory:extract_with_fallback:214 - Attempting extraction via ollama (qwen2.5:latest)...
+2026-04-05 17:18:17.445 | INFO     | p01_Data_Extraction.llm_factory:extract:170 - Requesting Ollama: qwen2.5:latest...
+2026-04-05 17:20:34.866 | ERROR    | p01_Data_Extraction.pdf_extractor:process_report:201 - Validation Error: 6 validation errors for FSDataPayload
+statements.0.line_items.0.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.0.values.1.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.1.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.1.values.1.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.2.values.0.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+statements.0.line_items.2.values.1.month_end
+  Input should be a valid integer [type=int_type, input_value=None, input_type=NoneType]
+    For further information visit https://errors.pydantic.dev/2.10/v/int_type
+2026-04-05 17:20:34.891 | ERROR    | __main__:run_pipeline:77 - Extraction failed for data/raw/reports\AMMB HOLDINGS BERHAD\2024_fs.pdf
+2026-04-05 17:20:34.893 | SUCCESS  | __main__:run_pipeline:99 - Orchestration Complete. Success: 0, Fail: 1
