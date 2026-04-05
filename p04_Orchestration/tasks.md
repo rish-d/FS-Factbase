@@ -18,6 +18,8 @@ This file contains the tickets for the Orchestration Agent.
 - [x] **[CLI RESOLVER]** New Script: `cli_resolver.py`.
 - [x] **[TERMINAL AUDITOR]** New Script: `view_db.py`.
 - [x] **[ORCHESTRATOR REFINEMENT]** Update `orchestrator.py` to act as the primary CLI "glue".
+- [x] **[CONTINUOUS LOOP]** Implement `continuous_orchestrator.py` with auto-pause resilience.
+- [x] **[DASHBOARD]** Implement "Lighter" monitoring dashboard in `api/`.
 
 ---
 

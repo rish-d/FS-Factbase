@@ -10,6 +10,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from p01_Data_Extraction.pdf_extractor import process_report, build_extraction_prompt, clean_json_output, FSDataPayload
 from p01_Data_Extraction.text_clipper import get_clipped_financial_text_dynamic
 from p02_Database_and_Mapping.mapper import StandardizedMapper
+from p02_Database_and_Mapping.checkpoint_manager import CheckpointManager
+from p04_Orchestration.status_manager import StatusManager
 
 def discover_reports(base_path="data/raw/reports"):
     """
@@ -54,6 +56,7 @@ def run_pipeline(user_prompt: str = "Balance Sheet and Income Statement", sample
     logger.info(f"Discovered {len(reports)} reports for processing. Target: {user_prompt}")
     
     mapper = StandardizedMapper()
+    checkpoint_manager = CheckpointManager()
     
     success_count = 0
     fail_count = 0
@@ -66,11 +69,17 @@ def run_pipeline(user_prompt: str = "Balance Sheet and Income Statement", sample
         
         try:
             # 1. Extract
+            StatusManager.update_status(activity=f"Extracting: {inst_id} ({period})...")
             json_path = process_report(pdf_path, inst_id, period, user_prompt)
             
             if json_path and os.path.exists(json_path):
                 # 2. Map
+                StatusManager.update_status(activity=f"Mapping: {inst_id} ({period})...")
                 mapper.process_file(json_path)
+                
+                # 3. Update Checkpoint for this specific task
+                checkpoint_manager.set_checkpoint(inst_id, period, user_prompt, "COMPLETED")
+                
                 success_count += 1
                 results_log.append((inst_id, period, "SUCCESS"))
             else:
@@ -97,6 +106,7 @@ def run_pipeline(user_prompt: str = "Balance Sheet and Income Statement", sample
         print(f"{inst[:30]:<30} | {per:<8} | {status}")
     print("="*50)
     logger.success(f"Orchestration Complete. Success: {success_count}, Fail: {fail_count}")
+    return success_count > 0 and fail_count == 0
 
 def run_offline_prep(user_prompt: str = "Balance Sheet and Income Statement", sample: bool = False, target_year: str = None, target_bank: str = None):
     """

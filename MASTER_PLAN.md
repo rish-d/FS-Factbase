@@ -27,7 +27,7 @@ This document is the absolute ground truth for the FS Factbase ETL pipeline. It 
 | **Phase 3** | **Extraction with Fallbacks** | ✅ DONE | `p01.../pdf_extractor.py` |
 | **Phase 4** | **Deterministic Mapping** | ✅ DONE | `p02.../mapper.py` |
 | **Phase 5** | **Batch AI & CLI HITL** | ✅ DONE | `ai_batch_manager.py`, `rollback_batch.py` |
-| **Phase 6** | **Local LLM Inference** | 🏗️ PLANNED | `llm_factory.py`, `ollama` |
+| **Phase 6** | **Local LLM Inference** | ✅ DONE | `llm_factory.py`, `ollama` |
 
 ---
 
@@ -63,9 +63,10 @@ This document is the absolute ground truth for the FS Factbase ETL pipeline. It 
 
 ## 🏗️ Phase 6: Local-First Inference (Upcoming)
 **Goal:** Eliminate API dependencies by routing extraction and reconciliation to local models.
-*   **Unified LLM Factory:** Implement `llm_factory.py` to abstract providers (Gemini vs. Ollama).
-*   **Hardware-Aware Extraction:** Configure high-throughput local models (Llama 3.1 8B, DeepSeek) to run constant extraction loops without cost.
-*   **Web UI Sync:** Fully integrate the `--offline-prep` and `--offline-ingest` workflows to ensure manual Web UI data is treated as first-class citizens in the queue.
+*   **Unified LLM Factory**: Implement `llm_factory.py` to abstract providers (Gemini vs. Ollama).
+*   **Hardware-Aware Extraction**: Configure high-throughput local models (Llama 3.1 8B, DeepSeek) to run constant extraction loops without cost.
+*   **Continuous Orchestration Loop**: [continuous_orchestrator.py](file:///d:/FS%20Factbase/p04_Orchestration/continuous_orchestrator.py) implements the end-to-end Extraction -> Mapping -> Expansion cycle.
+*   **Decoupled Monitoring Dashboard**: [dashboard_server.py](file:///d:/FS%20Factbase/api/dashboard_server.py) provides a lightweight, premium window into the factbase's growth and pipeline state.
 
 ---
 

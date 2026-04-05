@@ -7,9 +7,9 @@ import db_config
 
 class LLMReconciler:
     def __init__(self, api_key=None):
-        self.api_key = api_key or os.getenv("GOOGLE_API_KEY")
+        self.api_key = api_key or os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
         if not self.api_key:
-            logger.error("GOOGLE_API_KEY not found in environment.")
+            logger.error("Neither GOOGLE_API_KEY nor GEMINI_API_KEY found in environment.")
             raise ValueError("API key required for LLMReconciler")
         
         genai.configure(api_key=self.api_key)

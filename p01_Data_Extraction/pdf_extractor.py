@@ -21,7 +21,7 @@ from pydantic import BaseModel, Field, model_validator
 class YearValue(BaseModel):
     year: int = Field(description="The reporting year, e.g., 2024", validation_alias=AliasChoices("reporting_year", "year"))
     value: Optional[float] = Field(None, description="The numerical value.", validation_alias=AliasChoices("amount", "value"))
-    month_end: int = Field(description="The month number of the reporting date (1-12).")
+    month_end: Optional[int] = Field(None, description="The month number of the reporting date (1-12).")
     is_cumulative: bool = Field(description="True if the value is cumulative (e.g. Full Year, Balance Sheet), False if incremental (e.g. 3 months only).")
     scaling_factor: int = Field(description="The multiplier found in headers (1, 1000, 1000000).")
     confidence: float = Field(description="AI's confidence in this specific value (0.0 to 1.0)")
@@ -107,7 +107,7 @@ class Statement(BaseModel):
             for dp in dps:
                 if not isinstance(dp, dict): continue
                 if "reporting_year" not in dp and "year" not in dp: dp["reporting_year"] = period
-                if "month_end" not in dp: dp["month_end"] = month_end
+                if "month_end" not in dp or dp["month_end"] is None: dp["month_end"] = month_end
                 if "is_cumulative" not in dp: dp["is_cumulative"] = is_cumulative
                 if "scaling_factor" not in dp: dp["scaling_factor"] = scaling_factor
                 if "source_page_number" not in dp and "page_number" not in dp: dp["source_page_number"] = source_page_number

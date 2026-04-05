@@ -79,6 +79,7 @@ class AIBatchManager:
                 success_count += len(terms)
 
         logger.success(f"✅ Optimistic Batch {batch_id} complete. Resolved {success_count} terms.")
+        return success_count
 
     def _fetch_top_unmapped(self, limit):
         conn = duckdb.connect(self.db_path)

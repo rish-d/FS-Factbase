@@ -81,7 +81,7 @@ def build_extraction_prompt(clipped_text: str, institution_id: str, reporting_pe
         f"USER TARGET: {user_prompt}\n\n"
         "### EXTRACTION RULES ###\n"
         "1. RAW SCALING: Extract the RAWEST numerical value exactly as it appears in the table. Identify multipliers from headers (RM'000, Millions) and store as 'scaling_factor' metadata. DO NOT multiply the value yourself.\n"
-        "2. TEMPORAL & ENTITY: Detect 'month_end' (1-12) and 'is_cumulative' (True for annual/balance sheet). If the table presents multiple entity columns (e.g., 'Group' vs 'Bank'/'Company'), extract figures for BOTH and tag them appropriately in the 'entity_scope' field. If only one set of figures is present, assume it is 'Group'.\n"
+        "2. TEMPORAL & ENTITY: Detect 'month_end' (1-12) and 'is_cumulative' (True for annual/balance sheet). If month_end is not clearly stated, you may leave it as null. If the table presents multiple entity columns (e.g., 'Group' vs 'Bank'/'Company'), extract figures for BOTH and tag them appropriately in the 'entity_scope' field. If only one set of figures is present, assume it is 'Group'.\n"
         "3. PRECISION: Extract ONLY from the provided text. Do not hallucinate data points.\n"
         "4. TRACEABILITY: Locate the '--- TARGET FINANCIAL PAGE {page_num} ---' markers in the text. For EACH extracted data point (YearValue), you MUST set 'source_page_number' to the {page_num} specified in the marker immediately preceding that section of text.\n"
         "5. STRUCTURE: Comply exactly with the target JSON schema. Keep 'statement_type' and 'statement_name' SHORT AND CONCISE (e.g., 'Balance Sheet'). DO NOT include long descriptions in these fields.\n\n"
@@ -168,7 +168,7 @@ class OllamaProvider(LLMProvider):
         
         try:
             logger.info(f"Requesting Ollama: {self.model_name}...")
-            response = requests.post(url, json=payload, timeout=240)
+            response = requests.post(url, json=payload, timeout=300)
             response.raise_for_status()
             result = response.json()
             raw_response = result.get("response", "")
